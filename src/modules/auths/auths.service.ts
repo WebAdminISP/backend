@@ -43,11 +43,25 @@ export class AuthsService {
       sub: newUser.id,
       id: newUser.id,
       email: newUser.email,
+      mame: newUser.nombre,
       roles: [newUser.isAdmin ? Role.Admin : Role.User],
     };
 
     const token = this.jwtService.sign(userPayload);
-    return { succes: 'User logged in successfully', token };
+
+    const decodedToken = this.jwtService.decode(token);
+
+    // console.log(decodedToken);
+
+    const iat = new Date(decodedToken.iat * 1000).toLocaleString();
+    const exp = new Date(decodedToken.exp * 1000).toLocaleString();
+
+    return {
+      succes: 'User logged in successfully',
+      token,
+      issuedAt: iat,
+      expiresAt: exp,
+    };
     //return { succes: 'User logged in successfully' };
   }
 
