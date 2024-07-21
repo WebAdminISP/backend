@@ -43,7 +43,7 @@ export class AuthsService {
       sub: newUser.id,
       id: newUser.id,
       email: newUser.email,
-      mame: newUser.nombre,
+      agente: newUser.nombre,
       roles: [newUser.isAdmin ? Role.Admin : Role.User],
     };
 
@@ -56,11 +56,14 @@ export class AuthsService {
     const iat = new Date(decodedToken.iat * 1000).toLocaleString();
     const exp = new Date(decodedToken.exp * 1000).toLocaleString();
 
+    const agente = decodedToken.agente;
+
     return {
       succes: 'User logged in successfully',
       token,
       issuedAt: iat,
       expiresAt: exp,
+      agente,
     };
     //return { succes: 'User logged in successfully' };
   }
