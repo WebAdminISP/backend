@@ -113,4 +113,5 @@ La aplicación está construida utilizando NestJS.
 
 ### <font color='lime'><p align="center">Integrantes del equipo frontend.</p></font>
 <p align="center">Edmundo Kinast - <b>Back End</b></p>
+<p align="center">Rodrigo Nahuel Fernandez - <b>Back End</b></p>
 <p align="center">Rafael Velazquez Hernandez - <b>Back End</b></p>

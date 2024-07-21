@@ -1,4 +1,4 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDate,
   IsEmail,
@@ -39,6 +39,7 @@ export class CreateUserDto {
   })
   createdAt: Date;
 
+  @IsOptional()
   @IsString({ message: 'El agente debe ser una cadena de texto.' })
   @ApiProperty({})
   agente?: string;
