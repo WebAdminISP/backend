@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
   IsDate,
   IsEmail,
@@ -6,23 +6,25 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
   Matches,
   Max,
   Min,
-  ValidateNested,
+  // ValidateNested,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import { addMinutes } from 'date-fns';
-import { Provincia } from '../../provincias/entities/provincia.entity';
-import { Localidad } from '../../localidades/entities/localidades.entity';
+// import { Provincia } from '../../provincias/entities/provincia.entity';
+// import { Localidad } from '../../localidades/entities/localidades.entity';
 
 export class CreateUserDto {
-  @ApiProperty({
-    description: 'Define si el usuario es administrador boolean.',
-    example: 'false',
-    type: Boolean,
-  })
+  @ApiHideProperty()
+  // @ApiProperty({
+  //   description: 'Define si el usuario es administrador boolean.',
+  //   example: 'false',
+  //   type: Boolean,
+  // })
   isAdmin: boolean;
 
   @IsOptional()
@@ -36,15 +38,17 @@ export class CreateUserDto {
     },
     { toClassOnly: true },
   )
-  @ApiProperty({
-    description: 'La fecha de creación del usuario se genera automáticamente.',
-    type: Date,
-  })
+  @ApiHideProperty()
+  // @ApiProperty({
+  //   description: 'La fecha de creación del usuario se genera automáticamente.',
+  //   type: Date,
+  // })
   createdAt: Date;
 
   @IsOptional()
-  @IsString({ message: 'El agente debe ser una cadena de texto.' })
-  @ApiProperty({})
+  @IsString({ message: 'El agente es cargado automaticamente' })
+  // @ApiProperty({})
+  @ApiHideProperty()
   agente?: string;
 
   @IsNotEmpty({ message: 'El nombre es obligatorio y no puede estar vacío.' })
@@ -163,17 +167,33 @@ export class CreateUserDto {
   @ApiProperty()
   impuesto: string;
 
-  @IsNotEmpty({})
-  @ValidateNested()
-  @Type(() => Provincia)
-  @ApiProperty({ type: Provincia })
-  provincia: Provincia;
+  // @IsNotEmpty({})
+  // @ValidateNested()
+  // @Type(() => Provincia)
+  // @ApiProperty({ type: Provincia })
+  // provincia: Provincia;
 
-  @IsNotEmpty({})
-  @ValidateNested()
-  @Type(() => Localidad)
-  @ApiProperty({ type: Localidad })
-  localidad: Localidad;
+  @IsUUID()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'El id de la provincia, debe ser un id UUID valido',
+    example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
+  })
+  provinciaId: string;
+
+  // @IsNotEmpty({})
+  // @ValidateNested()
+  // @Type(() => Localidad)
+  // @ApiProperty({ type: Localidad })
+  // localidad: Localidad;
+
+  @IsUUID()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'El id de la localidad, debe ser un id UUID valido',
+    example: '911aec2b-1ee8-4e86-a223-abf0eb0d138b',
+  })
+  localidadId: string;
 
   @IsNotEmpty({})
   @IsString({ message: 'El CP debe ser una cadena de texto.' })
@@ -247,7 +267,7 @@ export class CreateUserDto {
   })
   @ApiProperty({
     description: 'El texto de la señal de la conexión debe ser válido.',
-    example: '¿xxx?',
+    example: '-65dBm',
     type: String,
   })
   senalConexion: string;
