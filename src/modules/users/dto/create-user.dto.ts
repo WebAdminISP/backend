@@ -10,9 +10,12 @@ import {
   Matches,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { addMinutes } from 'date-fns';
+import { Provincia } from '../../provincias/entities/provincia.entity';
+import { Localidad } from '../../localidades/entities/localidades.entity';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -161,17 +164,19 @@ export class CreateUserDto {
   impuesto: string;
 
   @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
-  @ApiProperty()
-  provincia: string;
+  @ValidateNested()
+  @Type(() => Provincia)
+  @ApiProperty({ type: Provincia })
+  provincia: Provincia;
 
   @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
-  @ApiProperty()
-  localidad: string;
+  @ValidateNested()
+  @Type(() => Localidad)
+  @ApiProperty({ type: Localidad })
+  localidad: Localidad;
 
   @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
+  @IsString({ message: 'El CP debe ser una cadena de texto.' })
   @Length(4, 8, { message: 'El CP debe tener 4 u 8 caracteres.' })
   @ApiProperty({
     description: 'El CP debe ser válido.',

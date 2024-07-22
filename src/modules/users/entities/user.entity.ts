@@ -1,5 +1,13 @@
 // Pourpase: Entity for the user table
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Provincia } from '../../provincias/entities/provincia.entity';
+import { Localidad } from '../../localidades/entities/localidades.entity';
 
 @Entity({
   name: 'users',
@@ -51,11 +59,13 @@ export class User {
   @Column()
   impuesto: string;
 
-  @Column()
-  provincia: string;
+  @ManyToOne(() => Provincia, (provincia) => provincia.localidades)
+  @JoinColumn({ name: 'provinciaId' })
+  provincia: Provincia;
 
-  @Column()
-  localidad: string;
+  @ManyToOne(() => Localidad, (localidad) => localidad.provincia)
+  @JoinColumn({ name: 'localidadId' })
+  localidad: Localidad;
 
   @Column()
   codigoPostal: string;
