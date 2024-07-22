@@ -11,6 +11,8 @@ import typeOrmConfig from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from './modules/users/users.module';
 import { AuthsModule } from './modules/auths/auths.module';
+import { ProvinciasModule } from './modules/provincias/provincias.module';
+import { SeedsModule } from './seeds/seeds.module';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { AuthsModule } from './modules/auths/auths.module';
     }),
     UsersModule,
     AuthsModule,
+    SeedsModule,
     //FilesModule,
     JwtModule.register({
       global: true,
@@ -33,6 +36,7 @@ import { AuthsModule } from './modules/auths/auths.module';
     }),
     AuthsModule,
     UsersModule,
+    ProvinciasModule,
   ],
   controllers: [AppController],
   providers: [
