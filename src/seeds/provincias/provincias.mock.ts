@@ -1,4 +1,4 @@
-export const provincias = [
+export const ProvinciasMock = [
   {
     nombre: 'Buenos Aires',
   },
@@ -46,5 +46,29 @@ export const provincias = [
   },
   {
     nombre: 'Rio Negro',
+  },
+  {
+    nombre: 'Salta',
+  },
+  {
+    nombre: 'San Juan',
+  },
+  {
+    nombre: 'San Luis',
+  },
+  {
+    nombre: 'Santa Cruz',
+  },
+  {
+    nombre: 'Santa Fe',
+  },
+  {
+    nombre: 'Santiago del Estero',
+  },
+  {
+    nombre: 'Tierra del Fuego',
+  },
+  {
+    nombre: 'Tucumán',
   },
 ];
