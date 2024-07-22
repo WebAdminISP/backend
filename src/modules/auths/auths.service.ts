@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +13,8 @@ import { SignInDto } from './dto/sign-in.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { Role } from './roles.enum';
+import { Provincia } from '../provincias/entities/provincia.entity';
+import { Localidad } from '../localidades/entities/localidades.entity';
 
 @Injectable()
 export class AuthsService {
@@ -20,6 +23,10 @@ export class AuthsService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Provincia)
+    private provinciaRepository: Repository<Provincia>,
+    @InjectRepository(Localidad)
+    private localidadRepository: Repository<Localidad>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -83,7 +90,30 @@ export class AuthsService {
 
     createUserDto.password = hashedPassword;
 
-    const user = this.usersRepository.create(createUserDto);
+    const provincia = await this.provinciaRepository.findOne({
+      where: { id: createUserDto.provinciaId },
+    });
+
+    if (!provincia) {
+      throw new NotFoundException(
+        `Provincia with ID ${createUserDto.provinciaId} not found`,
+      );
+    }
+
+    const localidad = await this.localidadRepository.findOne({
+      where: { id: createUserDto.localidadId },
+    });
+    if (!localidad) {
+      throw new NotFoundException(
+        `Localidad with ID ${createUserDto.localidadId} not found`,
+      );
+    }
+
+    const user = this.usersRepository.create({
+      ...createUserDto,
+      provincia,
+      localidad,
+    });
 
     if (!createUserDto.createdAt) {
       user.createdAt = new Date();

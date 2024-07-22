@@ -39,13 +39,14 @@ export class AuthsController {
   }
 
   @Post('signup')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Dar de alta un usuario nuevo' })
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ transform: true }))
   async createUser(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
-    const agente = req.user.agente;
+    // const agente = req.user.agente;
+    const agente = 'Admin';
     createUserDto.agente = agente;
 
     return this.authsService.saveUser(createUserDto);
