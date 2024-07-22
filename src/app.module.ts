@@ -13,6 +13,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthsModule } from './modules/auths/auths.module';
 import { ProvinciasModule } from './modules/provincias/provincias.module';
 import { SeedsModule } from './seeds/seeds.module';
+import { LocalidadesModule } from './modules/localidades/localidades.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { SeedsModule } from './seeds/seeds.module';
     AuthsModule,
     UsersModule,
     ProvinciasModule,
+    LocalidadesModule,
   ],
   controllers: [AppController],
   providers: [

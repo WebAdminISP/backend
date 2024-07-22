@@ -12,7 +12,7 @@ export class ProvinciasSeed {
   ) {}
 
   async onModuleInit() {
-    console.log('Seed inicializado');
+    console.log('Seed provincias inicializado');
     await this.seed();
   }
 
