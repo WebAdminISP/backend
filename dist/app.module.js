@@ -22,6 +22,7 @@ const users_module_1 = require("./modules/users/users.module");
 const auths_module_1 = require("./modules/auths/auths.module");
 const provincias_module_1 = require("./modules/provincias/provincias.module");
 const seeds_module_1 = require("./seeds/seeds.module");
+const localidades_module_1 = require("./modules/localidades/localidades.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -47,6 +48,7 @@ exports.AppModule = AppModule = __decorate([
             auths_module_1.AuthsModule,
             users_module_1.UsersModule,
             provincias_module_1.ProvinciasModule,
+            localidades_module_1.LocalidadesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
