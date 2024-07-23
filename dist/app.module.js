@@ -23,6 +23,9 @@ const auths_module_1 = require("./modules/auths/auths.module");
 const provincias_module_1 = require("./modules/provincias/provincias.module");
 const seeds_module_1 = require("./seeds/seeds.module");
 const localidades_module_1 = require("./modules/localidades/localidades.module");
+const equipos_module_1 = require("./modules/equipos/equipos.module");
+const servicios_module_1 = require("./modules/servicios/servicios.module");
+const impuestos_module_1 = require("./modules/impuestos/impuestos.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -49,6 +52,9 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             provincias_module_1.ProvinciasModule,
             localidades_module_1.LocalidadesModule,
+            equipos_module_1.EquiposModule,
+            servicios_module_1.ServiciosModule,
+            impuestos_module_1.ImpuestosModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

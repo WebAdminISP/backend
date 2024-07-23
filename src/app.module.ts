@@ -14,6 +14,9 @@ import { AuthsModule } from './modules/auths/auths.module';
 import { ProvinciasModule } from './modules/provincias/provincias.module';
 import { SeedsModule } from './seeds/seeds.module';
 import { LocalidadesModule } from './modules/localidades/localidades.module';
+import { EquiposModule } from './modules/equipos/equipos.module';
+import { ServiciosModule } from './modules/servicios/servicios.module';
+import { ImpuestosModule } from './modules/impuestos/impuestos.module';
 
 @Module({
   imports: [
@@ -39,6 +42,9 @@ import { LocalidadesModule } from './modules/localidades/localidades.module';
     UsersModule,
     ProvinciasModule,
     LocalidadesModule,
+    EquiposModule,
+    ServiciosModule,
+    ImpuestosModule,
   ],
   controllers: [AppController],
   providers: [
