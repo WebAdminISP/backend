@@ -11,7 +11,7 @@ export class SignInDto {
   )
   @ApiProperty({
     description: 'El email del usuario debe ser un email válido.',
-    example: 'jperez@mail.com',
+    example: 'seedUser@mail.com',
     type: String,
   })
   email: string;
