@@ -12,7 +12,7 @@ export const UsersMock = [
     email: 'seedUser@mail.com',
     password: 'P@ssw0rd',
     razonSocial: 'Café los Angelitos',
-    impuesto: 'string',
+    impuesto: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
     provincia: '',
     localidad: '',
     codigoPostal: '5529',
@@ -22,7 +22,7 @@ export const UsersMock = [
     emailInstal: 'seedUser@mail.com',
     observaciones: 'Seed para usuario administrador',
     senalConexion: '00',
-    equiposId: 'no',
-    serviciosId: 'no',
+    equiposId: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
+    serviciosId: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
   },
 ];
