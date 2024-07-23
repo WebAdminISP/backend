@@ -11,12 +11,14 @@ import {
   Matches,
   Max,
   Min,
+  ValidateNested,
   // ValidateNested,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { addMinutes } from 'date-fns';
-// import { Provincia } from '../../provincias/entities/provincia.entity';
-// import { Localidad } from '../../localidades/entities/localidades.entity';
+import { Provincia } from '../../provincias/entities/provincia.entity';
+import { Localidad } from '../../localidades/entities/localidades.entity';
+import { Impuesto } from 'src/modules/impuestos/entities/impuesto.entity';
 
 export class CreateUserDto {
   @ApiHideProperty()
@@ -163,15 +165,16 @@ export class CreateUserDto {
   razonSocial: string;
 
   @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
-  @ApiProperty()
-  impuesto: string;
+  @ValidateNested()
+  @Type(() => Impuesto)
+  @ApiProperty({ type: Impuesto })
+  impuesto: Impuesto;
 
-  // @IsNotEmpty({})
-  // @ValidateNested()
-  // @Type(() => Provincia)
-  // @ApiProperty({ type: Provincia })
-  // provincia: Provincia;
+  @IsNotEmpty({})
+  @ValidateNested()
+  @Type(() => Provincia)
+  @ApiProperty({ type: Provincia })
+  provincia: Provincia;
 
   @IsUUID()
   @IsNotEmpty()
@@ -181,11 +184,11 @@ export class CreateUserDto {
   })
   provinciaId: string;
 
-  // @IsNotEmpty({})
-  // @ValidateNested()
-  // @Type(() => Localidad)
-  // @ApiProperty({ type: Localidad })
-  // localidad: Localidad;
+  @IsNotEmpty({})
+  @ValidateNested()
+  @Type(() => Localidad)
+  @ApiProperty({ type: Localidad })
+  localidad: Localidad;
 
   @IsUUID()
   @IsNotEmpty()

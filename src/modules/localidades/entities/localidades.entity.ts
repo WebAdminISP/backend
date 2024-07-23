@@ -1,3 +1,4 @@
+import { User } from 'src/modules/users/entities/user.entity';
 import { Provincia } from '../../provincias/entities/provincia.entity';
 import {
   Column,
@@ -5,6 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity({
@@ -16,6 +18,9 @@ export class Localidad {
 
   @Column({ length: 50, nullable: false })
   nombre: string;
+
+  @OneToMany(() => User, (user) => user.localidad)
+  users: User[];
 
   @ManyToOne(() => Provincia, (provincia) => provincia.localidades)
   @JoinColumn()

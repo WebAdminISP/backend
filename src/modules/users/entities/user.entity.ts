@@ -4,10 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Provincia } from '../../provincias/entities/provincia.entity';
 import { Localidad } from '../../localidades/entities/localidades.entity';
+import { Equipo } from 'src/modules/equipos/entities/equipo.entity';
+import { Servicio } from 'src/modules/servicios/entities/servicio.entity';
+import { Impuesto } from 'src/modules/impuestos/entities/impuesto.entity';
 
 @Entity({
   name: 'users',
@@ -56,14 +60,15 @@ export class User {
   @Column({ length: 50 })
   razonSocial: string;
 
-  @Column()
-  impuesto: string;
+  @ManyToOne(() => Impuesto, (impuesto) => impuesto.users)
+  @JoinColumn({ name: 'impuestoId' })
+  impuesto: Impuesto;
 
-  @ManyToOne(() => Provincia, (provincia) => provincia.localidades)
+  @ManyToOne(() => Provincia, (provincia) => provincia.users)
   @JoinColumn({ name: 'provinciaId' })
   provincia: Provincia;
 
-  @ManyToOne(() => Localidad, (localidad) => localidad.provincia)
+  @ManyToOne(() => Localidad, (localidad) => localidad.users)
   @JoinColumn({ name: 'localidadId' })
   localidad: Localidad;
 
@@ -88,9 +93,9 @@ export class User {
   @Column()
   senalConexion: string;
 
-  @Column()
-  equiposId: string;
+  @OneToMany(() => Equipo, (equipo) => equipo.user)
+  equipos: Equipo[];
 
-  @Column()
-  serviciosId: string;
+  @OneToMany(() => Servicio, (servicio) => servicio.user)
+  servicios: Servicio[];
 }
