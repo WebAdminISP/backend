@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { LocalidadesService } from './localidades.service';
 import { CreateLocalidadeDto } from './dto/create-localidade.dto';
 import { UpdateLocalidadeDto } from './dto/update-localidade.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Localidades')
 @Controller('localidades')
 export class LocalidadesController {
   constructor(private readonly localidadesService: LocalidadesService) {}
@@ -23,7 +33,10 @@ export class LocalidadesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLocalidadeDto: UpdateLocalidadeDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateLocalidadeDto: UpdateLocalidadeDto,
+  ) {
     return this.localidadesService.update(+id, updateLocalidadeDto);
   }
 

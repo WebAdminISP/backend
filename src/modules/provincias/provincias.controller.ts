@@ -10,7 +10,9 @@ import {
 import { ProvinciasService } from './provincias.service';
 import { CreateProvinciaDto } from './dto/create-provincia.dto';
 import { UpdateProvinciaDto } from './dto/update-provincia.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Provincias')
 @Controller('provincias')
 export class ProvinciasController {
   constructor(private readonly provinciasService: ProvinciasService) {}
