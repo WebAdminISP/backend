@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
@@ -47,7 +48,6 @@ export class Equipo {
   @Column({ nullable: false })
   antena: string;
 
-  @ManyToOne(() => User, (user) => user.equipos)
-  @JoinColumn()
-  user: User;
+  @OneToMany(() => User, (user) => user.equipo)
+  users: User[];
 }

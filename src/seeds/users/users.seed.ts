@@ -8,7 +8,8 @@ import { User } from 'src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class UsersSeed implements OnModuleInit {
+//export class UsersSeed implements OnModuleInit {
+export class UsersSeed {
   constructor(
     @InjectRepository(Localidad)
     private readonly localidadesRepository: Repository<Localidad>,
@@ -18,13 +19,9 @@ export class UsersSeed implements OnModuleInit {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  async onModuleInit() {
-    console.log('Seed users inicializado');
-    await this.seed();
-  }
-
   async seed() {
     // Obtener la provincia de Mendoza
+    console.log('Seed users inicializado');
     const provinciaSeed = await this.provinciasRepository.findOne({
       where: { nombre: 'Mendoza' },
     });
