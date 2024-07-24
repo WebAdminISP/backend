@@ -3,9 +3,14 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggerGlobal } from './middlewares/logger.middleware';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+const { auth } = require('express-openid-connect');
+import { config as auth0Config } from './config/auth0';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+   //* implementa auth0 middleware > login > logout endpoints
+   app.use(auth(auth0Config));
 
   app.useGlobalPipes(
     new ValidationPipe({
