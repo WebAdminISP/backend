@@ -3,12 +3,15 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   Param,
   ParseUUIDPipe,
   Put,
   Query,
+  Req,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -24,8 +27,11 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiQuery,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
+import { Request } from 'express';
 
 @ApiTags('Users')
 @Controller('users')
@@ -56,6 +62,49 @@ export class UsersController {
   ) {
     const allUsers: User[] = await this.UsersService.getUsers(page, limit);
     return allUsers;
+  }
+
+  //*AUTH0 ENDPOINTS
+  //* endpoint generico para verificar auth de usuario y su info
+  @Get('auth0/protected')
+  @ApiOperation({ summary: 'Comprobacion de logueo con Auth0' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  getAuth0Protected(@Req() req:Request){
+    try {
+      if (req.oidc) {
+        console.log('Autenticado con Auth0');
+        return JSON.stringify(req.oidc.user);
+      } else if (req.user) {  // Assuming internal auth sets req.user
+        console.log('Autenticado con JWT interno');
+        return JSON.stringify(req.user);
+      } else {
+        throw new UnauthorizedException('No se encontró información de autenticación');
+      }
+    } catch (error) {
+      throw new ForbiddenException();
+    }
+  }
+
+  // verifica estado de autenticacion de usuario sin mostrar token
+  @Get('auth0/user-info')
+  @ApiOperation({ summary: 'Retorna informacion de usuario Auth0' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard) 
+  getUserInfo(@Req() req: Request) {
+    const isAuthenticated = req.oidc.isAuthenticated();
+    return {
+      isAuthenticated,
+      status: isAuthenticated ? 'Logged in' : 'Logged out',
+      user: isAuthenticated ? {
+        name: req.oidc.user.name,
+        email: req.oidc.user.email,
+      } : null
+    };
   }
 
   @Get(':id')
