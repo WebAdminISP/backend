@@ -5,11 +5,11 @@ const app_module_1 = require("./app.module");
 const swagger_1 = require("@nestjs/swagger");
 const logger_middleware_1 = require("./middlewares/logger.middleware");
 const common_1 = require("@nestjs/common");
-const { auth } = require('express-openid-connect');
+const express_openid_connect_1 = require("express-openid-connect");
 const auth0_1 = require("./config/auth0");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    app.use(auth(auth0_1.config));
+    app.use((0, express_openid_connect_1.auth)(auth0_1.config));
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         exceptionFactory: (errors) => {
@@ -81,9 +81,9 @@ async function bootstrap() {
                 clientId: process.env.AUTH0_CLIENT_ID,
                 appName: 'WebAdminISP',
                 scopeSeparator: ' ',
-                additionalQueryStringParams: {}
-            }
-        }
+                additionalQueryStringParams: {},
+            },
+        },
     });
     await app.listen(3000);
 }

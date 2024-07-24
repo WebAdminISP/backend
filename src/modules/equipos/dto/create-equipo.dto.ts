@@ -8,15 +8,31 @@ import {
 } from 'class-validator';
 
 export class CreateEquipoDto {
-  @IsOptional()
+  @IsNotEmpty({
+    message: 'El agente es obligatorio y no puede estar vacío.',
+  })
   @IsString({ message: 'El agente es cargado automaticamente' })
-  // @ApiProperty({})
-  @ApiHideProperty()
-  agente?: string;
+  @ApiProperty({
+    description: 'El nombre debe ser válido.',
+    example: 'Huawei',
+    type: String,
+  })
+  //@ApiHideProperty()
+  nombre: string;
 
   @IsNotEmpty({
-    message: 'La IP es obligatoria y no puede estar vacía.',
+    message: 'El agente es obligatorio y no puede estar vacío.',
   })
+  @IsString({ message: 'El agente es cargado automaticamente' })
+  @ApiProperty({
+    description: 'El nombre debe ser válido.',
+    example: 'Juan Pérez',
+    type: String,
+  })
+  //@ApiHideProperty()
+  agente: string;
+
+  @IsOptional()
   @IsString({ message: 'La IP debe ser una cadena de texto.' })
   @Length(11, 15, { message: 'La IP debe tener entre 11 y 15 caracteres.' })
   @ApiProperty({
@@ -26,9 +42,7 @@ export class CreateEquipoDto {
   })
   ipPc: string;
 
-  @IsNotEmpty({
-    message: 'La IP es obligatoria y no puede estar vacía.',
-  })
+  @IsOptional()
   @IsString({ message: 'La IP debe ser una cadena de texto.' })
   @Length(11, 15, { message: 'La IP debe tener entre 11 y 15 caracteres.' })
   @ApiProperty({
@@ -38,9 +52,7 @@ export class CreateEquipoDto {
   })
   ipAp: string;
 
-  @IsNotEmpty({
-    message: 'La máscara es obligatoria y no puede estar vacía.',
-  })
+  @IsOptional()
   @IsString({ message: 'La máscara debe ser una cadena de texto.' })
   @Length(9, 15, {
     message: 'La máscara debe tener entre 9 y 15 caracteres.',
@@ -53,9 +65,7 @@ export class CreateEquipoDto {
   })
   mascaraSubRed: string;
 
-  @IsNotEmpty({
-    message: 'La puerta de enlace es obligatoria y no puede estar vacía.',
-  })
+  @IsOptional()
   @IsString({ message: 'La puerta de enlace debe ser una cadena de texto.' })
   @Length(7, 15, {
     message: 'La puerta de enlace debe tener entre 7 y 15 caracteres.',
@@ -68,9 +78,7 @@ export class CreateEquipoDto {
   })
   puertaEnlace: string;
 
-  @IsNotEmpty({
-    message: 'El DNS es obligatorio y no puede estar vacío.',
-  })
+  @IsOptional()
   @IsString({ message: 'El DNS debe ser una cadena de texto.' })
   @Length(7, 15, {
     message: 'El DNS debe tener entre 7 y 15 caracteres.',
@@ -82,9 +90,7 @@ export class CreateEquipoDto {
   })
   dns1: string;
 
-  @IsNotEmpty({
-    message: 'El DNS es obligatorio y no puede estar vacío.',
-  })
+  @IsOptional()
   @IsString({ message: 'El DNS debe ser una cadena de texto.' })
   @Length(7, 15, {
     message: 'El DNS debe tener entre 7 y 15 caracteres.',
@@ -96,9 +102,7 @@ export class CreateEquipoDto {
   })
   dns2: string;
 
-  @IsNotEmpty({
-    message: 'El Nodo es obligatorio y no puede estar vacío.',
-  })
+  @IsOptional()
   @IsString({ message: 'El DNS debe ser una cadena de texto.' })
   @ApiProperty({
     description: 'El Nodo debe ser válido.',
@@ -118,6 +122,15 @@ export class CreateEquipoDto {
   })
   equipo: string;
 
+  @IsOptional()
+  @IsString({ message: 'Los metros de cable deben ingresarse.' })
+  @ApiProperty({
+    description: 'La longitud debe ser válida.',
+    example: '50 mts',
+    type: String,
+  })
+  cableMts: string;
+
   @IsNotEmpty({
     message: 'La MAC es obligatoria.',
   })
@@ -129,9 +142,7 @@ export class CreateEquipoDto {
   })
   macEquipo: string;
 
-  @IsNotEmpty({
-    message: 'La antena es obligatoria.',
-  })
+  @IsOptional()
   @IsString({ message: 'La antena debe ser una cadena de texto.' })
   @ApiProperty({
     description: 'El Equipo debe ser válido.',
