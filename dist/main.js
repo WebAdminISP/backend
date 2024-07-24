@@ -5,8 +5,11 @@ const app_module_1 = require("./app.module");
 const swagger_1 = require("@nestjs/swagger");
 const logger_middleware_1 = require("./middlewares/logger.middleware");
 const common_1 = require("@nestjs/common");
+const { auth } = require('express-openid-connect');
+const auth0_1 = require("./config/auth0");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.use(auth(auth0_1.config));
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
         exceptionFactory: (errors) => {
@@ -48,10 +51,40 @@ async function bootstrap() {
         .setTitle('Demo NestJS API')
         .setDescription('Esta es una API creada con NestJS para el Proyecto Final FullStack de HENRY')
         .setVersion('1.0')
-        .addBearerAuth()
+        .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+    }, 'JWT-auth')
+        .addOAuth2({
+        type: 'oauth2',
+        flows: {
+            implicit: {
+                authorizationUrl: process.env.AUTH0_ISSUER_BASE_URL,
+                scopes: {
+                    openid: 'OpenID',
+                    profile: 'Profile',
+                    email: 'Email',
+                },
+            },
+        },
+    }, 'Auth0')
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, swaggerConfig);
-    swagger_1.SwaggerModule.setup('api', app, document);
+    swagger_1.SwaggerModule.setup('api', app, document, {
+        swaggerOptions: {
+            oauth2RedirectUrl: 'http://localhost:3000/api/oauth2-redirect.html',
+            oauth: {
+                clientId: process.env.AUTH0_CLIENT_ID,
+                appName: 'WebAdminISP',
+                scopeSeparator: ' ',
+                additionalQueryStringParams: {}
+            }
+        }
+    });
     await app.listen(3000);
 }
 bootstrap();

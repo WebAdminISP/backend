@@ -3,12 +3,15 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   Param,
   ParseUUIDPipe,
   Put,
   Query,
+  Req,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -24,8 +27,11 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiQuery,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
+import { Request } from 'express';
 
 @ApiTags('Users')
 @Controller('users')
@@ -35,9 +41,10 @@ export class UsersController {
   }
   @Get()
   @ApiOperation({ summary: 'Ver todos los usuarios' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @ApiQuery({
     name: 'page',
     required: false,
@@ -58,11 +65,55 @@ export class UsersController {
     return allUsers;
   }
 
+  //*AUTH0 ENDPOINTS
+  //* endpoint generico para verificar auth de usuario y su info
+  @Get('auth0/protected')
+  @ApiOperation({ summary: 'Comprobacion de logueo con Auth0' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  getAuth0Protected(@Req() req:Request){
+    try {
+      if (req.oidc) {
+        console.log('Autenticado con Auth0');
+        return JSON.stringify(req.oidc.user);
+      } else if (req.user) {  // Assuming internal auth sets req.user
+        console.log('Autenticado con JWT interno');
+        return JSON.stringify(req.user);
+      } else {
+        throw new UnauthorizedException('No se encontró información de autenticación');
+      }
+    } catch (error) {
+      throw new ForbiddenException();
+    }
+  }
+
+  //* verifica estado de autenticacion de usuario sin mostrar token
+  @Get('auth0/user-info')
+  @ApiOperation({ summary: 'Retorna informacion de usuario Auth0' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard) 
+  getUserInfo(@Req() req: Request) {
+    const isAuthenticated = req.oidc.isAuthenticated();
+    return {
+      isAuthenticated,
+      status: isAuthenticated ? 'Logged in' : 'Logged out',
+      user: isAuthenticated ? {
+        name: req.oidc.user.name,
+        email: req.oidc.user.email,
+      } : null
+    };
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Ver un usuario por :id' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async getUserById(@Param('id', new ParseUUIDPipe()) id: string) {
     const user = await this.UsersService.getUserById(id);
@@ -76,8 +127,10 @@ export class UsersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar un usuario por :id' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   async updateUser(
@@ -89,8 +142,10 @@ export class UsersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un usuario por :id' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @HttpCode(200)
   async deleteUser(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.UsersService.deleteUser(id);
