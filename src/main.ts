@@ -3,14 +3,14 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggerGlobal } from './middlewares/logger.middleware';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-const { auth } = require('express-openid-connect');
+import { auth } from 'express-openid-connect';
 import { config as auth0Config } from './config/auth0';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-   //* implementa auth0 middleware > login > logout endpoints
-   app.use(auth(auth0Config));
+  //* implementa auth0 middleware > login > logout endpoints
+  app.use(auth(auth0Config));
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -69,15 +69,17 @@ async function bootstrap() {
       'Esta es una API creada con NestJS para el Proyecto Final FullStack de HENRY',
     )
     .setVersion('1.0')
-    .addBearerAuth({
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      name: 'JWT',
-      description: 'Enter JWT token',
-      in: 'header',
-    },
-    'JWT-auth') // ojo:este nombre tiene que estar para referenciar en decorador @ApiBearerAuth() en controller methods
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    ) // ojo:este nombre tiene que estar para referenciar en decorador @ApiBearerAuth() en controller methods
     .addOAuth2(
       {
         type: 'oauth2',
@@ -92,7 +94,7 @@ async function bootstrap() {
           },
         },
       },
-      'Auth0' // ojo:este nombre tiene que estar para referenciar en decorador @ApiSecurity() en controller methods
+      'Auth0', // ojo:este nombre tiene que estar para referenciar en decorador @ApiSecurity() en controller methods
     )
     .build();
 
@@ -106,9 +108,9 @@ async function bootstrap() {
         clientId: process.env.AUTH0_CLIENT_ID,
         appName: 'WebAdminISP',
         scopeSeparator: ' ',
-        additionalQueryStringParams: {}
-      }
-    }
+        additionalQueryStringParams: {},
+      },
+    },
   });
 
   await app.listen(3000);

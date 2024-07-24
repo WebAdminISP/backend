@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @Entity({
@@ -16,38 +9,44 @@ export class Equipo {
   id: string;
 
   @Column({ nullable: false })
+  nombre: string;
+
+  @Column({ nullable: false })
   agente: string;
 
-  @Column({ nullable: false })
-  ipPc: string;
+  @Column()
+  ipPc?: string;
 
-  @Column({ nullable: false })
-  ipAp: string;
+  @Column()
+  ipAp?: string;
 
-  @Column({ nullable: false })
-  mascaraSubRed: string;
+  @Column()
+  mascaraSubRed?: string;
 
-  @Column({ nullable: false })
-  puertaEnlace: string;
+  @Column()
+  puertaEnlace?: string;
 
-  @Column({ nullable: false })
-  dns1: string;
+  @Column()
+  dns1?: string;
 
-  @Column({ nullable: false })
-  dns2: string;
+  @Column()
+  dns2?: string;
 
-  @Column({ nullable: false })
-  nodo: string;
+  @Column()
+  nodo?: string;
 
   @Column({ nullable: false })
   equipo: string;
 
+  @Column()
+  cableMts: string;
+
   @Column({ nullable: false })
   macEquipo: string;
 
-  @Column({ nullable: false })
-  antena: string;
+  @Column()
+  antena?: string;
 
   @OneToMany(() => User, (user) => user.equipo)
-  users: User[];
+  users?: User[];
 }
