@@ -16,9 +16,6 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { addMinutes } from 'date-fns';
-import { Provincia } from '../../provincias/entities/provincia.entity';
-import { Localidad } from '../../localidades/entities/localidades.entity';
-import { Impuesto } from 'src/modules/impuestos/entities/impuesto.entity';
 
 export class CreateUserDto {
   @ApiHideProperty()
@@ -164,17 +161,13 @@ export class CreateUserDto {
   })
   razonSocial: string;
 
+  @IsUUID()
   @IsNotEmpty({})
-  @ValidateNested()
-  @Type(() => Impuesto)
-  @ApiProperty({ type: Impuesto })
-  impuesto: Impuesto;
-
-  @IsNotEmpty({})
-  @ValidateNested()
-  @Type(() => Provincia)
-  @ApiProperty({ type: Provincia })
-  provincia: Provincia;
+  @ApiProperty({
+    description: 'El id del impuesto, debe ser un id UUID valido',
+    example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
+  })
+  impuestoId: string;
 
   @IsUUID()
   @IsNotEmpty()
@@ -183,12 +176,6 @@ export class CreateUserDto {
     example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
   })
   provinciaId: string;
-
-  @IsNotEmpty({})
-  @ValidateNested()
-  @Type(() => Localidad)
-  @ApiProperty({ type: Localidad })
-  localidad: Localidad;
 
   @IsUUID()
   @IsNotEmpty()
@@ -264,7 +251,7 @@ export class CreateUserDto {
   })
   observaciones: string;
 
-  @IsNotEmpty({})
+  @IsOptional({})
   @IsString({
     message: 'La señal de la conexión debe ser una cadena de texto.',
   })
@@ -275,15 +262,23 @@ export class CreateUserDto {
   })
   senalConexion: string;
 
-  @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
+  @IsUUID()
+  @IsOptional({})
+  @IsString()
   @ApiProperty()
   equiposId: string;
 
-  @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
+  @IsUUID()
+  @IsOptional({})
+  @IsString()
   @ApiProperty()
   serviciosId: string;
+
+  @IsUUID()
+  @IsOptional({})
+  @IsString()
+  @ApiProperty()
+  asistenciasId: string;
 
   constructor(createdAt?: number) {
     this.createdAt = createdAt ? new Date(createdAt) : this.getLocalDate();

@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @Entity({
@@ -29,7 +23,6 @@ export class Servicio {
   @Column({ nullable: false })
   abono: string;
 
-  @ManyToOne(() => User, (user) => user.servicios)
-  @JoinColumn()
-  user: User;
+  @OneToMany(() => User, (user) => user.servicio)
+  users: User[];
 }
