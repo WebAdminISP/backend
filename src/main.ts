@@ -69,12 +69,47 @@ async function bootstrap() {
       'Esta es una API creada con NestJS para el Proyecto Final FullStack de HENRY',
     )
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    },
+    'JWT-auth') // ojo:este nombre tiene que estar para referenciar en decorador @ApiBearerAuth() en controller methods
+    .addOAuth2(
+      {
+        type: 'oauth2',
+        flows: {
+          implicit: {
+            authorizationUrl: process.env.AUTH0_ISSUER_BASE_URL,
+            scopes: {
+              openid: 'OpenID',
+              profile: 'Profile',
+              email: 'Email',
+            },
+          },
+        },
+      },
+      'Auth0' // ojo:este nombre tiene que estar para referenciar en decorador @ApiSecurity() en controller methods
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
 
-  SwaggerModule.setup('api', app, document);
+  //! este redireccionamiento aun no funciona
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      oauth2RedirectUrl: 'http://localhost:3000/api/oauth2-redirect.html',
+      oauth: {
+        clientId: process.env.AUTH0_CLIENT_ID,
+        appName: 'WebAdminISP',
+        scopeSeparator: ' ',
+        additionalQueryStringParams: {}
+      }
+    }
+  });
 
   await app.listen(3000);
 }
