@@ -41,9 +41,10 @@ export class UsersController {
   }
   @Get()
   @ApiOperation({ summary: 'Ver todos los usuarios' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @ApiQuery({
     name: 'page',
     required: false,
@@ -88,7 +89,7 @@ export class UsersController {
     }
   }
 
-  // verifica estado de autenticacion de usuario sin mostrar token
+  //* verifica estado de autenticacion de usuario sin mostrar token
   @Get('auth0/user-info')
   @ApiOperation({ summary: 'Retorna informacion de usuario Auth0' })
   @ApiBearerAuth('JWT-auth')
@@ -109,9 +110,10 @@ export class UsersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Ver un usuario por :id' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
   @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async getUserById(@Param('id', new ParseUUIDPipe()) id: string) {
     const user = await this.UsersService.getUserById(id);
@@ -125,8 +127,10 @@ export class UsersController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar un usuario por :id' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   async updateUser(
@@ -138,8 +142,10 @@ export class UsersController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un usuario por :id' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @HttpCode(200)
   async deleteUser(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.UsersService.deleteUser(id);
