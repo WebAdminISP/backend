@@ -4,7 +4,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Provincia } from '../../provincias/entities/provincia.entity';
@@ -93,9 +92,11 @@ export class User {
   @Column()
   senalConexion: string;
 
-  @OneToMany(() => Equipo, (equipo) => equipo.user)
-  equipos: Equipo[];
+  @ManyToOne(() => Equipo, (equipo) => equipo.users)
+  @JoinColumn({ name: 'equipoId' })
+  equipo: Equipo;
 
-  @OneToMany(() => Servicio, (servicio) => servicio.user)
-  servicios: Servicio[];
+  @ManyToOne(() => Servicio, (servicio) => servicio.users)
+  @JoinColumn({ name: 'servicioId' })
+  servicio: Servicio;
 }
