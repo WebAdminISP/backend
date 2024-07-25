@@ -15,6 +15,8 @@ import * as bcrypt from 'bcrypt';
 import { Role } from './roles.enum';
 import { Provincia } from '../provincias/entities/provincia.entity';
 import { Localidad } from '../localidades/entities/localidades.entity';
+import { Servicio } from '../servicios/entities/servicio.entity';
+import { Equipo } from '../equipos/entities/equipo.entity';
 
 @Injectable()
 export class AuthsService {
@@ -27,6 +29,10 @@ export class AuthsService {
     private provinciaRepository: Repository<Provincia>,
     @InjectRepository(Localidad)
     private localidadRepository: Repository<Localidad>,
+    @InjectRepository(Servicio)
+    private servicioRepository: Repository<Servicio>,
+    @InjectRepository(Equipo)
+    private equipoRepository: Repository<Equipo>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -109,10 +115,30 @@ export class AuthsService {
       );
     }
 
+    const equipo = await this.equipoRepository.findOne({
+      where: { id: createUserDto.equipoId },
+    });
+    if (!equipo) {
+      throw new NotFoundException(
+        `Equipo with ID ${createUserDto.equipoId} not found`,
+      );
+    }
+
+    const servicio = await this.servicioRepository.findOne({
+      where: { id: createUserDto.servicioId },
+    });
+    if (!servicio) {
+      throw new NotFoundException(
+        `Servicio with ID ${createUserDto.servicioId} not found`,
+      );
+    }
+
     const user = this.usersRepository.create({
       ...createUserDto,
       provincia,
       localidad,
+      equipo,
+      servicio
     });
 
     if (!createUserDto.createdAt) {
