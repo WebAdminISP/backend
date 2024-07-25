@@ -1,6 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Localidad } from '../../localidades/entities/localidades.entity';
 import { User } from '../../users/entities/user.entity';
+import { Relevamiento } from '../../relevamientos/entities/relevamiento.entity';
 
 @Entity({
   name: 'provincias',
@@ -17,4 +25,8 @@ export class Provincia {
 
   @OneToMany(() => Localidad, (localidad) => localidad.provincia)
   localidades: Localidad[];
+
+  @ManyToOne(() => Relevamiento, (relevamiento) => relevamiento.provincia)
+  @JoinColumn({ name: 'relevamientoId' })
+  relevamiento: Relevamiento;
 }

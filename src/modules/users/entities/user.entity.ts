@@ -56,7 +56,7 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 60 })
   razonSocial: string;
 
   @ManyToOne(() => Impuesto, (impuesto) => impuesto.users)
