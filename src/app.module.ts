@@ -17,6 +17,7 @@ import { LocalidadesModule } from './modules/localidades/localidades.module';
 import { EquiposModule } from './modules/equipos/equipos.module';
 import { ServiciosModule } from './modules/servicios/servicios.module';
 import { ImpuestosModule } from './modules/impuestos/impuestos.module';
+import { RelevamientosModule } from './modules/relevamientos/relevamientos.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ImpuestosModule } from './modules/impuestos/impuestos.module';
     EquiposModule,
     ServiciosModule,
     ImpuestosModule,
+    RelevamientosModule,
   ],
   controllers: [AppController],
   providers: [

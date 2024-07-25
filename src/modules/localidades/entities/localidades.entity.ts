@@ -8,6 +8,7 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
+import { Relevamiento } from 'src/modules/relevamientos/entities/relevamiento.entity';
 
 @Entity({
   name: 'localidades',
@@ -23,6 +24,10 @@ export class Localidad {
   users: User[];
 
   @ManyToOne(() => Provincia, (provincia) => provincia.localidades)
-  @JoinColumn()
+  @JoinColumn({ name: 'provinciaId' })
   provincia: Provincia;
+
+  @ManyToOne(() => Relevamiento, (relevamiento) => relevamiento.localidad)
+  @JoinColumn({ name: 'localidadId' })
+  relevamiento: Relevamiento;
 }
