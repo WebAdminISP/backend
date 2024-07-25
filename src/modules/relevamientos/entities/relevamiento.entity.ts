@@ -8,6 +8,7 @@ import { Localidad } from 'src/modules/localidades/entities/localidades.entity';
 export class Relevamiento {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
@@ -24,19 +25,19 @@ export class Relevamiento {
   @Column({ length: 50, nullable: false, unique: true })
   email: string;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', nullable: false })
   telefono: number;
 
   @Column({ length: 60 })
   razon: string;
 
-  @Column()
+  @Column({ nullable: false })
   direccion: string;
 
-  @Column('double precision')
+  @Column('double precision', { nullable: false })
   latitud: number;
 
-  @Column('double precision')
+  @Column('double precision', { nullable: false })
   longitud: number;
 
   @OneToMany(() => Provincia, (provincia) => provincia.relevamiento)
