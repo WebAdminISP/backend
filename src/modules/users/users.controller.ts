@@ -73,16 +73,19 @@ export class UsersController {
   @ApiSecurity('Auth0')
   @Roles(Role.Admin)
   @UseGuards(CompositeAuthGuard, RolesGuard)
-  getAuth0Protected(@Req() req:Request){
+  getAuth0Protected(@Req() req: Request) {
     try {
       if (req.oidc) {
         console.log('Autenticado con Auth0');
         return JSON.stringify(req.oidc.user);
-      } else if (req.user) {  // Assuming internal auth sets req.user
+      } else if (req.user) {
+        // Assuming internal auth sets req.user
         console.log('Autenticado con JWT interno');
         return JSON.stringify(req.user);
       } else {
-        throw new UnauthorizedException('No se encontró información de autenticación');
+        throw new UnauthorizedException(
+          'No se encontró información de autenticación',
+        );
       }
     } catch (error) {
       throw new ForbiddenException();
@@ -95,16 +98,18 @@ export class UsersController {
   @ApiBearerAuth('JWT-auth')
   @ApiSecurity('Auth0')
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard) 
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   getUserInfo(@Req() req: Request) {
     const isAuthenticated = req.oidc.isAuthenticated();
     return {
       isAuthenticated,
       status: isAuthenticated ? 'Logged in' : 'Logged out',
-      user: isAuthenticated ? {
-        name: req.oidc.user.name,
-        email: req.oidc.user.email,
-      } : null
+      user: isAuthenticated
+        ? {
+            name: req.oidc.user.name,
+            email: req.oidc.user.email,
+          }
+        : null,
     };
   }
 

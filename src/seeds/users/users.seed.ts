@@ -4,11 +4,11 @@ import { Localidad } from '../../modules/localidades/entities/localidades.entity
 import { Provincia } from '../../modules/provincias/entities/provincia.entity';
 import { Repository } from 'typeorm';
 import { UsersMock } from './users.mock';
-import { User } from 'src/modules/users/entities/user.entity';
+import { User } from '../../modules/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { Impuesto } from 'src/modules/impuestos/entities/impuesto.entity';
-import { Equipo } from 'src/modules/equipos/entities/equipo.entity';
-import { Servicio } from 'src/modules/servicios/entities/servicio.entity';
+import { Impuesto } from '../../modules/impuestos/entities/impuesto.entity';
+import { Equipo } from '../../modules/equipos/entities/equipo.entity';
+import { Servicio } from '../../modules/servicios/entities/servicio.entity';
 
 @Injectable()
 export class UsersSeed {
@@ -66,7 +66,7 @@ export class UsersSeed {
     }
 
     const servicioSeed = await this.serviciosRepository.findOne({
-      where: { abono: '100/35' },
+      where: { nombre: '100/35' },
     });
 
     if (!servicioSeed) {
