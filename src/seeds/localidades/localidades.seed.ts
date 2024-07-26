@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { LocalidadesMock } from './localidades.mock';
 
 @Injectable()
-//export class LocalidadesSeed implements OnModuleInit {
 export class LocalidadesSeed {
   constructor(
     @InjectRepository(Localidad)
@@ -14,11 +13,6 @@ export class LocalidadesSeed {
     @InjectRepository(Provincia)
     private readonly provinciasRepository: Repository<Provincia>,
   ) {}
-
-  // async onModuleInit() {
-  //   console.log('Seed localidades inicializado');
-  //   await this.seed();
-  // }
 
   async seed() {
     // Obtener la provincia de Mendoza
