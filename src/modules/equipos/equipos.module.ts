@@ -9,6 +9,7 @@ import { Auth0Guard } from '../auths/auth0.guards';
 import { UsersController } from '../users/users.controller';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
+import { requiresAuth } from 'express-openid-connect';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Equipo, User])],
@@ -22,10 +23,9 @@ import { User } from '../users/entities/user.entity';
     UsersService,
   ],
 })
-// export class EquiposModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     //protege con autenticacion cualquier endpoint aqui listado
-//     consumer.apply(requiresAuth()).forRoutes();
-//   }
-// }
-export class EquiposModule {}
+export class EquiposModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    //protege con autenticacion cualquier endpoint aqui listado
+    consumer.apply(requiresAuth()).forRoutes();
+  }
+}
