@@ -8,6 +8,9 @@ import {
   Delete,
   Query,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { RelevamientosService } from './relevamientos.service';
 import { CreateRelevamientoDto } from './dto/create-relevamiento.dto';
@@ -59,8 +62,14 @@ export class RelevamientosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.relevamientosService.findOne(+id);
+  @ApiOperation({ summary: 'Retorna 1 relevamiento por id' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+ async findOne(@Param('id', new ParseUUIDPipe()) id: string) {  
+    return this.relevamientosService.findOne(id);
   }
 
   @Patch(':id')

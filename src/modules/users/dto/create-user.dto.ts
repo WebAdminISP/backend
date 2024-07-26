@@ -145,7 +145,7 @@ type: Number,
   @IsNotEmpty({ message: 'El id del impuesto es obligatorio y debe ser un id UUID válido.' })
   @ApiProperty({
     description: 'El id del impuesto debe ser un id UUID válido.',
-    example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
+    example: '2583ff4d-bb01-4dc7-90bb-281fa554f141',
   })
   impuestoId: string;
 
@@ -153,7 +153,7 @@ type: Number,
   @IsNotEmpty({ message: 'El id de la provincia es obligatorio y debe ser un id UUID válido.' })
   @ApiProperty({
     description: 'El id de la provincia debe ser un id UUID válido.',
-    example: 'c993ad82-4b0f-4650-b1f1-85f365cdbaaf',
+    example: 'e003af0a-f7f4-4d99-868e-931ee12b538b',
   })
   provinciaId: string;
 
@@ -161,7 +161,7 @@ type: Number,
   @IsNotEmpty({ message: 'El id de la localidad es obligatorio y debe ser un id UUID válido.' })
   @ApiProperty({
     description: 'El id de la localidad debe ser un id UUID válido.',
-    example: 'b7dc3fe8-cd87-42a1-9743-6b41ab1f65cd',
+    example: 'cbcc03a5-a1fe-4e49-b040-95adfb0afb80',
   })
   localidadId: string;
 
@@ -235,7 +235,7 @@ type: Number,
  @IsString()
   @ApiProperty({
     description: 'El id del equipo debe ser un id UUID válido.',
-    example: '8136cf52-84bf-4748-8451-54fd995f746d',
+    example: 'b2837f3d-48cd-476d-a64d-ade12932b606',
   })
   equipoId: string;
 
@@ -244,7 +244,7 @@ type: Number,
   @IsString()
   @ApiProperty({
     description: 'El id del servicio debe ser un id UUID válido.',
-    example: '3ebd09f8-d777-43bf-abd0-4615368cb681',
+    example: 'fa3f2527-4125-4938-9c74-7c7bf448f8b3',
   })
   servicioId: string;
 

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRelevamientoDto } from './dto/create-relevamiento.dto';
 import { UpdateRelevamientoDto } from './dto/update-relevamiento.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -79,8 +79,16 @@ export class RelevamientosService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} relevamiento`;
+  async findOne(id: string) {
+    const relevamiento = await this.relevamientoRepository.findOne({where: {id}});
+
+    if(!relevamiento) {
+      throw new NotFoundException('Relevamiento no encontrado')
+    }
+    return {
+      message: 'Relevamiento encontrado',
+      relevamiento
+    };
   }
 
   update(id: number, updateRelevamientoDto: UpdateRelevamientoDto) {
