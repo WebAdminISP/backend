@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRelevamientoDto } from './dto/create-relevamiento.dto';
 import { UpdateRelevamientoDto } from './dto/update-relevamiento.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -79,15 +79,80 @@ export class RelevamientosService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} relevamiento`;
+  async findOne(id: string) {
+    const relevamiento = await this.relevamientoRepository.findOne({where: {id}});
+
+    if(!relevamiento) {
+      throw new NotFoundException('Relevamiento no encontrado')
+    }
+    return {
+      message: 'Relevamiento encontrado',
+      relevamiento
+    };
   }
 
-  update(id: number, updateRelevamientoDto: UpdateRelevamientoDto) {
-    return `This action updates a #${id} relevamiento`;
+  async update(id: string, updateRelevamientoDto:CreateRelevamientoDto) {
+    const fetchedRelevamiento = await this.relevamientoRepository.findOne({
+      where: {id}  }) 
+
+    if(!fetchedRelevamiento) {
+      throw new NotFoundException('Relevamiento no encontrado')
+    }
+
+    //* verifica provincia y localidad 
+    let provincia: Provincia;
+    let localidad: Localidad;
+
+    const fetchedProvincia = await this.provinciaRepository.findOne(
+      {where: {nombre:updateRelevamientoDto.provincia}}
+    )
+ 
+      if (!fetchedProvincia) {
+        throw new BadRequestException('La provincia no existe');
+      }
+
+      provincia = fetchedProvincia;
+    
+
+    const fetchedLocalidad = await this.localidadRepository.findOne(
+      {where: {nombre: updateRelevamientoDto.localidad}}
+    )
+
+    if (!fetchedLocalidad) {
+      throw new BadRequestException('La localidad no existe');
+    }
+
+    localidad = fetchedLocalidad;
+
+     
+    const updatedRelevamiento = {
+      id,
+      ...updateRelevamientoDto,
+      provincia,
+      localidad,
+    }
+
+    const savedRelevamiento = await this.relevamientoRepository.save(updatedRelevamiento);
+
+    return {
+      message: 'Relevamiento actualizado exitosamente',
+      savedRelevamiento
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} relevamiento`;
+  async remove(id: string) {
+    const relevamiento = await this.relevamientoRepository.findOne({
+      where:{id}
+    })
+
+    if(!relevamiento) {
+      throw new NotFoundException('El relevamiento no existe')
+    }
+
+    await this.relevamientoRepository.remove(relevamiento)
+    return {
+      message: 'Relevamiento eliminado exitosamente',
+      relevamiento
+    };
   }
 }

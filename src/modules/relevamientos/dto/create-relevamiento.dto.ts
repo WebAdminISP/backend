@@ -69,4 +69,43 @@ export class CreateRelevamientoDto {
   @IsString()
   localidad: string;
 
+  // @ApiProperty({ required: false, example: 'Lunes', description: 'Día preferido para visita' })
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString()
+  diaCliente?: string;
+
+  // @ApiProperty({
+  //   example: '10hs - 15hs',
+  //   description: 'Franja horaria de contacto' })
+ @ApiHideProperty()
+ @IsOptional()
+ @IsString()
+ @Length(1, 60)
+ horarios: string;
+
+//  @ApiProperty({ required: false, example: 'Calle Falsa 456', description: 'Domicilio del Instalador' })
+ @ApiHideProperty()
+ @IsOptional()
+ @IsString()
+ domicilioInstal?: string;
+
+//  @ApiProperty({ required: false, example: 'Las Heras', description: 'Localidad de Instalador' })
+ @ApiHideProperty()
+ @IsOptional()
+ @IsString()
+ localidadInstal?: string;
+
+//  @ApiProperty({ required: false, example: 'jperez@example.com', description: 'Email de instalador' })
+ @ApiHideProperty()
+ @IsOptional()
+ @IsEmail()
+ emailInstal?: string;
+
+//  @ApiProperty({ required: false, example: 'Calle sin número, 1° timbre', description: 'Observaciones adicionales'})
+ @ApiHideProperty()
+ @IsOptional()
+ @IsString()
+ observaciones?: string;
+
 }

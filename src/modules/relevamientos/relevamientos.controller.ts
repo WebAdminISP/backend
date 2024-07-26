@@ -8,6 +8,10 @@ import {
   Delete,
   Query,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
+  ParseUUIDPipe,
+  Put,
 } from '@nestjs/common';
 import { RelevamientosService } from './relevamientos.service';
 import { CreateRelevamientoDto } from './dto/create-relevamiento.dto';
@@ -17,6 +21,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { RolesGuard } from '../auths/roles.guard';
+import { Relevamiento } from './entities/relevamiento.entity';
 
 @ApiTags('Relevamientos')
 @Controller('relevamientos')
@@ -59,20 +64,44 @@ export class RelevamientosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.relevamientosService.findOne(+id);
+  @ApiOperation({ summary: 'Retorna 1 relevamiento por id' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+ async findOne(@Param('id', new ParseUUIDPipe()) id: string) {  
+    return await this.relevamientosService.findOne(id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateRelevamientoDto: UpdateRelevamientoDto,
-  ) {
-    return this.relevamientosService.update(+id, updateRelevamientoDto);
-  }
+  @Put(':id')
+  @ApiOperation({ summary: 'Modifica relevamiento por ID' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  async updateRelevamiento( 
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateRelevamiento:CreateRelevamientoDto)
+    {
+      return await this.relevamientosService.update(id, updateRelevamiento);
+    }
+
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateRelevamientoDto: UpdateRelevamientoDto,
+  // ) {
+  //   return this.relevamientosService.update(+id, updateRelevamientoDto);
+  // }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.relevamientosService.remove(+id);
+  @ApiOperation({ summary: 'Elimina 1 relevamiento por ID' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.relevamientosService.remove(id);
   }
 }
