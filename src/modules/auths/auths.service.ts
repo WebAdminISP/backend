@@ -82,6 +82,7 @@ export class AuthsService {
   }
 
   async saveUser(createUserDto: Omit<CreateUserDto, 'isAdmin'>) {
+
     const existingUser = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
