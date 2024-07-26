@@ -23,11 +23,14 @@ export class Localidad {
   @OneToMany(() => User, (user) => user.localidad)
   users: User[];
 
-  @ManyToOne(() => Provincia, (provincia) => provincia.localidades)
+  @ManyToOne(() => Provincia, (provincia) => provincia.localidades, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'provinciaId' })
   provincia: Provincia;
 
-  @ManyToOne(() => Relevamiento, (relevamiento) => relevamiento.localidad)
-  @JoinColumn({ name: 'localidadId' })
-  relevamiento: Relevamiento;
+  @OneToMany(() => Relevamiento, (relevamiento) => relevamiento.localidad, {
+    nullable: false,
+  })
+  relevamiento: Relevamiento[];
 }
