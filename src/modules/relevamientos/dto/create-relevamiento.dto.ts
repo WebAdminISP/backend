@@ -1,11 +1,14 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
+    ArrayMinSize,
+    IsArray,
   IsDate,
   IsEmail,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
   Matches,
   Max,
@@ -73,6 +76,26 @@ export class CreateRelevamientoDto {
   @IsNotEmpty({ message: 'La longitud es obligatoria y no puede estar vacía.' })
   @IsNumber({}, { message: 'La longitud debe ser un número.' })
   longitud: number;
+
+  @ApiProperty({ 
+        type: [String], 
+        description: 'Array de IDs de provincias',
+        example: ['57235f1f-b3e1-4b1d-ab16-d97b54c8db19']
+   })
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsUUID('4', { each: true })
+  provincia: string[];
+
+  @ApiProperty({ 
+    type: [String], 
+    description: 'Array de IDs de localidades',
+    example:['b81df080-84a5-4eb1-b655-9d3724f9a5de']
+})
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsUUID('4', { each: true })
+  localidad: string[];
 
   @ApiProperty({ required: false, example: 'Lunes', description: 'Día preferido para visita' })
   @IsOptional()

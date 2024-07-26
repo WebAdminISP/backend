@@ -10,7 +10,9 @@ import {
 import { RelevamientosService } from './relevamientos.service';
 import { CreateRelevamientoDto } from './dto/create-relevamiento.dto';
 import { UpdateRelevamientoDto } from './dto/update-relevamiento.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Relevamientos')
 @Controller('relevamientos')
 export class RelevamientosController {
   constructor(private readonly relevamientosService: RelevamientosService) {
