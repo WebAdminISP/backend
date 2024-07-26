@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Provincia } from 'src/modules/provincias/entities/provincia.entity';
 import { Localidad } from 'src/modules/localidades/entities/localidades.entity';
 
@@ -40,11 +46,13 @@ export class Relevamiento {
   @Column('double precision', { nullable: false })
   longitud: number;
 
-  @OneToMany(() => Provincia, (provincia) => provincia.relevamiento)
-  provincia: Provincia[];
+  @ManyToOne(() => Provincia, (provincia) => provincia.relevamiento)
+  @JoinColumn({ name: 'provinciaId' })
+  provincia: Provincia;
 
-  @OneToMany(() => Localidad, (localidad) => localidad.relevamiento)
-  localidad: Localidad[];
+  @ManyToOne(() => Localidad, (localidad) => localidad.relevamiento)
+  @JoinColumn({ name: 'localidadId' })
+  localidad: Localidad;
 
   @Column()
   diaCliente: string;
