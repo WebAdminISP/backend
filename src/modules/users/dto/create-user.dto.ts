@@ -153,7 +153,7 @@ type: Number,
   @IsNotEmpty({ message: 'El id de la provincia es obligatorio y debe ser un id UUID válido.' })
   @ApiProperty({
     description: 'El id de la provincia debe ser un id UUID válido.',
-    example: '57235f1f-b3e1-4b1d-ab16-d97b54c8db19',
+    example: 'c993ad82-4b0f-4650-b1f1-85f365cdbaaf',
   })
   provinciaId: string;
 
@@ -161,7 +161,7 @@ type: Number,
   @IsNotEmpty({ message: 'El id de la localidad es obligatorio y debe ser un id UUID válido.' })
   @ApiProperty({
     description: 'El id de la localidad debe ser un id UUID válido.',
-    example: '7ebac6ef-001d-4f0d-83a2-d9b9fb717aef',
+    example: 'b7dc3fe8-cd87-42a1-9743-6b41ab1f65cd',
   })
   localidadId: string;
 

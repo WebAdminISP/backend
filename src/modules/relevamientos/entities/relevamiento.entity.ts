@@ -54,21 +54,21 @@ export class Relevamiento {
   @JoinColumn({ name: 'localidadId' })
   localidad: Localidad;
 
-  @Column()
+  @Column({ nullable: true, default: 'no especificado' })
   diaCliente: string;
 
-  @Column()
+  @Column({ nullable: true, default: 'no especificado' })
   horarios: string;
 
-  @Column()
+  @Column({ nullable: true, default: 'no especificado' })
   domicilioInstal: string;
 
-  @Column()
+  @Column({ nullable: true, default: 'no especificado' })
   localidadInstal: string;
 
-  @Column()
+  @Column({ nullable: true, default: 'no especificado' })
   emailInstal: string;
 
-  @Column()
+  @Column({ nullable: true, default: 'no especificado' })
   observaciones: string;
 }
