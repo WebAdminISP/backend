@@ -17,20 +17,8 @@ import {
 import { Transform, Type } from 'class-transformer';
 
 export class CreateRelevamientoDto {
-  @ApiHideProperty()
-  @IsDate()
-  @Type(() => Date)
-  @Transform(({ value }) => new Date(value))
-  fechaIngreso: Date = new Date();
 
-//   @ApiProperty({ 
-//     example: 'Juan Perez', 
-//     description: 'Nombre del agente es cargado automaticamente' })
-  @ApiHideProperty()
-  @IsNotEmpty()
-  @IsString()
-  @Length(1, 50)
-  agente?: string;
+
 
   @ApiProperty({ example: 'Juan Pérez', description: 'Nombre del interesado' })
   @IsNotEmpty()
@@ -55,7 +43,7 @@ export class CreateRelevamientoDto {
   @ApiProperty({
      example: 'Solicitud de instalación de servico',
      description: 'Motivo del contacto' })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Length(1, 60)
   razon: string;
@@ -67,63 +55,18 @@ export class CreateRelevamientoDto {
   @IsString()
   direccion: string;
 
-  @ApiProperty({ example: -34.6037, description: 'Latitud del domicilio' })
-  @IsNotEmpty({ message: 'La latitud es obligatoria y no puede estar vacía.' })
-  @IsNumber({}, { message: 'La latitud debe ser un número.' })
-  latitud: number;
-
-  @ApiProperty({ example: -58.3816, description: 'Longitud del domicilio' })
-  @IsNotEmpty({ message: 'La longitud es obligatoria y no puede estar vacía.' })
-  @IsNumber({}, { message: 'La longitud debe ser un número.' })
-  longitud: number;
+  @ApiProperty({ 
+    example: 'Mendoza', 
+    description: 'Provincia del interesado' })
+  @IsNotEmpty()
+  @IsString()
+  provincia: string;
 
   @ApiProperty({ 
-        type: [String], 
-        description: 'Array de IDs de provincias',
-        example: ['57235f1f-b3e1-4b1d-ab16-d97b54c8db19']
-   })
-  @IsArray()
-  @ArrayMinSize(1)
-  @IsUUID('4', { each: true })
-  provincia: string[];
-
-  @ApiProperty({ 
-    type: [String], 
-    description: 'Array de IDs de localidades',
-    example:['b81df080-84a5-4eb1-b655-9d3724f9a5de']
-})
-  @IsArray()
-  @ArrayMinSize(1)
-  @IsUUID('4', { each: true })
-  localidad: string[];
-
-  @ApiProperty({ required: false, example: 'Lunes', description: 'Día preferido para visita' })
-  @IsOptional()
+    example: 'Las Heras', 
+    description: 'Localidad del interesado' })
+  @IsNotEmpty()
   @IsString()
-  diaCliente?: string;
+  localidad: string;
 
-  @ApiProperty({ required: false, example: '9:00 - 18:00', description: 'Franja horaria indicada para la visita' })
-  @IsOptional()
-  @IsString()
-  horarios?: string;
-
-  @ApiProperty({ required: false, example: 'Calle Falsa 456', description: 'Domicilio del Instalador' })
-  @IsOptional()
-  @IsString()
-  domicilioInstal?: string;
-
-  @ApiProperty({ required: false, example: 'Las Heras', description: 'Localidad de Instalador' })
-  @IsOptional()
-  @IsString()
-  localidadInstal?: string;
-
-  @ApiProperty({ required: false, example: 'jperez@example.com', description: 'Email de instalador' })
-  @IsOptional()
-  @IsEmail()
-  emailInstal?: string;
-
-  @ApiProperty({ required: false, example: 'Calle sin número, 1° timbre', description: 'Observaciones adicionales'})
-  @IsOptional()
-  @IsString()
-  observaciones?: string;
 }
