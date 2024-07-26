@@ -14,39 +14,39 @@ export class Equipo {
   @Column({ nullable: false })
   agente: string;
 
-  @Column()
+  @Column({ nullable: true })
   ipPc?: string;
 
-  @Column()
+  @Column({ nullable: true })
   ipAp?: string;
 
-  @Column()
+  @Column({ nullable: true })
   mascaraSubRed?: string;
 
-  @Column()
+  @Column({ nullable: true })
   puertaEnlace?: string;
 
-  @Column()
+  @Column({ nullable: true })
   dns1?: string;
 
-  @Column()
+  @Column({ nullable: true })
   dns2?: string;
 
-  @Column()
+  @Column({ nullable: true })
   nodo?: string;
 
   @Column({ nullable: false })
   equipo: string;
 
-  @Column()
+  @Column({ nullable: true })
   cableMts: string;
 
   @Column({ nullable: false })
   macEquipo: string;
 
-  @Column()
+  @Column({ nullable: true })
   antena?: string;
 
-  @OneToMany(() => User, (user) => user.equipo)
+  @OneToMany(() => User, (user) => user.equipo, { nullable: true })
   users?: User[];
 }
