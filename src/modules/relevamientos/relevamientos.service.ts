@@ -3,9 +3,9 @@ import { CreateRelevamientoDto } from './dto/create-relevamiento.dto';
 import { UpdateRelevamientoDto } from './dto/update-relevamiento.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Relevamiento } from './entities/relevamiento.entity';
-import { Repository } from 'typeorm';
 import { Provincia } from '../provincias/entities/provincia.entity';
 import { Localidad } from '../localidades/entities/localidades.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RelevamientosService {
@@ -25,16 +25,10 @@ export class RelevamientosService {
     const longitud = -58.3816;
     const latitud = -58.3816;
     //w propiedades opcionales (modificar entidad > nullable:true)
-    const diaCliente = 'no especificado';
-    const horarios = 'no especificado';
-    const domicilioInstal = 'no especificado';
-    const localidadInstal = 'no especificado';
-    const emailInstal = 'no especificado';
-    const observaciones = 'no especificado';
     
     //* fetch provincia y localidad
-    let provincia: Provincia[] = [];
-    let localidad: Localidad[]= [];
+    let provincia: Provincia;
+    let localidad: Localidad;
 
     const fetchedProvincia = await this.provinciaRepository.findOne(
       {where: {nombre:createRelevamientoDto.provincia}}
@@ -44,7 +38,7 @@ export class RelevamientosService {
         throw new BadRequestException('La provincia no existe');
       }
 
-      provincia.push(fetchedProvincia);
+      provincia = fetchedProvincia;
     
 
     const fetchedLocalidad = await this.localidadRepository.findOne(
@@ -55,7 +49,7 @@ export class RelevamientosService {
       throw new BadRequestException('La localidad no existe');
     }
 
-    localidad.push(fetchedLocalidad);
+    localidad = fetchedLocalidad;
     
 
     //* crea nuevo relevamiento con propiedades restantes
@@ -65,13 +59,7 @@ export class RelevamientosService {
       longitud,
       latitud,
       provincia,
-      localidad,
-      diaCliente,
-      horarios,
-      domicilioInstal,
-      localidadInstal,
-      emailInstal,
-      observaciones
+      localidad
     })
 
     const savedRelevamiento = await this.relevamientoRepository.save(newRelevamiento);
