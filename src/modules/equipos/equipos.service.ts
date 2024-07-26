@@ -8,14 +8,11 @@ import { UpdateEquipoDto } from './dto/update-equipo.dto';
 import { Equipo } from './entities/equipo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class EquiposService {
   constructor(
     @InjectRepository(Equipo) private equiposRepository: Repository<Equipo>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
     private dataSource: DataSource,
   ) {}
 
@@ -51,15 +48,45 @@ export class EquiposService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} equipo`;
+  async findOne(id: string) {
+    const equipo = await this.equiposRepository.findOne({
+      where: { id: id },
+    });
+
+    if (equipo) {
+      return {
+        ...equipo,
+      };
+    } else {
+      return null;
+    }
   }
 
-  update(id: number, updateEquipoDto: UpdateEquipoDto) {
-    return `This action updates a #${id} equipo`;
+  async update(id: string, updatedEquipoData: Partial<Equipo>) {
+    const oldEquipo = await this.equiposRepository.findOneBy({ id: id });
+
+    if (!oldEquipo) {
+      throw new NotFoundException(`Equipo con ID ${id} no encontrado`);
+    }
+
+    // Merge de datos: copiar las propiedades actualizadas al usuario existente
+    Object.assign(oldEquipo, updatedEquipoData);
+
+    const updatedEquipo = await this.equiposRepository.save(oldEquipo);
+    return updatedEquipo;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} equipo`;
+  async remove(id: string) {
+    const oldEquipo = await this.equiposRepository.findOne({
+      where: { id },
+    });
+
+    if (!oldEquipo) {
+      throw new NotFoundException(`Equipo con ID ${id} no encontrado`);
+    }
+
+    await this.equiposRepository.remove(oldEquipo);
+
+    return { success: `Equipo con id: ${id} eliminado con éxito` };
   }
 }
