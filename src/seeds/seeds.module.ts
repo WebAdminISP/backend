@@ -10,10 +10,19 @@ import { Equipo } from '../modules/equipos/entities/equipo.entity';
 import { EquiposSeed } from './equipos/equipos.seed';
 import { Impuesto } from '../modules/impuestos/entities/impuesto.entity';
 import { ImpuestosSeed } from './impuestos/impuestos.seed';
+import { Servicio } from '../modules/servicios/entities/servicio.entity';
+import { ServiciosSeed } from './servicios/servicios.seed';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Provincia, Localidad, User, Equipo, Impuesto]),
+    TypeOrmModule.forFeature([
+      Provincia,
+      Localidad,
+      User,
+      Equipo,
+      Impuesto,
+      Servicio,
+    ]),
   ],
   providers: [
     ProvinciasSeed,
@@ -21,6 +30,7 @@ import { ImpuestosSeed } from './impuestos/impuestos.seed';
     UsersSeed,
     EquiposSeed,
     ImpuestosSeed,
+    ServiciosSeed,
   ],
   exports: [
     ProvinciasSeed,
@@ -28,6 +38,7 @@ import { ImpuestosSeed } from './impuestos/impuestos.seed';
     UsersSeed,
     EquiposSeed,
     ImpuestosSeed,
+    ServiciosSeed,
   ],
 })
 // export class SeedsModule {}
@@ -37,13 +48,16 @@ export class SeedsModule implements OnModuleInit {
     private readonly localidadesSeed: LocalidadesSeed,
     private readonly equiposSeed: EquiposSeed,
     private readonly impuestosSeed: ImpuestosSeed,
+    private readonly serviciosSeed: ServiciosSeed,
+    private readonly usersSeed: UsersSeed,
   ) {}
 
   async onModuleInit() {
     await this.provinciasSeed.seed();
     await this.localidadesSeed.seed();
-    //await this.usersSeed.seed();
     await this.equiposSeed.seed();
     await this.impuestosSeed.seed();
+    await this.serviciosSeed.seed();
+    await this.usersSeed.seed();
   }
 }

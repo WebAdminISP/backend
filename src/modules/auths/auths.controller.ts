@@ -11,7 +11,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthsService } from './auths.service';
-import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UsersService } from '../users/users.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -55,29 +60,27 @@ export class AuthsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async createUser(
     //* extiende la req de express que se espera tenga propiedades extra
-    @Req() req: Request & { oidc?: any; user?: any }, 
-    @Body() createUserDto: CreateUserDto) {
-
+    @Req() req: Request & { oidc?: any; user?: any },
+    @Body() createUserDto: CreateUserDto,
+  ) {
     let agente: string;
 
-    //* propiedad user existe tanto en auth interna como externa 
+    //* propiedad user existe tanto en auth interna como externa
     //* solo difiere el acceso al nombre (name > Auth0, agente > Interna)
-  if (req.user) {
-   
-  agente = req.user.name || req.user.agente;
-  
-  } else {
-  throw new UnauthorizedException('No se pudo determinar el agente');
-  }
+    if (req.user) {
+      agente = req.user.name || req.user.agente;
+    } else {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
 
-  //? creo que esta verificacion no corre nunca
-  if (!agente) {
-  throw new UnauthorizedException('No se pudo determinar el agente');
-  }
+    //? creo que esta verificacion no corre nunca
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
 
-  //* agrega al agente al dto y lo pasa al servicio
-  createUserDto.agente = agente;
-  console.log('agente cargado automaticamente a dto')
-  return this.authsService.saveUser(createUserDto);
+    //* agrega al agente al dto y lo pasa al servicio
+    createUserDto.agente = agente;
+    console.log('agente cargado automaticamente a dto');
+    return this.authsService.saveUser(createUserDto);
   }
 }

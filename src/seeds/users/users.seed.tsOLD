@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Localidad } from '../../modules/localidades/entities/localidades.entity';
 import { Provincia } from '../../modules/provincias/entities/provincia.entity';
@@ -6,28 +6,21 @@ import { Repository } from 'typeorm';
 import { UsersMock } from './users.mock';
 import { User } from 'src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { Impuesto } from 'src/modules/impuestos/entities/impuesto.entity';
-import { Equipo } from 'src/modules/equipos/entities/equipo.entity';
-import { Servicio } from 'src/modules/servicios/entities/servicio.entity';
 
 @Injectable()
+//export class UsersSeed implements OnModuleInit {
 export class UsersSeed {
   constructor(
     @InjectRepository(Localidad)
     private readonly localidadesRepository: Repository<Localidad>,
     @InjectRepository(Provincia)
     private readonly provinciasRepository: Repository<Provincia>,
-    @InjectRepository(Impuesto)
-    private readonly impuestosRepository: Repository<Impuesto>,
-    @InjectRepository(Equipo)
-    private readonly equiposRepository: Repository<Equipo>,
-    @InjectRepository(Servicio)
-    private readonly serviciosRepository: Repository<Servicio>,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
 
   async seed() {
+    // Obtener la provincia de Mendoza
     console.log('Seed users inicializado');
     const provinciaSeed = await this.provinciasRepository.findOne({
       where: { nombre: 'Mendoza' },
@@ -47,39 +40,15 @@ export class UsersSeed {
       return;
     }
 
-    const impuestoSeed = await this.impuestosRepository.findOne({
-      where: { nombre: 'Monotributo' },
-    });
-
-    if (!impuestoSeed) {
-      console.error('No se encontro el impuesto: Monotributo');
-      return;
-    }
-
-    const equipoSeed = await this.equiposRepository.findOne({
-      where: { equipo: 'NanoLoco M5' },
-    });
-
-    if (!equipoSeed) {
-      console.error('No se encontro el equipo: NanoLoco M5');
-      return;
-    }
-
-    const servicioSeed = await this.serviciosRepository.findOne({
-      where: { abono: '100/35' },
-    });
-
-    if (!servicioSeed) {
-      console.error('No se encontro el servicio: 100/35');
-      return;
-    }
-
     for (const userMock of UsersMock) {
       const existingUser = await this.usersRepository.findOne({
         where: { email: userMock.email },
       });
 
       if (existingUser) {
+        console.log(
+          `Usuario con email ${userMock.email} ya existe, omitiendo creación.`,
+        );
         return;
       }
 
@@ -89,11 +58,7 @@ export class UsersSeed {
       user.password = hashedPassword;
       user.provincia = provinciaSeed;
       user.localidad = loalidadSeed;
-      user.impuesto = impuestoSeed;
-      user.equipo = equipoSeed;
-      user.servicio = servicioSeed;
 
-      console.log('Creando usuario: ', user.nombre);
       await this.usersRepository.save(user);
     }
   }

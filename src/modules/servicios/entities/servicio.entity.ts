@@ -23,6 +23,9 @@ export class Servicio {
   @Column({ nullable: false })
   abono: string;
 
+  @Column({ nullable: false })
+  nombre: string;
+
   @OneToMany(() => User, (user) => user.servicio)
   users: User[];
 }

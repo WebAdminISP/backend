@@ -8,9 +8,9 @@ import {
 } from 'typeorm';
 import { Provincia } from '../../provincias/entities/provincia.entity';
 import { Localidad } from '../../localidades/entities/localidades.entity';
-import { Equipo } from 'src/modules/equipos/entities/equipo.entity';
-import { Servicio } from 'src/modules/servicios/entities/servicio.entity';
-import { Impuesto } from 'src/modules/impuestos/entities/impuesto.entity';
+import { Equipo } from '../../equipos/entities/equipo.entity';
+import { Servicio } from '../../servicios/entities/servicio.entity';
+import { Impuesto } from '../../impuestos/entities/impuesto.entity';
 
 @Entity({
   name: 'users',
