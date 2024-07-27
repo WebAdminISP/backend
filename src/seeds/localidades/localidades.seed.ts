@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Localidad } from '../../modules/localidades/entities/localidades.entity';
 import { Provincia } from '../../modules/provincias/entities/provincia.entity';
@@ -36,6 +36,7 @@ export class LocalidadesSeed {
         const localidad = new Localidad();
         localidad.nombre = localidadesData.nombre;
         localidad.provincia = provinciaMendoza; // Vincular a la provincia de Mendoza
+        localidad.agente = localidadesData.agente;
         await this.localidadesRepository.save(localidad);
         console.log(
           `Localidad ${localidad.nombre} guardada en provincia ${provinciaMendoza.nombre}`,

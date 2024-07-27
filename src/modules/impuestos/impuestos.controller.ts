@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ImpuestosService } from './impuestos.service';
 import { CreateImpuestoDto } from './dto/create-impuesto.dto';
 import { UpdateImpuestoDto } from './dto/update-impuesto.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Impuestos')
 @Controller('impuestos')
 export class ImpuestosController {
   constructor(private readonly impuestosService: ImpuestosService) {}
@@ -23,7 +33,10 @@ export class ImpuestosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateImpuestoDto: UpdateImpuestoDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateImpuestoDto: UpdateImpuestoDto,
+  ) {
     return this.impuestosService.update(+id, updateImpuestoDto);
   }
 

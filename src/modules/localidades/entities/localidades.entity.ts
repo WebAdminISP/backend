@@ -17,6 +17,9 @@ export class Localidad {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ length: 50, nullable: true })
+  agente: string;
+
   @Column({ length: 50, nullable: false })
   nombre: string;
 
