@@ -82,7 +82,6 @@ export class AuthsService {
   }
 
   async saveUser(createUserDto: Omit<CreateUserDto, 'isAdmin'>) {
-
     const existingUser = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -138,8 +137,8 @@ export class AuthsService {
       ...createUserDto,
       provincia,
       localidad,
-      equipo,
-      servicio
+      equipos: [equipo],
+      servicios: [servicio],
     });
 
     if (!createUserDto.createdAt) {

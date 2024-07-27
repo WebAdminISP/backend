@@ -1,34 +1,164 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+  HttpStatus,
+  Query,
+  ParseUUIDPipe,
+  Put,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ServiciosService } from './servicios.service';
 import { CreateServicioDto } from './dto/create-servicio.dto';
 import { UpdateServicioDto } from './dto/update-servicio.dto';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
+import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
+import { RolesGuard } from '../auths/roles.guard';
+import { Role } from '../auths/roles.enum';
+import { Servicio } from './entities/servicio.entity';
 
+@ApiTags('Servicios')
 @Controller('servicios')
 export class ServiciosController {
   constructor(private readonly serviciosService: ServiciosService) {}
 
   @Post()
-  create(@Body() createServicioDto: CreateServicioDto) {
+  @ApiOperation({ summary: 'Agregar un servicio nuevo' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  // create(@Body() createServicioDto: CreateServicioDto) {
+  //   return this.serviciosService.create(createServicioDto);
+  create(
+    @Req() req: Request & { oidc?: any; user?: any },
+    @Body() createServicioDto: CreateServicioDto,
+  ) {
+    let agente: string;
+
+    if (req.user) {
+      agente = req.user.name || req.user.agente;
+    } else {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createServicioDto.agente = agente;
+    console.log('agente cargado automáticamente al dto');
     return this.serviciosService.create(createServicioDto);
   }
 
   @Get()
-  findAll() {
-    return this.serviciosService.findAll();
+  @ApiOperation({ summary: 'Ver todos los servicios' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+    example: 5,
+  })
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 5,
+  ) {
+    const allServicios: Servicio[] = await this.serviciosService.findAll(
+      page,
+      limit,
+    );
+    return allServicios;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.serviciosService.findOne(+id);
+  @ApiOperation({ summary: 'Ver un servicio por :id' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const servicio = await this.serviciosService.findOne(id);
+    if (!servicio) {
+      return {
+        error: 'No se encontró el servicioo.',
+      };
+    }
+    return servicio;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServicioDto: UpdateServicioDto) {
-    return this.serviciosService.update(+id, updateServicioDto);
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualizar un servicio por :id' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @HttpCode(200)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  // async update(
+  //   @Param('id', new ParseUUIDPipe()) id: string,
+  //   @Body() createServicioDto: CreateServicioDto,
+  // ) {
+  //   return this.serviciosService.update(id, createServicioDto);
+  // }
+  async update(
+    @Req() req: Request & { oidc?: any; user?: any },
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() createServicioDto: CreateServicioDto,
+  ) {
+    let agente: string;
+
+    if (req.user) {
+      agente = req.user.name || req.user.agente;
+    } else {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createServicioDto.agente = agente;
+    console.log('agente cargado automáticamente al dto');
+    return this.serviciosService.update(id, createServicioDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.serviciosService.remove(+id);
+  @ApiOperation({ summary: 'Eliminar un servicio por :id' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @HttpCode(200)
+  async delete(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.serviciosService.remove(id);
   }
 }

@@ -14,10 +14,11 @@ import {
   ValidationPipe,
   ParseUUIDPipe,
   Put,
+  UnauthorizedException,
+  Req,
 } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
 import { CreateEquipoDto } from './dto/create-equipo.dto';
-import { UpdateEquipoDto } from './dto/update-equipo.dto';
 import {
   ApiOperation,
   ApiQuery,
@@ -46,7 +47,24 @@ export class EquiposController {
   @UseGuards(CompositeAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createEquipoDto: CreateEquipoDto) {
+  create(
+    @Req() req: Request & { oidc?: any; user?: any },
+    @Body() createEquipoDto: CreateEquipoDto,
+  ) {
+    let agente: string;
+
+    if (req.user) {
+      agente = req.user.name || req.user.agente;
+    } else {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createEquipoDto.agente = agente;
+    console.log('agente cargado automáticamente al dto');
     return this.equiposService.create(createEquipoDto);
   }
 
@@ -102,20 +120,24 @@ export class EquiposController {
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(
+    @Req() req: Request & { oidc?: any; user?: any },
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() createEquipoDto: CreateEquipoDto,
   ) {
-    return this.equiposService.update(id, createEquipoDto);
-  }
+    let agente: string;
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar un equipoo por :id' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
-  @HttpCode(200)
-  async deleteUser(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.equiposService.remove(id);
+    if (req.user) {
+      agente = req.user.name || req.user.agente;
+    } else {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createEquipoDto.agente = agente;
+    console.log('agente cargado automáticamente al dto');
+    return this.equiposService.update(id, createEquipoDto);
   }
 }
