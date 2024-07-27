@@ -90,8 +90,8 @@ export class UsersSeed {
       user.provincia = provinciaSeed;
       user.localidad = loalidadSeed;
       user.impuesto = impuestoSeed;
-      user.equipo = equipoSeed;
-      user.servicio = servicioSeed;
+      user.equipos = equipoSeed[0];
+      user.servicios = servicioSeed[0];
 
       console.log('Creando usuario: ', user.nombre);
       await this.usersRepository.save(user);

@@ -1,10 +1,11 @@
+import { User } from 'src/modules/users/entities/user.entity';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateEquipoDto } from './dto/create-equipo.dto';
-import { UpdateEquipoDto } from './dto/update-equipo.dto';
 import { Equipo } from './entities/equipo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -13,10 +14,11 @@ import { DataSource, Repository } from 'typeorm';
 export class EquiposService {
   constructor(
     @InjectRepository(Equipo) private equiposRepository: Repository<Equipo>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
     private dataSource: DataSource,
   ) {}
 
-  async create(createEquipoDto: CreateEquipoDto) {
+  async create(createEquipoDto: CreateEquipoDto): Promise<Equipo> {
     const existingEquipo = await this.equiposRepository.findOne({
       where: { macEquipo: createEquipoDto.macEquipo },
     });
@@ -24,20 +26,30 @@ export class EquiposService {
       throw new BadRequestException('El equipo ya existe');
     }
 
-    // const user = await this.usersRepository.findOne({
-    //   where: { id: createEquipoDto.userId },
-    // });
-
-    // if (!user) {
-    //   throw new NotFoundException(
-    //     `User con ID ${createEquipoDto.userId} no existe`,
-    //   );
-    // }
+    let user = null;
+    if (createEquipoDto.userId) {
+      user = await this.usersRepository.findOne({
+        where: { id: createEquipoDto.userId },
+      });
+      if (!user) {
+        throw new BadRequestException(
+          `Usuario con id ${createEquipoDto.userId} no encontrado.`,
+        );
+      }
+    }
 
     const equipo = this.equiposRepository.create({
       ...createEquipoDto,
+      user, // Asignamos el objeto User si existe
     });
-    return await this.equiposRepository.save(equipo);
+
+    try {
+      return await this.equiposRepository.save(equipo);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Ocurrió un error al guardar el equipo.',
+      );
+    }
   }
 
   async findAll(page: number, limit: number) {
@@ -69,7 +81,7 @@ export class EquiposService {
       throw new NotFoundException(`Equipo con ID ${id} no encontrado`);
     }
 
-    // Merge de datos: copiar las propiedades actualizadas al usuario existente
+    // Merge de datos: copiar las propiedades actualizadas
     Object.assign(oldEquipo, updatedEquipoData);
 
     const updatedEquipo = await this.equiposRepository.save(oldEquipo);
