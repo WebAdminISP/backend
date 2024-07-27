@@ -11,9 +11,10 @@ import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { requiresAuth } from 'express-openid-connect';
 import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users/users.module';
+import { User } from '../users/entities/user.entity';
 
 @Module({
-  imports: [UsersModule,TypeOrmModule.forFeature([Relevamiento, Provincia, Localidad])],
+  imports: [UsersModule,TypeOrmModule.forFeature([Relevamiento, Provincia, Localidad, User])],
   controllers: [RelevamientosController],
   providers: [
     RelevamientosService,

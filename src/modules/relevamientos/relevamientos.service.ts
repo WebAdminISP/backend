@@ -7,6 +7,7 @@ import { Provincia } from '../provincias/entities/provincia.entity';
 import { Localidad } from '../localidades/entities/localidades.entity';
 import { Between, Repository } from 'typeorm';
 import { RangoFecha } from './dto/rango-fecha.dto';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class RelevamientosService {
@@ -17,11 +18,13 @@ export class RelevamientosService {
     private provinciaRepository: Repository<Provincia>,
     @InjectRepository(Localidad)
     private localidadRepository: Repository<Localidad>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ){}
 
   async create(createRelevamientoDto: CreateRelevamientoDto) {
     // //w localizar agente cercano y asignar(mock)
-    const agente = 'agente';
+    const agente = 'Seed User';
     //w localiza coordenadas domicilio(mock)
     const longitud = -58.3816;
     const latitud = -58.3816;
@@ -186,6 +189,35 @@ export class RelevamientosService {
       message: `${relevamientos.length} relevamientos encontrados desde ${fechaInicio} hasta ${fechaFin}`,
       relevamientos
     }
-
   }
+
+  async getByAgente(agente:string){
+    //* busca al agente en tabla users
+    const existingAgente = await this.userRepository.findOne({
+      where:{
+        isAdmin: true,
+        nombre: agente
+      }
+    })
+    //* retorna exception si no encuentra al agente
+    if(!existingAgente) throw new NotFoundException(`El agente ${agente} no existe`)
+    
+     //* busca relevamientos por agente verificado
+    const relevamientos = await this.relevamientoRepository.find({
+      where:{agente},
+      relations:['provincia', 'localidad']
+    })
+    
+    //* si el agente no tiene relevamientos lo informa
+    if(!relevamientos.length) throw new NotFoundException(`No hay relevamientos para el agente ${agente}`)
+
+      return {
+        message: `Relevamientos del agente ${agente}`,
+        relevamientos
+      }
+  }
+
+
+
+
 }

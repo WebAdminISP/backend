@@ -80,6 +80,18 @@ export class RelevamientosController {
     return this.relevamientosService.getByDateRange(rangoFecha);
   }
 
+  @Get('by-agente/:agente')
+  @ApiOperation({ summary: 'Busca relevamientos por agente' })
+  @ApiQuery({ name: 'agente', required: true, type: String })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  async getByAgente(@Query('agente') agente:string){
+    return await this.relevamientosService.getByAgente(agente);
+  }
+
+
   @Get(':id')
   @ApiOperation({ summary: 'Retorna 1 relevamiento por id' })
   @ApiBearerAuth('JWT-auth')
