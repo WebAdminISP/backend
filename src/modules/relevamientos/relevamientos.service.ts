@@ -5,7 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Relevamiento } from './entities/relevamiento.entity';
 import { Provincia } from '../provincias/entities/provincia.entity';
 import { Localidad } from '../localidades/entities/localidades.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
+import { RangoFecha } from './dto/rango-fecha.dto';
 
 @Injectable()
 export class RelevamientosService {
@@ -19,12 +20,11 @@ export class RelevamientosService {
   ){}
 
   async create(createRelevamientoDto: CreateRelevamientoDto) {
-    //w localizar agente cercano y asignar(mock)
-    const agente = 'Admin';
+    // //w localizar agente cercano y asignar(mock)
+    const agente = 'agente';
     //w localiza coordenadas domicilio(mock)
     const longitud = -58.3816;
     const latitud = -58.3816;
-    //w propiedades opcionales (modificar entidad > nullable:true)
     
     //* fetch provincia y localidad
     let provincia: Provincia;
@@ -154,5 +154,38 @@ export class RelevamientosService {
       message: 'Relevamiento eliminado exitosamente',
       relevamiento
     };
+  }
+
+  //* ##############################
+  //* ######## 'Busquedas' #########
+  //* ##############################
+
+  async getByDateRange(rangoFecha: RangoFecha) {
+    const {fechaInicio, fechaFin} = rangoFecha;
+
+    //* formatea fechas para coincidir con el TimeStamp en db
+    const startDate = new Date(fechaInicio);
+    startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = new Date(fechaFin);
+    endDate.setUTCHours(23, 59, 59, 999);
+
+    const relevamientos = await this.relevamientoRepository.find({
+      where:{
+        fechaIngreso: Between(startDate, endDate)
+      },
+      relations: ['provincia', 'localidad']
+    });
+
+    //* retorna excepcion si no encuentra relevamientos
+    if (relevamientos.length === 0) {
+      throw new NotFoundException(`No hay relevamientos entre ${fechaFin} y ${fechaInicio}`);
+    }
+
+    return {
+      message: `${relevamientos.length} relevamientos encontrados desde ${fechaInicio} hasta ${fechaFin}`,
+      relevamientos
+    }
+
   }
 }

@@ -1,4 +1,4 @@
-import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { RelevamientosService } from './relevamientos.service';
 import { RelevamientosController } from './relevamientos.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,6 +26,7 @@ import { UsersModule } from '../users/users.module';
 })
 export class RelevamientosModule implements NestModule {
   configure(consumer:MiddlewareConsumer){
-    consumer.apply(requiresAuth()).forRoutes()
+    consumer.apply(requiresAuth()).forRoutes();
+    
   }
 }
