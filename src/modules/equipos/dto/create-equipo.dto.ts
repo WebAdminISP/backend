@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsOptional,
@@ -20,16 +20,11 @@ export class CreateEquipoDto {
   //@ApiHideProperty()
   nombre: string;
 
-  @IsNotEmpty({
+  @IsOptional({
     message: 'El agente es obligatorio y no puede estar vacío.',
   })
   @IsString({ message: 'El agente es cargado automaticamente' })
-  @ApiProperty({
-    description: 'El nombre debe ser válido.',
-    example: 'Juan Pérez',
-    type: String,
-  })
-  //@ApiHideProperty()
+  @ApiHideProperty()
   agente: string;
 
   @IsOptional()
@@ -152,10 +147,10 @@ export class CreateEquipoDto {
   antena: string;
 
   @IsUUID()
-  @IsNotEmpty({})
+  @IsOptional()
   @ApiProperty({
-    description: 'El id del user, debe ser un id UUID valido',
+    description: 'El ID del usuario, debe ser un UUID válido si se proporciona',
     example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
   })
-  userId: string;
+  userId?: string;
 }
