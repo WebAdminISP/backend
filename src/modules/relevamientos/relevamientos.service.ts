@@ -217,7 +217,22 @@ export class RelevamientosService {
       }
   }
 
+  async getByProvincia(provincia:string){
+    //*busca la provincia
+    const existingProvincia = await this.provinciaRepository.findOne({
+      where:{nombre:provincia},
+      relations:['relevamiento']
+    })
+    //* verifica existencia de provincia
+    if(!existingProvincia) throw new NotFoundException('Provincia no encontrada');
 
+    //* retorna todos los relevamientos segun la provincia
+    return {
+      message: `Relevamientos encontrados para ${provincia}`,
+      relevamientos: existingProvincia.relevamiento
+    }
+
+  }
 
 
 }

@@ -91,6 +91,17 @@ export class RelevamientosController {
     return await this.relevamientosService.getByAgente(agente);
   }
 
+  @Get('by-provincia/:provincia')
+  @ApiOperation({ summary: 'Busca relevamientos por provincia' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  async getByProvincia(@Query('provincia') provincia: string){
+    return await this.relevamientosService.getByProvincia(provincia);
+
+  }
+
 
   @Get(':id')
   @ApiOperation({ summary: 'Retorna 1 relevamiento por id' })

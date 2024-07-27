@@ -31,8 +31,7 @@ export class ProvinciasService {
     
     if (!existingProvincia) throw new NotFoundException('La provincia no existe');
 
-    //* podrian haber provincias con igual nombre en distinto pais (Cordoba  > Ar / Es)
-    //* O descomentar esto para evitar duplicados
+    
     // if(existingProvincia.nombre === updateProvinciaDto.nombre)
     //   throw new BadRequestException('La provincia ya existe')
   
