@@ -93,7 +93,7 @@ export class RelevamientosService {
 
   async update(id: string, updateRelevamientoDto:CreateRelevamientoDto) {
     const fetchedRelevamiento = await this.relevamientoRepository.findOne({
-      where: {id}  }) 
+      where: {id}}) 
 
     if(!fetchedRelevamiento) {
       throw new NotFoundException('Relevamiento no encontrado')
