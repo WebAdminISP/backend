@@ -17,7 +17,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 //import { UsersService } from './users.service';
-import { AuthGuard } from '../auths/auth.guards';
+// import { AuthGuard } from '../auths/auth.guards';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';

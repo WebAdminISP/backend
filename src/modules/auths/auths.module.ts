@@ -14,18 +14,22 @@ import { CompositeAuthGuard } from './compositeAuthGuard';
 import { requiresAuth } from 'express-openid-connect';
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forFeature([Provincia, Localidad, Equipo, Servicio])],
+  imports: [
+    UsersModule,
+    TypeOrmModule.forFeature([Provincia, Localidad, Equipo, Servicio]),
+  ],
   controllers: [AuthsController],
   providers: [
-    AuthsService, 
+    AuthsService,
     UsersService,
     AuthGuard,
     Auth0Guard,
     CompositeAuthGuard,
-    Logger,],
+    Logger,
+  ],
 })
 export class AuthsModule implements NestModule {
-  configure(consumer:MiddlewareConsumer){
+  configure(consumer: MiddlewareConsumer) {
     consumer.apply(requiresAuth()).forRoutes();
   }
 }
