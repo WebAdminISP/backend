@@ -26,6 +26,7 @@ import { CompositeAuthGuard } from './compositeAuthGuard';
 import { RolesGuard } from './roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from './roles.enum';
+import { MailService } from '../mail/mail.service';
 
 @ApiTags('Auth')
 @Controller('auths')
@@ -33,6 +34,7 @@ export class AuthsController {
   constructor(
     private readonly authsService: AuthsService,
     private readonly usersDBService: UsersService,
+    private readonly mailService: MailService,
   ) {
     {
       console.log('AuthController instantiated');
@@ -80,7 +82,10 @@ export class AuthsController {
 
     //* agrega al agente al dto y lo pasa al servicio
     createUserDto.agente = agente;
-    console.log('agente cargado automaticamente a dto');
-    return this.authsService.saveUser(createUserDto);
+    const email = createUserDto.email;
+    const username = createUserDto.nombre;
+    const savedUser = await this.authsService.saveUser(createUserDto);
+    await this.mailService.sendRegistrationConfirmation(email, username);
+    return savedUser;
   }
 }
