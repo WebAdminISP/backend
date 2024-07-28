@@ -99,8 +99,18 @@ export class RelevamientosController {
   @UseGuards(CompositeAuthGuard, RolesGuard)
   async getByProvincia(@Query('provincia') provincia: string){
     return await this.relevamientosService.getByProvincia(provincia);
-
   }
+
+  @Get('by-localidad/:localidad')
+  @ApiOperation({ summary: 'Busca relevamientos por provincia' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  async getByLocalidad(@Query('localidad') localidad: string) {
+    return await this.relevamientosService.getByLocalidad(localidad);
+  }
+
 
 
   @Get(':id')

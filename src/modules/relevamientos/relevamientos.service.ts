@@ -23,6 +23,16 @@ export class RelevamientosService {
   ){}
 
   async create(createRelevamientoDto: CreateRelevamientoDto) {
+    //* verifica mail duplicado (la entidad dice email:unique)
+    const existingEmail = await this.relevamientoRepository.findOne({
+      where:{
+        email: createRelevamientoDto.email
+      }
+    })
+
+    if(existingEmail) 
+      throw new BadRequestException(`Ya existe un relevamiento para este email.Un agente se contactará.`)
+
     // //w localizar agente cercano y asignar(mock)
     const agente = 'Seed User';
     //w localiza coordenadas domicilio(mock)
@@ -225,11 +235,36 @@ export class RelevamientosService {
     })
     //* verifica existencia de provincia
     if(!existingProvincia) throw new NotFoundException('Provincia no encontrada');
+    //* verifica si hay relevamientos en el array
+    if(!existingProvincia.relevamiento.length) 
+      throw new NotFoundException(`No se encontraron relevamientos para ${provincia}`)
 
     //* retorna todos los relevamientos segun la provincia
     return {
       message: `Relevamientos encontrados para ${provincia}`,
       relevamientos: existingProvincia.relevamiento
+    }
+  }
+
+
+  async getByLocalidad(localidad: string) {
+    //* busca la localidad por nombre
+    const existingLocalidad = await this.localidadRepository.findOne({
+      where: {nombre: localidad},
+      relations: ['relevamiento']
+    })
+
+    //* verifica su existencia en db
+    if(!existingLocalidad) throw new NotFoundException(`Localidad no encontrada`);
+    //* verifica si hay relevamientos en el array
+    if(!existingLocalidad.relevamiento.length) 
+      throw new NotFoundException(`No se encontraron relevamientos para ${localidad}`)
+
+
+
+    return {
+      message: `Relevamientos para ${localidad}`,
+      relevamientos: existingLocalidad.relevamiento
     }
 
   }
