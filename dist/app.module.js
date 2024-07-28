@@ -27,6 +27,7 @@ const equipos_module_1 = require("./modules/equipos/equipos.module");
 const servicios_module_1 = require("./modules/servicios/servicios.module");
 const impuestos_module_1 = require("./modules/impuestos/impuestos.module");
 const relevamientos_module_1 = require("./modules/relevamientos/relevamientos.module");
+const mail_module_1 = require("./modules/mail/mail.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -57,6 +58,7 @@ exports.AppModule = AppModule = __decorate([
             servicios_module_1.ServiciosModule,
             impuestos_module_1.ImpuestosModule,
             relevamientos_module_1.RelevamientosModule,
+            mail_module_1.MailModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

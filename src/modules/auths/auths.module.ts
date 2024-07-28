@@ -12,6 +12,7 @@ import { AuthGuard } from './auth.guards';
 import { Auth0Guard } from './auth0.guards';
 import { CompositeAuthGuard } from './compositeAuthGuard';
 import { requiresAuth } from 'express-openid-connect';
+import { MailService } from '../mail/mail.service';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { requiresAuth } from 'express-openid-connect';
   providers: [
     AuthsService,
     UsersService,
+    MailService,
     AuthGuard,
     Auth0Guard,
     CompositeAuthGuard,
