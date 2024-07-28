@@ -25,13 +25,12 @@ export class UsersService {
       where: { id: id },
     });
 
-    if (user) {
+    if(!user) throw new NotFoundException('Usuario No Encontrado')
+
       return {
-        ...user,
-      };
-    } else {
-      return null;
-    }
+        message: 'Usuario Encontrado',
+        ...user
+      }
   }
 
   async getUserByEmail(email: string) {

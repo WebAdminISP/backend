@@ -5,7 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Relevamiento } from './entities/relevamiento.entity';
 import { Provincia } from '../provincias/entities/provincia.entity';
 import { Localidad } from '../localidades/entities/localidades.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
+import { RangoFecha } from './dto/rango-fecha.dto';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class RelevamientosService {
@@ -16,15 +18,26 @@ export class RelevamientosService {
     private provinciaRepository: Repository<Provincia>,
     @InjectRepository(Localidad)
     private localidadRepository: Repository<Localidad>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ){}
 
   async create(createRelevamientoDto: CreateRelevamientoDto) {
-    //w localizar agente cercano y asignar(mock)
-    const agente = 'Admin';
+    //* verifica mail duplicado (la entidad dice email:unique)
+    const existingEmail = await this.relevamientoRepository.findOne({
+      where:{
+        email: createRelevamientoDto.email
+      }
+    })
+
+    if(existingEmail) 
+      throw new BadRequestException(`Ya existe un relevamiento para este email.Un agente se contactará.`)
+
+    // //w localizar agente cercano y asignar(mock)
+    const agente = 'Seed User';
     //w localiza coordenadas domicilio(mock)
     const longitud = -58.3816;
     const latitud = -58.3816;
-    //w propiedades opcionales (modificar entidad > nullable:true)
     
     //* fetch provincia y localidad
     let provincia: Provincia;
@@ -155,4 +168,106 @@ export class RelevamientosService {
       relevamiento
     };
   }
+
+  //* ##############################
+  //* ######## 'Busquedas' #########
+  //* ##############################
+
+  async getByDateRange(rangoFecha: RangoFecha) {
+    const {fechaInicio, fechaFin} = rangoFecha;
+
+    //* formatea fechas para coincidir con el TimeStamp en db
+    const startDate = new Date(fechaInicio);
+    startDate.setUTCHours(0, 0, 0, 0);
+
+    const endDate = new Date(fechaFin);
+    endDate.setUTCHours(23, 59, 59, 999);
+
+    const relevamientos = await this.relevamientoRepository.find({
+      where:{
+        fechaIngreso: Between(startDate, endDate)
+      },
+      relations: ['provincia', 'localidad']
+    });
+
+    //* retorna excepcion si no encuentra relevamientos
+    if (relevamientos.length === 0) {
+      throw new NotFoundException(`No hay relevamientos entre ${fechaFin} y ${fechaInicio}`);
+    }
+
+    return {
+      message: `${relevamientos.length} relevamientos encontrados desde ${fechaInicio} hasta ${fechaFin}`,
+      relevamientos
+    }
+  }
+
+  async getByAgente(agente:string){
+    //* busca al agente en tabla users
+    const existingAgente = await this.userRepository.findOne({
+      where:{
+        isAdmin: true,
+        nombre: agente
+      }
+    })
+    //* retorna exception si no encuentra al agente
+    if(!existingAgente) throw new NotFoundException(`El agente ${agente} no existe`)
+    
+     //* busca relevamientos por agente verificado
+    const relevamientos = await this.relevamientoRepository.find({
+      where:{agente},
+      relations:['provincia', 'localidad']
+    })
+    
+    //* si el agente no tiene relevamientos lo informa
+    if(!relevamientos.length) throw new NotFoundException(`No hay relevamientos para el agente ${agente}`)
+
+      return {
+        message: `Relevamientos del agente ${agente}`,
+        relevamientos
+      }
+  }
+
+  async getByProvincia(provincia:string){
+    //*busca la provincia
+    const existingProvincia = await this.provinciaRepository.findOne({
+      where:{nombre:provincia},
+      relations:['relevamiento']
+    })
+    //* verifica existencia de provincia
+    if(!existingProvincia) throw new NotFoundException('Provincia no encontrada');
+    //* verifica si hay relevamientos en el array
+    if(!existingProvincia.relevamiento.length) 
+      throw new NotFoundException(`No se encontraron relevamientos para ${provincia}`)
+
+    //* retorna todos los relevamientos segun la provincia
+    return {
+      message: `Relevamientos encontrados para ${provincia}`,
+      relevamientos: existingProvincia.relevamiento
+    }
+  }
+
+
+  async getByLocalidad(localidad: string) {
+    //* busca la localidad por nombre
+    const existingLocalidad = await this.localidadRepository.findOne({
+      where: {nombre: localidad},
+      relations: ['relevamiento']
+    })
+
+    //* verifica su existencia en db
+    if(!existingLocalidad) throw new NotFoundException(`Localidad no encontrada`);
+    //* verifica si hay relevamientos en el array
+    if(!existingLocalidad.relevamiento.length) 
+      throw new NotFoundException(`No se encontraron relevamientos para ${localidad}`)
+
+
+
+    return {
+      message: `Relevamientos para ${localidad}`,
+      relevamientos: existingLocalidad.relevamiento
+    }
+
+  }
+
+
 }

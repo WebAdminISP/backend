@@ -1,26 +1,85 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateImpuestoDto } from './dto/create-impuesto.dto';
 import { UpdateImpuestoDto } from './dto/update-impuesto.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Impuesto } from './entities/impuesto.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ImpuestosService {
-  create(createImpuestoDto: CreateImpuestoDto) {
-    return 'This action adds a new impuesto';
+  constructor(
+    @InjectRepository(Impuesto)
+    private impuestoRepository:Repository<Impuesto>
+  ) {}
+
+
+  async create(createImpuestoDto: CreateImpuestoDto) {
+    //* busca impuesto en db
+    const existingImpuesto = await this.impuestoRepository.findOne({
+      where: {nombre:createImpuestoDto.nombre }
+    })
+    //* verifica si existe
+    if(existingImpuesto) throw new BadRequestException(`El impuesto ${createImpuestoDto.nombre} ya existe`)
+
+      //* crea y guarda el impuesto
+    const newImpuesto = await this.impuestoRepository.save(createImpuestoDto);
+
+    return {
+      message: `Impuesto - ${newImpuesto.nombre} - agregado exitosamente`,
+      newImpuesto
+    }
   }
 
-  findAll() {
-    return `This action returns all impuestos`;
+  async findAll() {
+    const impuestos = await this.impuestoRepository.find();
+    if(!impuestos.length) throw new NotFoundException('No hay impuestos que mostrar')
+
+      return {
+        message: 'Todos los impuestos', 
+        impuestos
+      }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} impuesto`;
+  async findOne(id: string) {
+    const impuesto = await this.impuestoRepository.findOneBy({id})
+    
+    if(!impuesto) throw new NotFoundException('Impuesto no encontrado')
+
+      return {
+        message: 'Impuesto encontrado', 
+        impuesto
+      }
   }
 
-  update(id: number, updateImpuestoDto: UpdateImpuestoDto) {
-    return `This action updates a #${id} impuesto`;
+  async update(id: string, updateImpuestoDto: CreateImpuestoDto) {
+    const existingImpuesto = await this.impuestoRepository.findOneBy({id});
+
+    if(!existingImpuesto) throw new NotFoundException('Impuesto No Encontrado');
+
+    const updatedImpuesto = {
+      id,
+      ...existingImpuesto,
+      ...updateImpuestoDto
+    }
+
+    const savedImpuesto = await this.impuestoRepository.save(updatedImpuesto);
+
+    return {
+      message: `El impuesto ${savedImpuesto.nombre} fue actualizado exitosamente`,
+      savedImpuesto
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} impuesto`;
+  async remove(id: string) {
+    const impuesto = await this.impuestoRepository.findOneBy({id});
+
+    if(!impuesto) throw new NotFoundException('Impuesto No Encontrado');
+
+    const removedImpuesto = await this.impuestoRepository.remove(impuesto);
+
+    return {
+      message: `Impuesto Eliminado`,
+      removedImpuesto
+    }
   }
 }

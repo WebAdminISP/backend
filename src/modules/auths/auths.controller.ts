@@ -55,8 +55,6 @@ export class AuthsController {
   @ApiSecurity('Auth0')
   @Roles(Role.Admin)
   @UseGuards(CompositeAuthGuard, RolesGuard)
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Dar de alta un usuario nuevo' })
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ transform: true }))

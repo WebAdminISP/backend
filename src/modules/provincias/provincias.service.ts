@@ -14,6 +14,14 @@ export class ProvinciasService {
   ){}
 
   async create(createProvinciaDto: CreateProvinciaDto) {
+    //*busca la provincia por nombre
+    const existingProvincia = await this.provinciaRepository.findOne({
+      where:{nombre:createProvinciaDto.nombre}
+    })
+    //* si la encuentra previene el duplicado
+    if(existingProvincia) throw new BadRequestException(`${createProvinciaDto.nombre} ya existe en la base de datos`)
+
+    //* guarda la nueva provincia
     const newProvincia = await this.provinciaRepository.save(createProvinciaDto)
     return newProvincia;
   }
@@ -27,15 +35,11 @@ export class ProvinciasService {
   }
 
   async update(id: string, updateProvinciaDto: CreateProvinciaDto) {
-    const existingProvincia = await this.provinciaRepository.findOne({ where: { id } });
+    const existingProvincia = await this.provinciaRepository.findOne({ where: { id }});
     
     if (!existingProvincia) throw new NotFoundException('La provincia no existe');
-
-    //* podrian haber provincias con igual nombre en distinto pais (Cordoba  > Ar / Es)
-    //* O descomentar esto para evitar duplicados
-    // if(existingProvincia.nombre === updateProvinciaDto.nombre)
-    //   throw new BadRequestException('La provincia ya existe')
   
+    
     const updatedProvincia = {
       ...existingProvincia,
       ...updateProvinciaDto

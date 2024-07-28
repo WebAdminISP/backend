@@ -77,8 +77,13 @@ export class AuthsService {
       issuedAt: iat,
       expiresAt: exp,
       agente,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        nombre: newUser.nombre,
+        roles: [newUser.isAdmin ? Role.Admin : Role.User],
+      }
     };
-    //return { succes: 'User logged in successfully' };
   }
 
   async saveUser(createUserDto: Omit<CreateUserDto, 'isAdmin'>) {

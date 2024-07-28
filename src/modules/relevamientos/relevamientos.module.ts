@@ -1,4 +1,4 @@
-import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { RelevamientosService } from './relevamientos.service';
 import { RelevamientosController } from './relevamientos.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,9 +11,10 @@ import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { requiresAuth } from 'express-openid-connect';
 import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users/users.module';
+import { User } from '../users/entities/user.entity';
 
 @Module({
-  imports: [UsersModule,TypeOrmModule.forFeature([Relevamiento, Provincia, Localidad])],
+  imports: [UsersModule,TypeOrmModule.forFeature([Relevamiento, Provincia, Localidad, User])],
   controllers: [RelevamientosController],
   providers: [
     RelevamientosService,
@@ -26,6 +27,7 @@ import { UsersModule } from '../users/users.module';
 })
 export class RelevamientosModule implements NestModule {
   configure(consumer:MiddlewareConsumer){
-    consumer.apply(requiresAuth()).forRoutes()
+    consumer.apply(requiresAuth()).forRoutes();
+    
   }
 }

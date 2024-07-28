@@ -12,6 +12,11 @@ import {
 import { Transform } from 'class-transformer';
 
 export class CreateRelevamientoDto {
+
+  @ApiHideProperty()
+  @IsOptional()
+  agente: string;
+
   @ApiProperty({ example: 'Juan Pérez', description: 'Nombre del interesado' })
   @IsNotEmpty()
   @IsString()
