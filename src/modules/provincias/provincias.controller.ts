@@ -12,7 +12,12 @@ import {
 } from '@nestjs/common';
 import { ProvinciasService } from './provincias.service';
 import { CreateProvinciaDto } from './dto/create-provincia.dto';
-import { ApiBearerAuth, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
@@ -61,7 +66,7 @@ export class ProvinciasController {
   @Roles(Role.Admin)
   @UseGuards(CompositeAuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
- async update(
+  async update(
     @Param('id') id: string,
     @Body() updateProvinciaDto: CreateProvinciaDto,
   ) {
