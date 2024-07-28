@@ -36,7 +36,6 @@ export class LocalidadesSeed {
         const localidad = new Localidad();
         localidad.nombre = localidadesData.nombre;
         localidad.provincia = provinciaMendoza; // Vincular a la provincia de Mendoza
-        localidad.agente = localidadesData.agente;
         await this.localidadesRepository.save(localidad);
         console.log(
           `Localidad ${localidad.nombre} guardada en provincia ${provinciaMendoza.nombre}`,
