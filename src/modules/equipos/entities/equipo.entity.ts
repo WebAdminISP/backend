@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @Entity({
@@ -47,6 +53,6 @@ export class Equipo {
   @Column({ nullable: true })
   antena?: string;
 
-  @OneToMany(() => User, (user) => user.equipo, { nullable: true })
-  users?: User[];
+  @ManyToOne(() => User, (user) => user.equipos, { nullable: true })
+  user?: User;
 }

@@ -6,42 +6,211 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
+  Query,
+  UsePipes,
+  ValidationPipe,
+  UseGuards,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { LocalidadesService } from './localidades.service';
 import { CreateLocalidadeDto } from './dto/create-localidade.dto';
 import { UpdateLocalidadeDto } from './dto/update-localidade.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiSecurity,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from '../auths/roles.enum';
+import { RolesGuard } from '../auths/roles.guard';
+import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
+import { Request } from 'express';
 
 @ApiTags('Localidades')
 @Controller('localidades')
 export class LocalidadesController {
   constructor(private readonly localidadesService: LocalidadesService) {}
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @ApiOperation({ summary: 'Create locality' })
+  @ApiResponse({
+    status: 201,
+    description: 'The locality has been successfully created.',
+    type: CreateLocalidadeDto,
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
   @Post()
-  create(@Body() createLocalidadeDto: CreateLocalidadeDto) {
+  create(
+    @Req() req: Request & { oidc?: any; user?: any },
+    @Body() createLocalidadeDto: CreateLocalidadeDto,
+  ) {
+    let agente: string;
+
+    //* propiedad user existe tanto en auth interna como externa
+    //* solo difiere el acceso al nombre (name > Auth0, agente > Interna)
+    if (req.user) {
+      agente = req.user.name || req.user.agente;
+    } else {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    //* agrega al agente al dto y lo pasa al servicio
+    createLocalidadeDto.agente = agente;
+
     return this.localidadesService.create(createLocalidadeDto);
   }
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @ApiOperation({ summary: 'Get all localities' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Number of page',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+    example: 5,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The locality has been successfully retrieved.',
+    example: {
+      data: [
+        {
+          id: '1e0ce1b8-869f-4d43-b7e3-0815885d7ee1',
+          nombre: 'Mendoza',
+        },
+        {
+          id: 'fe08027c-6f70-4fc8-ae80-80c716a78029',
+          nombre: 'Godoy Cruz',
+        },
+      ],
+      count: 18,
+      currentPage: '1',
+      totalPages: 4,
+    },
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @Get()
-  findAll() {
-    return this.localidadesService.findAll();
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
+    return this.localidadesService.findAll(page, limit);
   }
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @ApiOperation({ summary: 'Get locality by Id' })
+  @ApiResponse({
+    status: 200,
+    description: 'The locality has been successfully retrieved.',
+    example: {
+      id: '59ba50d7-1212-4bd0-a50a-304098519e2b',
+      nombre: 'San Carlos',
+      provincia: {
+        id: '3706c2bb-4d83-4aa7-b9bd-6ce8f8f9fefc',
+        nombre: 'Mendoza',
+      },
+    },
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.localidadesService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.localidadesService.findOne(id);
   }
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @ApiOperation({ summary: 'Update locality' })
+  @ApiBody({
+    schema: {
+      type: 'string',
+      example: { nombre: 'San Carlos' },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The locality has been successfully updated.',
+    example: {
+      id: '59ba50d7-1212-4bd0-a50a-304098519e2b',
+      nombre: 'San Carlos',
+      provincia: {
+        id: '3706c2bb-4d83-4aa7-b9bd-6ce8f8f9fefc',
+        nombre: 'Mendoza',
+      },
+    },
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @Patch(':id')
+  @UsePipes(new ValidationPipe({ transform: true }))
   update(
-    @Param('id') id: string,
+    @Req() req: Request & { oidc?: any; user?: any },
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateLocalidadeDto: UpdateLocalidadeDto,
   ) {
-    return this.localidadesService.update(+id, updateLocalidadeDto);
+    let agente: string;
+
+    //* propiedad user existe tanto en auth interna como externa
+    //* solo difiere el acceso al nombre (name > Auth0, agente > Interna)
+    if (req.user) {
+      agente = req.user.name || req.user.agente;
+    } else {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    //* agrega al agente al dto y lo pasa al servicio
+    updateLocalidadeDto.agente = agente;
+    return this.localidadesService.update(id, updateLocalidadeDto);
   }
 
+  @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
+  @ApiOperation({ summary: 'Delete locality' })
+  @ApiResponse({
+    status: 200,
+    description: 'Delete a locality.',
+    schema: {
+      type: 'string',
+      example: {
+        id: '5a44f35e-d1e2-4430-b299-ddd42cf5f3fb',
+        nombre: 'San Carlos',
+        provincia: {
+          id: '004147cb-ad76-40ff-81b5-cb8f6a5d5359',
+          nombre: 'Salta',
+        },
+      },
+    },
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.Admin)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.localidadesService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.localidadesService.remove(id);
   }
 }

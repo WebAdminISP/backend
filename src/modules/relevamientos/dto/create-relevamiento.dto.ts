@@ -1,20 +1,15 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
-    ArrayMinSize,
-    IsArray,
-  IsDate,
   IsEmail,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  IsUUID,
   Length,
-  Matches,
   Max,
   Min,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export class CreateRelevamientoDto {
 
@@ -28,45 +23,61 @@ export class CreateRelevamientoDto {
   @Length(1, 50)
   nombre: string;
 
-  @ApiProperty({ example: 'juan@example.com', description: 'Email del interesado' })
+  @ApiProperty({
+    example: 'juan@example.com',
+    description: 'Email del interesado',
+  })
   @IsNotEmpty()
   @IsEmail()
   @Length(1, 50)
   email: string;
 
   @ApiProperty({ example: 1234567890, description: 'Telefono del interesado' })
-  @IsNotEmpty({ message: 'El número de teléfono de instalación es obligatorio.' })
-  @IsNumber({}, { message: 'El teléfono de instalación debe ser un número entero.' })
-  @Min(1000000, { message: 'El teléfono de instalación debe tener al menos 7 dígitos.' })
-  @Max(999999999999999, { message: 'El teléfono de instalación debe tener como máximo 15 dígitos.' })
+  @IsNotEmpty({
+    message: 'El número de teléfono de instalación es obligatorio.',
+  })
+  @IsNumber(
+    {},
+    { message: 'El teléfono de instalación debe ser un número entero.' },
+  )
+  @Min(1000000, {
+    message: 'El teléfono de instalación debe tener al menos 7 dígitos.',
+  })
+  @Max(999999999999999, {
+    message: 'El teléfono de instalación debe tener como máximo 15 dígitos.',
+  })
   @Transform(({ value }) => parseInt(value, 10))
   telefono: number;
 
   @ApiProperty({
-     example: 'Solicitud de instalación de servico',
-     description: 'Motivo del contacto' })
+    example: 'Solicitud de instalación de servico',
+    description: 'Motivo del contacto',
+  })
   @IsOptional()
   @IsString()
   @Length(1, 60)
   razon: string;
 
-  @ApiProperty({ 
-    example: 'Calle Falsa 123', 
-    description: 'Domicilio del interesado' })
+  @ApiProperty({
+    example: 'Calle Falsa 123',
+    description: 'Domicilio del interesado',
+  })
   @IsNotEmpty()
   @IsString()
   direccion: string;
 
-  @ApiProperty({ 
-    example: 'Mendoza', 
-    description: 'Provincia del interesado' })
+  @ApiProperty({
+    example: 'Mendoza',
+    description: 'Provincia del interesado',
+  })
   @IsNotEmpty()
   @IsString()
   provincia: string;
 
-  @ApiProperty({ 
-    example: 'Las Heras', 
-    description: 'Localidad del interesado' })
+  @ApiProperty({
+    example: 'Las Heras',
+    description: 'Localidad del interesado',
+  })
   @IsNotEmpty()
   @IsString()
   localidad: string;
@@ -80,34 +91,33 @@ export class CreateRelevamientoDto {
   // @ApiProperty({
   //   example: '10hs - 15hs',
   //   description: 'Franja horaria de contacto' })
- @ApiHideProperty()
- @IsOptional()
- @IsString()
- @Length(1, 60)
- horarios: string;
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString()
+  @Length(1, 60)
+  horarios: string;
 
-//  @ApiProperty({ required: false, example: 'Calle Falsa 456', description: 'Domicilio del Instalador' })
- @ApiHideProperty()
- @IsOptional()
- @IsString()
- domicilioInstal?: string;
+  //  @ApiProperty({ required: false, example: 'Calle Falsa 456', description: 'Domicilio del Instalador' })
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString()
+  domicilioInstal?: string;
 
-//  @ApiProperty({ required: false, example: 'Las Heras', description: 'Localidad de Instalador' })
- @ApiHideProperty()
- @IsOptional()
- @IsString()
- localidadInstal?: string;
+  //  @ApiProperty({ required: false, example: 'Las Heras', description: 'Localidad de Instalador' })
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString()
+  localidadInstal?: string;
 
-//  @ApiProperty({ required: false, example: 'jperez@example.com', description: 'Email de instalador' })
- @ApiHideProperty()
- @IsOptional()
- @IsEmail()
- emailInstal?: string;
+  //  @ApiProperty({ required: false, example: 'jperez@example.com', description: 'Email de instalador' })
+  @ApiHideProperty()
+  @IsOptional()
+  @IsEmail()
+  emailInstal?: string;
 
-//  @ApiProperty({ required: false, example: 'Calle sin número, 1° timbre', description: 'Observaciones adicionales'})
- @ApiHideProperty()
- @IsOptional()
- @IsString()
- observaciones?: string;
-
+  //  @ApiProperty({ required: false, example: 'Calle sin número, 1° timbre', description: 'Observaciones adicionales'})
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString()
+  observaciones?: string;
 }
