@@ -92,6 +92,22 @@ export class UsersController {
     }
   }
 
+
+  @Get('profile')
+  @ApiOperation({ summary: 'Retorna el perfil de usuario (User) - not admin' })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSecurity('Auth0')
+  @Roles(Role.User)
+  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getUserProfile(@Req() req: Request) {
+    const userId = req.user.id; // Assuming req.user.id contains the authenticated user's ID
+    console.log(userId);
+  const user = await this.UsersService.getUserById(userId);
+  return user;
+  }
+
+
   //* verifica estado de autenticacion de usuario sin mostrar token
   @Get('auth0/user-info')
   @ApiOperation({ summary: 'Retorna informacion de usuario Auth0' })
