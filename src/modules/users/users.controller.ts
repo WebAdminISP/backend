@@ -101,7 +101,7 @@ export class UsersController {
   @UseGuards(CompositeAuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async getUserProfile(@Req() req: Request) {
-    const userId = req.user.id; // Assuming req.user.id contains the authenticated user's ID
+    const userId = req.user.id; 
     console.log(userId);
   const user = await this.UsersService.getUserById(userId);
   return user;

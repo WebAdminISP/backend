@@ -22,7 +22,7 @@ import { requiresAuth } from 'express-openid-connect';
     AuthGuard,
     Auth0Guard,
     CompositeAuthGuard,
-    Logger,],
+    Logger,]
 })
 export class AuthsModule implements NestModule {
   configure(consumer:MiddlewareConsumer){
