@@ -1,5 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig({ path: '.env.development' });
 
 @Injectable()
 export class MailService {
@@ -7,12 +10,12 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // true para 465, false para otros puertos Utiliza STARTTLS
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      secure: process.env.SMTP_SECURE === 'true', // true para 465, false para otros puertos Utiliza STARTTLS
       auth: {
-        user: 'pfpt19a@gmail.com', // Tu correo electrónico
-        pass: 'ktzvmknyhpeehobi', // Tu contraseña de correo electrónico
+        user: process.env.SMTP_USER, // Tu correo electrónico
+        pass: process.env.SMTP_PASSWORD, // Tu contraseña de aplicación de Google
       },
     });
   }
