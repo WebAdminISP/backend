@@ -47,19 +47,25 @@ export class LocalidadesService {
     }
   }
 
-  async findAll(page: number, limit: number) {
-    const [result, total] = await this.localidadesRepository.findAndCount({
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+  async findAll() {
+    const localidades = await this.localidadesRepository.find();
 
-    return {
-      data: result,
-      count: total,
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-    };
+    return localidades;
   }
+
+  // async findAll(page: number, limit: number) {
+  //   const [result, total] = await this.localidadesRepository.findAndCount({
+  //     skip: (page - 1) * limit,
+  //     take: limit,
+  //   });
+
+  //   return {
+  //     data: result,
+  //     count: total,
+  //     currentPage: page,
+  //     totalPages: Math.ceil(total / limit),
+  //   };
+  // }
 
   async findOne(id: string) {
     const localidad = await this.localidadesRepository.findOne({
