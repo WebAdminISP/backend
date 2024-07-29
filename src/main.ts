@@ -5,9 +5,19 @@ import { LoggerGlobal } from './middlewares/logger.middleware';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { auth } from 'express-openid-connect';
 import { config as auth0Config } from './config/auth0';
+import * as cors from 'cors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const corsOptions = {
+    // origin: 'http://localhost:3000',
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  };
+
+  app.use(cors(corsOptions));
 
   //* implementa auth0 middleware > login > logout endpoints
   app.use(auth(auth0Config));

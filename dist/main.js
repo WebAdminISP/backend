@@ -7,8 +7,15 @@ const logger_middleware_1 = require("./middlewares/logger.middleware");
 const common_1 = require("@nestjs/common");
 const express_openid_connect_1 = require("express-openid-connect");
 const auth0_1 = require("./config/auth0");
+const cors = require("cors");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const corsOptions = {
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+    };
+    app.use(cors(corsOptions));
     app.use((0, express_openid_connect_1.auth)(auth0_1.config));
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
