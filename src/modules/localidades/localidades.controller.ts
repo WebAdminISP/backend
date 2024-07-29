@@ -107,10 +107,10 @@ export class LocalidadesController {
       totalPages: 4,
     },
   })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @Get()
   findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
     return this.localidadesService.findAll(page, limit);
@@ -131,10 +131,10 @@ export class LocalidadesController {
       },
     },
   })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.localidadesService.findOne(id);

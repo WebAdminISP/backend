@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpCode,
@@ -19,7 +18,6 @@ import {
 } from '@nestjs/common';
 import { ServiciosService } from './servicios.service';
 import { CreateServicioDto } from './dto/create-servicio.dto';
-import { UpdateServicioDto } from './dto/update-servicio.dto';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -71,10 +69,10 @@ export class ServiciosController {
 
   @Get()
   @ApiOperation({ summary: 'Ver todos los servicios' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @ApiQuery({
     name: 'page',
     required: false,
@@ -100,10 +98,10 @@ export class ServiciosController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Ver un servicio por :id' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const servicio = await this.serviciosService.findOne(id);

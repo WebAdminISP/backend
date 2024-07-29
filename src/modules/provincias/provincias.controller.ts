@@ -40,20 +40,20 @@ export class ProvinciasController {
 
   @Get()
   @ApiOperation({ summary: 'Retorna todas las provincias' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   async findAll() {
     return this.provinciasService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Retorna 1 provincia  por id' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async findOne(@Param('id') id: string) {
     return this.provinciasService.findOne(id);
