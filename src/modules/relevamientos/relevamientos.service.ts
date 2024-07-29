@@ -91,10 +91,20 @@ export class RelevamientosService {
 
   async findAll(page: number, limit: number) {
     const skippedItems = (page - 1) * limit;
-    return this.relevamientoRepository.find({
-      skip: skippedItems,
-      take: limit,
-    });
+
+    const [relevamientos, totlaItems] =
+      await this.relevamientoRepository.findAndCount({
+        skip: skippedItems,
+        take: limit,
+        relations: ['provincia', 'localidad'],
+      });
+
+    return {
+      totlaItems,
+      totalPages: Math.ceil(totlaItems / limit),
+      currentPage: page,
+      relevamientos,
+    };
   }
 
   async findOne(id: string) {
