@@ -11,12 +11,16 @@ import {
   ValidationPipe,
   ParseUUIDPipe,
   Put,
-  Req,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { RelevamientosService } from './relevamientos.service';
 import { CreateRelevamientoDto } from './dto/create-relevamiento.dto';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
@@ -33,17 +37,17 @@ export class RelevamientosController {
   }
 
   //* Público: usado por guests
- @Post()
- async create(@Body() createRelevamientoDto: CreateRelevamientoDto) {    
+  @Post()
+  async create(@Body() createRelevamientoDto: CreateRelevamientoDto) {
     return this.relevamientosService.create(createRelevamientoDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Ver todos los relevamientos' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @ApiQuery({
     name: 'page',
     required: false,
@@ -75,8 +79,8 @@ export class RelevamientosController {
   @ApiSecurity('Auth0')
   @Roles(Role.Admin)
   @UseGuards(CompositeAuthGuard, RolesGuard)
-  async getByDateRange(@Query() rangoFecha: RangoFecha){
-  console.log('Query params:', rangoFecha);
+  async getByDateRange(@Query() rangoFecha: RangoFecha) {
+    console.log('Query params:', rangoFecha);
     return this.relevamientosService.getByDateRange(rangoFecha);
   }
 
@@ -87,7 +91,7 @@ export class RelevamientosController {
   @ApiSecurity('Auth0')
   @Roles(Role.Admin)
   @UseGuards(CompositeAuthGuard, RolesGuard)
-  async getByAgente(@Query('agente') agente:string){
+  async getByAgente(@Query('agente') agente: string) {
     return await this.relevamientosService.getByAgente(agente);
   }
 
@@ -97,7 +101,7 @@ export class RelevamientosController {
   @ApiSecurity('Auth0')
   @Roles(Role.Admin)
   @UseGuards(CompositeAuthGuard, RolesGuard)
-  async getByProvincia(@Query('provincia') provincia: string){
+  async getByProvincia(@Query('provincia') provincia: string) {
     return await this.relevamientosService.getByProvincia(provincia);
   }
 
@@ -111,16 +115,14 @@ export class RelevamientosController {
     return await this.relevamientosService.getByLocalidad(localidad);
   }
 
-
-
   @Get(':id')
   @ApiOperation({ summary: 'Retorna 1 relevamiento por id' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
- async findOne(@Param('id', new ParseUUIDPipe()) id: string) {  
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.relevamientosService.findOne(id);
   }
 
@@ -130,12 +132,12 @@ export class RelevamientosController {
   @ApiSecurity('Auth0')
   @Roles(Role.Admin)
   @UseGuards(CompositeAuthGuard, RolesGuard)
-  async updateRelevamiento( 
+  async updateRelevamiento(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateRelevamiento:CreateRelevamientoDto)
-    {
-      return await this.relevamientosService.update(id, updateRelevamiento);
-    }
+    @Body() updateRelevamiento: CreateRelevamientoDto,
+  ) {
+    return await this.relevamientosService.update(id, updateRelevamiento);
+  }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Elimina 1 relevamiento por ID' })
@@ -146,8 +148,4 @@ export class RelevamientosController {
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.relevamientosService.remove(id);
   }
-
-  
-
-
 }

@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  Query,
+  // Query,
   UsePipes,
   ValidationPipe,
   UseGuards,
@@ -22,7 +22,7 @@ import {
   ApiBody,
   ApiForbiddenResponse,
   ApiOperation,
-  ApiQuery,
+  // ApiQuery,
   ApiResponse,
   ApiSecurity,
   ApiTags,
@@ -76,18 +76,18 @@ export class LocalidadesController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   @ApiOperation({ summary: 'Get all localities' })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    description: 'Number of page',
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    description: 'Number of items per page',
-    example: 5,
-  })
+  // @ApiQuery({
+  //   name: 'page',
+  //   required: false,
+  //   description: 'Number of page',
+  //   example: 1,
+  // })
+  // @ApiQuery({
+  //   name: 'limit',
+  //   required: false,
+  //   description: 'Number of items per page',
+  //   example: 5,
+  // })
   @ApiResponse({
     status: 200,
     description: 'The locality has been successfully retrieved.',
@@ -102,18 +102,19 @@ export class LocalidadesController {
           nombre: 'Godoy Cruz',
         },
       ],
-      count: 18,
-      currentPage: '1',
-      totalPages: 4,
+      // count: 18,
+      // currentPage: '1',
+      // totalPages: 4,
     },
   })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @Get()
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
-    return this.localidadesService.findAll(page, limit);
+  // findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
+  findAll() {
+    return this.localidadesService.findAll();
   }
 
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
@@ -131,10 +132,10 @@ export class LocalidadesController {
       },
     },
   })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
-  @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiSecurity('Auth0')
+  // @Roles(Role.Admin)
+  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.localidadesService.findOne(id);
