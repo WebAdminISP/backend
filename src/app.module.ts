@@ -19,6 +19,7 @@ import { ServiciosModule } from './modules/servicios/servicios.module';
 import { ImpuestosModule } from './modules/impuestos/impuestos.module';
 import { RelevamientosModule } from './modules/relevamientos/relevamientos.module';
 import { MailModule } from './modules/mail/mail.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { MailModule } from './modules/mail/mail.module';
     ImpuestosModule,
     RelevamientosModule,
     MailModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [

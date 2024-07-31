@@ -28,6 +28,7 @@ const servicios_module_1 = require("./modules/servicios/servicios.module");
 const impuestos_module_1 = require("./modules/impuestos/impuestos.module");
 const relevamientos_module_1 = require("./modules/relevamientos/relevamientos.module");
 const mail_module_1 = require("./modules/mail/mail.module");
+const notifications_module_1 = require("./modules/notifications/notifications.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -59,6 +60,7 @@ exports.AppModule = AppModule = __decorate([
             impuestos_module_1.ImpuestosModule,
             relevamientos_module_1.RelevamientosModule,
             mail_module_1.MailModule,
+            notifications_module_1.NotificationsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
