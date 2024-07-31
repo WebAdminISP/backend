@@ -82,7 +82,7 @@ export class AuthsService {
         email: newUser.email,
         nombre: newUser.nombre,
         roles: [newUser.isAdmin ? Role.Admin : Role.User],
-      }
+      },
     };
   }
 

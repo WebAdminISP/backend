@@ -66,4 +66,13 @@ export class MailService {
 
     await this.sendMail(email, subject, text, html);
   }
+
+  // Método para enviar notificaciones mensuales
+  async sendMonthlyNotification(email: string, username: string) {
+    const subject = 'Recordatorio y Pre-factura Mensual';
+    const text = `Hola ${username},\n\nEste es tu recordatorio y pre-factura del mes.\n\nSaludos,\nEl Equipo`;
+    const html = `<p>Hola ${username},</p><p>Este es tu recordatorio y pre-factura del mes.</p><p>Saludos,<br>El Equipo</p>`;
+
+    await this.sendMail(email, subject, text, html);
+  }
 }
