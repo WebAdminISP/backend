@@ -1,6 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { config as dotenvConfig } from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
 
 dotenvConfig({ path: '.env.development' });
 
@@ -25,6 +27,7 @@ export class MailService {
     subject: string,
     text: string,
     html: string,
+    attachments?: { filename: string; path: string }[],
   ) {
     const mailOptions = {
       from: '"Nombre Remitente" <tu-correo@gmail.com>', // remitente
@@ -32,6 +35,7 @@ export class MailService {
       subject, // asunto
       text, // texto plano
       html, // HTML
+      attachments, // adjuntos
     };
 
     try {
@@ -74,5 +78,19 @@ export class MailService {
     const html = `<p>Hola ${username},</p><p>Este es tu recordatorio y pre-factura del mes.</p><p>Saludos,<br>El Equipo</p>`;
 
     await this.sendMail(email, subject, text, html);
+  }
+
+  // Método para enviar notificaciones mensuales con archivo adjunto
+  async sendMonthlyNotificationWithAttachment(
+    email: string,
+    username: string,
+    filePath: string,
+  ) {
+    const subject = 'Recordatorio y Pre-factura Mensual';
+    const text = `Hola ${username},\n\nEste es tu recordatorio y pre-factura del mes.\n\nSaludos,\nEl Equipo`;
+    const html = `<p>Hola ${username},</p><p>Este es tu recordatorio y pre-factura del mes.</p><p>Saludos,<br>El Equipo</p>`;
+    const attachments = [{ filename: path.basename(filePath), path: filePath }];
+
+    await this.sendMail(email, subject, text, html, attachments);
   }
 }
