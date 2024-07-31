@@ -68,11 +68,11 @@ export class CreateUserDto {
     message: 'El teléfono debe tener como máximo 15 dígitos.',
   })
   @ApiProperty({
-    description: 'El número de teléfono debe ser un número entero.',
+    description: 'El número de teléfono debe ser un string.',
     example: 1234567,
-    type: Number,
+    type: String,
   })
-  telefono: number;
+  telefono: string;
 
   @IsNotEmpty({
     message: 'La dirección es obligatoria y no puede estar vacía.',
@@ -140,6 +140,7 @@ export class CreateUserDto {
   })
   password: string;
 
+  @IsOptional()
   @IsString({ message: 'La razón social debe ser una cadena de texto.' })
   @Length(8, 40, {
     message: 'La razón social debe tener entre 8 y 40 caracteres.',
@@ -151,10 +152,11 @@ export class CreateUserDto {
   })
   razonSocial: string;
 
-  @IsUUID()
-  @IsNotEmpty({
-    message: 'El id del impuesto es obligatorio y debe ser un id UUID válido.',
-  })
+  @IsOptional()
+  // @IsUUID()
+  // @IsNotEmpty({
+  //   message: 'El id del impuesto es obligatorio y debe ser un id UUID válido.',
+  // })
   @ApiProperty({
     description: 'El id del impuesto debe ser un id UUID válido.',
     example: '2583ff4d-bb01-4dc7-90bb-281fa554f141',
@@ -241,10 +243,10 @@ export class CreateUserDto {
   @ApiProperty({
     description:
       'El número de teléfono de instalación debe ser un número entero.',
-    example: 1234567,
-    type: Number,
+    example: '1234567',
+    type: String,
   })
-  telefonoInstal: number;
+  telefonoInstal: string;
 
   @IsNotEmpty({
     message: 'El email de instalación es obligatorio y no puede estar vacío.',
@@ -279,8 +281,8 @@ export class CreateUserDto {
   })
   senalConexion: string;
 
-  @IsUUID()
-  @IsOptional({})
+  // @IsUUID()
+  @IsOptional()
   @IsString()
   @ApiProperty({
     description: 'El id del equipo debe ser un id UUID válido.',
@@ -288,7 +290,7 @@ export class CreateUserDto {
   })
   equipoId: string;
 
-  @IsUUID()
+  // @IsUUID()
   @IsOptional()
   @IsString()
   @ApiProperty({

@@ -17,6 +17,8 @@ import { Provincia } from '../provincias/entities/provincia.entity';
 import { Localidad } from '../localidades/entities/localidades.entity';
 import { Servicio } from '../servicios/entities/servicio.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
+import { ImpuestosService } from '../impuestos/impuestos.service';
+import { EquiposService } from '../equipos/equipos.service';
 
 @Injectable()
 export class AuthsService {
@@ -34,6 +36,8 @@ export class AuthsService {
     @InjectRepository(Equipo)
     private equipoRepository: Repository<Equipo>,
     private readonly jwtService: JwtService,
+    private readonly impuestosService: ImpuestosService,
+    private readonly equiposService:EquiposService,
   ) {}
 
   async signIn(signInDto: SignInDto) {
@@ -86,13 +90,32 @@ export class AuthsService {
     };
   }
 
-  async saveUser(createUserDto: Omit<CreateUserDto, 'isAdmin'>) {
+  async saveUser(createUserDto: CreateUserDto) {
+    //* verifica si es 'user' con impuesto
+    if(!createUserDto.isAdmin && !createUserDto.impuestoId) 
+      throw new BadRequestException(`Indicar un impuesto para este usuario. Los impuestos son opcionales solo para admins.`)
+
+
+    //* verifica si ya existe usuario
     const existingUser = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
     if (existingUser) {
       throw new BadRequestException('User already exists');
     }
+
+     //* verifica que el impuesto exista
+     const impuestos = (await this.impuestosService.findAll()).impuestos;
+
+     if(!impuestos.some(impuesto => impuesto.id === createUserDto.impuestoId))
+       throw new BadRequestException(`Este impuesto no existe, verificar id`);
+
+     //* verifica que exista el equipo
+     const equipos = await this.equipoRepository.find()
+
+     if(!equipos.some(equipo => equipo.id === createUserDto.equipoId))
+      throw new BadRequestException(`Este impuesto no existe, verificar id`);
+
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     if (!hashedPassword) {
@@ -137,6 +160,19 @@ export class AuthsService {
         `Servicio with ID ${createUserDto.servicioId} not found`,
       );
     }
+
+     //* llena campos opcionales vacios
+     if(!createUserDto.domicilioInstal)
+      createUserDto.domicilioInstal = createUserDto.direccion
+
+    if(!createUserDto.localidadInstal)
+      createUserDto.localidadInstal = localidad.nombre
+
+    if(!createUserDto.telefonoInstal)
+      createUserDto.telefonoInstal = createUserDto.telefono;
+
+    if(!createUserDto.emailInstal)
+      createUserDto.emailInstal = createUserDto.email
 
     const user = this.usersRepository.create({
       ...createUserDto,

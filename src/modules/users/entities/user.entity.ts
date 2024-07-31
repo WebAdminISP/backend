@@ -36,8 +36,8 @@ export class User {
   @Column({ length: 50, nullable: false })
   nombre: string;
 
-  @Column({ type: 'bigint' })
-  telefono: number;
+  @Column({ type: 'varchar' })
+  telefono: string;
 
   @Column()
   direccion: string;
@@ -57,10 +57,10 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ length: 60 })
+  @Column({ length: 60, nullable: true, default: 'no declarado' })
   razonSocial: string;
 
-  @ManyToOne(() => Impuesto, (impuesto) => impuesto.users)
+  @ManyToOne(() => Impuesto, (impuesto) => impuesto.users, {nullable:true})
   @JoinColumn({ name: 'impuestoId' })
   impuesto: Impuesto;
 
@@ -75,27 +75,27 @@ export class User {
   @Column()
   codigoPostal: string;
 
-  @Column()
+  @Column({nullable:true})
   domicilioInstal: string;
 
-  @Column()
+  @Column({nullable:true})
   localidadInstal: string;
 
-  @Column()
-  telefonoInstal: number;
+  @Column({ type: 'varchar', nullable: true })
+  telefonoInstal: string;
 
-  @Column()
+  @Column({nullable:true})
   emailInstal: string;
 
-  @Column()
+  @Column({nullable:true})
   observaciones: string;
 
-  @Column()
+  @Column({nullable:true})
   senalConexion: string;
 
-  @OneToMany(() => Equipo, (equipo) => equipo.user)
+  @OneToMany(() => Equipo, (equipo) => equipo.user,{nullable:true})
   equipos: Equipo[];
 
-  @OneToMany(() => Servicio, (servicio) => servicio.user)
+  @OneToMany(() => Servicio, (servicio) => servicio.user,{nullable:true})
   servicios: Servicio[];
 }
