@@ -12,6 +12,8 @@ import { Impuesto } from '../modules/impuestos/entities/impuesto.entity';
 import { ImpuestosSeed } from './impuestos/impuestos.seed';
 import { Servicio } from '../modules/servicios/entities/servicio.entity';
 import { ServiciosSeed } from './servicios/servicios.seed';
+import { FacturacionSeed } from './facturacion/facturacion.seed';
+import { Factura } from '../modules/facturacion/entities/facturacion.entity';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { ServiciosSeed } from './servicios/servicios.seed';
       Equipo,
       Impuesto,
       Servicio,
+      Factura,
     ]),
   ],
   providers: [
@@ -31,6 +34,7 @@ import { ServiciosSeed } from './servicios/servicios.seed';
     EquiposSeed,
     ImpuestosSeed,
     ServiciosSeed,
+    FacturacionSeed,
   ],
   exports: [
     ProvinciasSeed,
@@ -39,6 +43,7 @@ import { ServiciosSeed } from './servicios/servicios.seed';
     EquiposSeed,
     ImpuestosSeed,
     ServiciosSeed,
+    FacturacionSeed,
   ],
 })
 // export class SeedsModule {}
@@ -50,6 +55,7 @@ export class SeedsModule implements OnModuleInit {
     private readonly impuestosSeed: ImpuestosSeed,
     private readonly serviciosSeed: ServiciosSeed,
     private readonly usersSeed: UsersSeed,
+    private readonly facturacionSeed: FacturacionSeed,
   ) {}
 
   async onModuleInit() {
@@ -59,5 +65,6 @@ export class SeedsModule implements OnModuleInit {
     await this.impuestosSeed.seed();
     await this.serviciosSeed.seed();
     await this.usersSeed.seed();
+    await this.facturacionSeed.seed();
   }
 }
