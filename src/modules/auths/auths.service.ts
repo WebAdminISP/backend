@@ -172,8 +172,8 @@ export class AuthsService {
       provincia,
       localidad,
       impuesto:impuestoDefault,
-      equipos: [equipo],
-      servicios: [servicio],
+      equipos:createUserDto.equipoId ? [equipo] : [],
+      servicios: createUserDto.servicioId ? [servicio] : [],
     });
 
     if (!createUserDto.createdAt) {

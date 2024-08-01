@@ -53,6 +53,6 @@ export class Equipo {
   @Column({ nullable: true })
   antena?: string;
 
-  @ManyToOne(() => User, (user) => user.equipos, { nullable: true })
+  @ManyToOne(() => User, (user) => user.equipos, { nullable: true , onDelete:'SET NULL'})
   user?: User;
 }

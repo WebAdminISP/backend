@@ -60,15 +60,15 @@ export class User {
   @Column({ length: 60, nullable: true, default: 'no declarado' })
   razonSocial: string;
 
-  @ManyToOne(() => Impuesto, (impuesto) => impuesto.users)
+  @ManyToOne(() => Impuesto, (impuesto) => impuesto.users, {onDelete:'SET NULL'})
   @JoinColumn({ name: 'impuestoId' })
   impuesto: Impuesto;
 
-  @ManyToOne(() => Provincia, (provincia) => provincia.users)
+  @ManyToOne(() => Provincia, (provincia) => provincia.users, {onDelete:'SET NULL'})
   @JoinColumn({ name: 'provinciaId' })
   provincia: Provincia;
 
-  @ManyToOne(() => Localidad, (localidad) => localidad.users)
+  @ManyToOne(() => Localidad, (localidad) => localidad.users, {onDelete:'SET NULL'})
   @JoinColumn({ name: 'localidadId' })
   localidad: Localidad;
 
@@ -93,9 +93,9 @@ export class User {
   @Column({nullable:true})
   senalConexion: string;
 
-  @OneToMany(() => Equipo, (equipo) => equipo.user,{nullable:true})
+  @OneToMany(() => Equipo, (equipo) => equipo.user,{nullable:true, onDelete:'SET NULL'})
   equipos: Equipo[];
 
-  @OneToMany(() => Servicio, (servicio) => servicio.user,{nullable:true})
+  @OneToMany(() => Servicio, (servicio) => servicio.user,{nullable:true, onDelete:'SET NULL'})
   servicios: Servicio[];
 }
