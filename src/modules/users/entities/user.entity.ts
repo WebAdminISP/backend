@@ -12,6 +12,7 @@ import { Localidad } from '../../localidades/entities/localidades.entity';
 import { Equipo } from '../../equipos/entities/equipo.entity';
 import { Servicio } from '../../servicios/entities/servicio.entity';
 import { Impuesto } from '../../impuestos/entities/impuesto.entity';
+import { Factura } from 'src/modules/facturacion/entities/facturacion.entity';
 
 @Entity({
   name: 'users',
@@ -98,4 +99,7 @@ export class User {
 
   @OneToMany(() => Servicio, (servicio) => servicio.user,{nullable:true, onDelete:'SET NULL'})
   servicios: Servicio[];
+
+  @OneToMany(() => Factura, (factura) => factura.user)
+  facturas: Factura[];
 }
