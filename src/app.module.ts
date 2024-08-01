@@ -20,6 +20,7 @@ import { ImpuestosModule } from './modules/impuestos/impuestos.module';
 import { RelevamientosModule } from './modules/relevamientos/relevamientos.module';
 import { MailModule } from './modules/mail/mail.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { FacturacionModule } from './modules/facturacion/facturacion.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     RelevamientosModule,
     MailModule,
     NotificationsModule,
+    FacturacionModule,
   ],
   controllers: [AppController],
   providers: [

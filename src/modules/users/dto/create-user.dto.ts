@@ -69,7 +69,7 @@ export class CreateUserDto {
   })
   @ApiProperty({
     description: 'El número de teléfono debe ser un número entero.',
-    example: 1234567,
+    example: 123456789123456,
     type: Number,
   })
   telefono: number;
