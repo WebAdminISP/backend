@@ -32,6 +32,9 @@ export class Servicio {
   @Column({ nullable: false })
   nombre: string;
 
-  @ManyToOne(() => User, (user) => user.servicios, { nullable: true, onDelete:'SET NULL' })
+  @ManyToOne(() => User, (user) => user.servicios, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   user?: User;
 }

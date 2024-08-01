@@ -8,8 +8,11 @@ export class Factura {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.facturas, { nullable: false })
-  user: User;
+  @ManyToOne(() => User, (user) => user.facturas, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  user?: User;
 
   @Column({ length: 50, nullable: false })
   agente: string;
@@ -39,4 +42,16 @@ export class Factura {
     nullable: false,
   })
   fechaVencimiento: Date;
+
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: false,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
+  })
+  importe: number;
 }
