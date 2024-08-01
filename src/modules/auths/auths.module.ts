@@ -13,16 +13,25 @@ import { Auth0Guard } from './auth0.guards';
 import { CompositeAuthGuard } from './compositeAuthGuard';
 import { requiresAuth } from 'express-openid-connect';
 import { MailService } from '../mail/mail.service';
+import { ImpuestosService } from '../impuestos/impuestos.service';
+import { ImpuestosModule } from '../impuestos/impuestos.module';
+import { Impuesto } from '../impuestos/entities/impuesto.entity';
+import { EquiposService } from '../equipos/equipos.service';
+import { EquiposModule } from '../equipos/equipos.module';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([Provincia, Localidad, Equipo, Servicio]),
+    ImpuestosModule,
+    EquiposModule,
+    TypeOrmModule.forFeature([Provincia, Localidad, Equipo, Servicio, Impuesto]),
   ],
   controllers: [AuthsController],
   providers: [
     AuthsService,
     UsersService,
+    ImpuestosService,
+    EquiposService,
     MailService,
     AuthGuard,
     Auth0Guard,

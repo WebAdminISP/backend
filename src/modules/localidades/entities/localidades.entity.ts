@@ -28,6 +28,7 @@ export class Localidad {
 
   @ManyToOne(() => Provincia, (provincia) => provincia.localidades, {
     nullable: false,
+    onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'provinciaId' })
   provincia: Provincia;

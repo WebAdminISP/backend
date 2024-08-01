@@ -17,6 +17,8 @@ import { Provincia } from '../provincias/entities/provincia.entity';
 import { Localidad } from '../localidades/entities/localidades.entity';
 import { Servicio } from '../servicios/entities/servicio.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
+import { ImpuestosService } from '../impuestos/impuestos.service';
+import { EquiposService } from '../equipos/equipos.service';
 
 @Injectable()
 export class AuthsService {
@@ -29,11 +31,13 @@ export class AuthsService {
     private provinciaRepository: Repository<Provincia>,
     @InjectRepository(Localidad)
     private localidadRepository: Repository<Localidad>,
-    @InjectRepository(Servicio)
-    private servicioRepository: Repository<Servicio>,
     @InjectRepository(Equipo)
     private equipoRepository: Repository<Equipo>,
+    @InjectRepository(Servicio)
+    private servicioRepository: Repository<Servicio>,
+    private readonly impuestosService: ImpuestosService,
     private readonly jwtService: JwtService,
+
   ) {}
 
   async signIn(signInDto: SignInDto) {
@@ -86,7 +90,8 @@ export class AuthsService {
     };
   }
 
-  async saveUser(createUserDto: Omit<CreateUserDto, 'isAdmin'>) {
+  async saveUser(createUserDto: CreateUserDto) {
+       //* verifica existencia de usuario
     const existingUser = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -101,6 +106,8 @@ export class AuthsService {
 
     createUserDto.password = hashedPassword;
 
+
+    //* verificacion de existencia de Provincia y Localidad
     const provincia = await this.provinciaRepository.findOne({
       where: { id: createUserDto.provinciaId },
     });
@@ -138,12 +145,35 @@ export class AuthsService {
       );
     }
 
+    //* busca impuesto por defecto : 'Consumidor Final'
+    const nombreImpuestoDefault = 'Consumidor Final';
+    const impuestoDefault = (await this.impuestosService.findImpuestoDefault(nombreImpuestoDefault));
+
+
+     //* llena campos opcionales vacios
+     if(!createUserDto.domicilioInstal){
+       createUserDto.domicilioInstal = createUserDto.direccion
+     }
+
+    if(!createUserDto.localidadInstal) {
+      createUserDto.localidadInstal = localidad.nombre
+    }
+
+    if(!createUserDto.telefonoInstal) {
+      createUserDto.telefonoInstal = createUserDto.telefono;
+    }
+
+    if(!createUserDto.emailInstal) {
+      createUserDto.emailInstal = createUserDto.email
+    }
+
     const user = this.usersRepository.create({
       ...createUserDto,
       provincia,
       localidad,
-      equipos: [equipo],
-      servicios: [servicio],
+      impuesto:impuestoDefault,
+      equipos:createUserDto.equipoId ? [equipo] : [],
+      servicios: createUserDto.servicioId ? [servicio] : [],
     });
 
     if (!createUserDto.createdAt) {

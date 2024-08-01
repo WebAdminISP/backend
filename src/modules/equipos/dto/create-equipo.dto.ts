@@ -146,11 +146,12 @@ export class CreateEquipoDto {
   })
   antena: string;
 
+  @ApiHideProperty()
   @IsUUID()
   @IsOptional()
-  @ApiProperty({
-    description: 'El ID del usuario, debe ser un UUID válido si se proporciona',
-    example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
-  })
+  // @ApiProperty({
+  //   description: 'El ID del usuario, debe ser un UUID válido si se proporciona',
+  //   example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
+  // })
   userId?: string;
 }

@@ -62,17 +62,13 @@ export class CreateUserDto {
   nombre: string;
 
   @IsNotEmpty({ message: 'El número de teléfono es obligatorio.' })
-  @IsNumber({}, { message: 'El teléfono debe ser un número entero.' })
-  @Min(1000000, { message: 'El teléfono debe tener al menos 7 dígitos.' })
-  @Max(999999999999999, {
-    message: 'El teléfono debe tener como máximo 15 dígitos.',
-  })
+  @IsString()
   @ApiProperty({
-    description: 'El número de teléfono debe ser un número entero.',
-    example: 123456789123456,
-    type: Number,
+    description: 'El número de teléfono debe ser un string.',
+    example: 1234567,
+    type: String,
   })
-  telefono: number;
+  telefono: string;
 
   @IsNotEmpty({
     message: 'La dirección es obligatoria y no puede estar vacía.',
@@ -140,25 +136,29 @@ export class CreateUserDto {
   })
   password: string;
 
+  @ApiHideProperty()
+  @IsOptional()
   @IsString({ message: 'La razón social debe ser una cadena de texto.' })
   @Length(8, 40, {
     message: 'La razón social debe tener entre 8 y 40 caracteres.',
   })
-  @ApiProperty({
-    description: 'La razón social debe ser válida.',
-    example: 'Café los Angelitos',
-    type: String,
-  })
+  // @ApiProperty({
+  //   description: 'La razón social debe ser válida.',
+  //   example: 'Café los Angelitos',
+  //   type: String,
+  // })
   razonSocial: string;
 
+  @ApiHideProperty()
+  @IsOptional()
   @IsUUID()
   @IsNotEmpty({
-    message: 'El id del impuesto es obligatorio y debe ser un id UUID válido.',
+    message: 'El id del impuesto es obligatorio y debe ser un id UUID válido. El default es el id de consumidor final',
   })
-  @ApiProperty({
-    description: 'El id del impuesto debe ser un id UUID válido.',
-    example: '2583ff4d-bb01-4dc7-90bb-281fa554f141',
-  })
+  // @ApiProperty({
+  //   description: 'El id del impuesto debe ser un id UUID válido.',
+  //   example: '2583ff4d-bb01-4dc7-90bb-281fa554f141',
+  // })
   impuestoId: string;
 
   @IsUUID()
@@ -197,104 +197,94 @@ export class CreateUserDto {
   })
   codigoPostal: string;
 
-  @IsNotEmpty({
-    message:
-      'El domicilio de instalación es obligatorio y no puede estar vacío.',
-  })
+  @ApiHideProperty()
+  @IsOptional()
   @IsString({
     message: 'El domicilio de instalación debe ser una cadena de texto.',
   })
-  @ApiProperty({
-    description: 'El domicilio de instalación debe ser válido.',
-    example: 'Urquiza 3560 1°A',
-    type: String,
-  })
+  // @ApiProperty({
+  //   description: 'El domicilio de instalación debe ser válido.',
+  //   example: 'Urquiza 3560 1°A',
+  //   type: String,
+  // })
   domicilioInstal: string;
 
-  @IsNotEmpty({
-    message:
-      'La localidad de instalación es obligatoria y no puede estar vacía.',
-  })
+  @ApiHideProperty()
+  @IsOptional()
   @IsString({
     message: 'La localidad de instalación debe ser una cadena de texto.',
   })
-  @ApiProperty({
-    description: 'La localidad de instalación debe ser válida.',
-    example: 'Potrerillos',
-    type: String,
-  })
+  // @ApiProperty({
+  //   description: 'La localidad de instalación debe ser válida.',
+  //   example: 'Potrerillos',
+  //   type: String,
+  // })
   localidadInstal: string;
 
-  @IsNotEmpty({
-    message: 'El número de teléfono de instalación es obligatorio.',
-  })
+  @ApiHideProperty()
+  @IsOptional()
   @IsNumber(
     {},
     { message: 'El teléfono de instalación debe ser un número entero.' },
   )
-  @Min(1000000, {
-    message: 'El teléfono de instalación debe tener al menos 7 dígitos.',
-  })
-  @Max(999999999999999, {
-    message: 'El teléfono de instalación debe tener como máximo 15 dígitos.',
-  })
-  @ApiProperty({
-    description:
-      'El número de teléfono de instalación debe ser un número entero.',
-    example: 1234567,
-    type: Number,
-  })
-  telefonoInstal: number;
+  // @ApiProperty({
+  //   description:
+  //     'El número de teléfono de instalación debe ser un string.',
+  //   example: '1234567',
+  //   type: String,
+  // })
+  telefonoInstal: string;
 
-  @IsNotEmpty({
-    message: 'El email de instalación es obligatorio y no puede estar vacío.',
-  })
+  @ApiHideProperty()
+  @IsOptional()
   @IsEmail(
     {},
     { message: 'El correo electrónico de instalación no es válido.' },
   )
-  @ApiProperty({
-    description: 'El email de instalación debe ser un email válido.',
-    example: 'jperez@mail.com',
-    type: String,
-  })
+  // @ApiProperty({
+  //   description: 'El email de instalación debe ser un email válido.',
+  //   example: 'jperez@mail.com',
+  //   type: String,
+  // })
   emailInstal: string;
 
-  @IsNotEmpty({
-    message: 'Las observaciones son obligatorias y no pueden estar vacías.',
-  })
+  @ApiHideProperty()
+  @IsOptional()
   @IsString({ message: 'Las observaciones deben ser una cadena de texto.' })
-  @ApiProperty({
-    description: 'Las observaciones deben ser válidas.',
-    example: 'La antena tiene acceso difícil, coordinar con el propietario',
-  })
+  // @ApiProperty({
+  //   description: 'Las observaciones deben ser válidas.',
+  //   example: 'La antena tiene acceso difícil, coordinar con el propietario',
+  // })
   observaciones: string;
 
+  @ApiHideProperty()
   @IsOptional()
   @IsString({ message: 'La señal de conexión debe ser una cadena de texto.' })
-  @ApiProperty({
-    description: 'El texto de la señal de conexión debe ser válido.',
-    example: '-65dBm',
-    type: String,
-  })
+  // @ApiProperty({
+  //   description: 'El texto de la señal de conexión debe ser válido.',
+  //   example: '-65dBm',
+  //   type: String,
+  // })
   senalConexion: string;
 
-  @IsUUID()
-  @IsOptional({})
-  @IsString()
-  @ApiProperty({
-    description: 'El id del equipo debe ser un id UUID válido.',
-    example: 'b2837f3d-48cd-476d-a64d-ade12932b606',
-  })
-  equipoId: string;
-
+  @ApiHideProperty()
   @IsUUID()
   @IsOptional()
   @IsString()
-  @ApiProperty({
-    description: 'El id del servicio debe ser un id UUID válido.',
-    example: 'fa3f2527-4125-4938-9c74-7c7bf448f8b3',
-  })
+  // @ApiProperty({
+  //   description: 'El id del equipo debe ser un id UUID válido.',
+  //   example: 'b2837f3d-48cd-476d-a64d-ade12932b606',
+  // })
+  equipoId: string;
+
+  @ApiHideProperty()
+  @IsUUID()
+  @IsOptional()
+  @IsString()
+  // @ApiProperty({
+  //   description: 'El id del servicio debe ser un id UUID válido.',
+  //   example: 'fa3f2527-4125-4938-9c74-7c7bf448f8b3',
+  // })
   servicioId: string;
 
   constructor(createdAt?: number) {

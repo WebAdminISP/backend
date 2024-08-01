@@ -40,6 +40,12 @@ export class ImpuestosService {
       }
   }
 
+  //* usado en signUp
+  async findImpuestoDefault(nombre:string){
+    const impuesto = await this.impuestoRepository.findOne({where:{nombre}});
+    return impuesto
+  }
+
   async findOne(id: string) {
     const impuesto = await this.impuestoRepository.findOneBy({id})
     

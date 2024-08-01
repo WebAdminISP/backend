@@ -63,11 +63,12 @@ export class CreateServicioDto {
   })
   nombre: string;
 
+  @ApiHideProperty()
   @IsUUID()
   @IsOptional({})
-  @ApiProperty({
-    description: 'El id del user, debe ser un id UUID valido',
-    example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
-  })
+  // @ApiProperty({
+  //   description: 'El id del user, debe ser un id UUID valido',
+  //   example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
+  // })
   userId?: string;
 }
