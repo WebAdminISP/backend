@@ -31,6 +31,10 @@ export class AuthsService {
     private provinciaRepository: Repository<Provincia>,
     @InjectRepository(Localidad)
     private localidadRepository: Repository<Localidad>,
+    @InjectRepository(Equipo)
+    private equipoRepository: Repository<Equipo>,
+    @InjectRepository(Servicio)
+    private servicioRepository: Repository<Servicio>,
     private readonly impuestosService: ImpuestosService,
     private readonly jwtService: JwtService,
 
@@ -123,8 +127,27 @@ export class AuthsService {
       );
     }
 
-    //* asigna impuesto por defecto : 'Consumidor Final'
-    const impuestoDefault = await 
+    const equipo = await this.equipoRepository.findOne({
+      where: { id: createUserDto.equipoId },
+    });
+    if (!equipo) {
+      throw new NotFoundException(
+        `Equipo with ID ${createUserDto.equipoId} not found`,
+      );
+    }
+
+    const servicio = await this.servicioRepository.findOne({
+      where: { id: createUserDto.servicioId },
+    });
+    if (!servicio) {
+      throw new NotFoundException(
+        `Servicio with ID ${createUserDto.servicioId} not found`,
+      );
+    }
+
+    //* busca impuesto por defecto : 'Consumidor Final'
+    const nombreImpuestoDefault = 'Consumidor Final';
+    const impuestoDefault = (await this.impuestosService.findImpuestoDefault(nombreImpuestoDefault));
 
 
      //* llena campos opcionales vacios
@@ -132,21 +155,25 @@ export class AuthsService {
        createUserDto.domicilioInstal = createUserDto.direccion
      }
 
-    if(!createUserDto.localidadInstal)
+    if(!createUserDto.localidadInstal) {
       createUserDto.localidadInstal = localidad.nombre
+    }
 
-    if(!createUserDto.telefonoInstal)
+    if(!createUserDto.telefonoInstal) {
       createUserDto.telefonoInstal = createUserDto.telefono;
+    }
 
-    if(!createUserDto.emailInstal)
+    if(!createUserDto.emailInstal) {
       createUserDto.emailInstal = createUserDto.email
+    }
 
     const user = this.usersRepository.create({
       ...createUserDto,
       provincia,
       localidad,
-      // equipos: [equipo],
-      // servicios: [servicio],
+      impuesto:impuestoDefault,
+      equipos: [equipo],
+      servicios: [servicio],
     });
 
     if (!createUserDto.createdAt) {

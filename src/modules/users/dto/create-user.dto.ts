@@ -62,11 +62,7 @@ export class CreateUserDto {
   nombre: string;
 
   @IsNotEmpty({ message: 'El número de teléfono es obligatorio.' })
-  @IsNumber({}, { message: 'El teléfono debe ser un número entero.' })
-  @Min(1000000, { message: 'El teléfono debe tener al menos 7 dígitos.' })
-  @Max(999999999999999, {
-    message: 'El teléfono debe tener como máximo 15 dígitos.',
-  })
+  @IsString()
   @ApiProperty({
     description: 'El número de teléfono debe ser un string.',
     example: 1234567,
