@@ -31,13 +31,9 @@ export class AuthsService {
     private provinciaRepository: Repository<Provincia>,
     @InjectRepository(Localidad)
     private localidadRepository: Repository<Localidad>,
-    @InjectRepository(Servicio)
-    private servicioRepository: Repository<Servicio>,
-    @InjectRepository(Equipo)
-    private equipoRepository: Repository<Equipo>,
-    private readonly jwtService: JwtService,
     private readonly impuestosService: ImpuestosService,
-    private readonly equiposService:EquiposService,
+    private readonly jwtService: JwtService,
+
   ) {}
 
   async signIn(signInDto: SignInDto) {
@@ -91,31 +87,13 @@ export class AuthsService {
   }
 
   async saveUser(createUserDto: CreateUserDto) {
-    //* verifica si es 'user' con impuesto
-    if(!createUserDto.isAdmin && !createUserDto.impuestoId) 
-      throw new BadRequestException(`Indicar un impuesto para este usuario. Los impuestos son opcionales solo para admins.`)
-
-
-    //* verifica si ya existe usuario
+       //* verifica existencia de usuario
     const existingUser = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
     if (existingUser) {
       throw new BadRequestException('User already exists');
     }
-
-     //* verifica que el impuesto exista
-     const impuestos = (await this.impuestosService.findAll()).impuestos;
-
-     if(!impuestos.some(impuesto => impuesto.id === createUserDto.impuestoId))
-       throw new BadRequestException(`Este impuesto no existe, verificar id`);
-
-     //* verifica que exista el equipo
-     const equipos = await this.equipoRepository.find()
-
-     if(!equipos.some(equipo => equipo.id === createUserDto.equipoId))
-      throw new BadRequestException(`Este impuesto no existe, verificar id`);
-
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     if (!hashedPassword) {
@@ -124,6 +102,8 @@ export class AuthsService {
 
     createUserDto.password = hashedPassword;
 
+
+    //* verificacion de existencia de Provincia y Localidad
     const provincia = await this.provinciaRepository.findOne({
       where: { id: createUserDto.provinciaId },
     });
@@ -143,27 +123,14 @@ export class AuthsService {
       );
     }
 
-    const equipo = await this.equipoRepository.findOne({
-      where: { id: createUserDto.equipoId },
-    });
-    if (!equipo) {
-      throw new NotFoundException(
-        `Equipo with ID ${createUserDto.equipoId} not found`,
-      );
-    }
+    //* asigna impuesto por defecto : 'Consumidor Final'
+    const impuestoDefault = await 
 
-    const servicio = await this.servicioRepository.findOne({
-      where: { id: createUserDto.servicioId },
-    });
-    if (!servicio) {
-      throw new NotFoundException(
-        `Servicio with ID ${createUserDto.servicioId} not found`,
-      );
-    }
 
      //* llena campos opcionales vacios
-     if(!createUserDto.domicilioInstal)
-      createUserDto.domicilioInstal = createUserDto.direccion
+     if(!createUserDto.domicilioInstal){
+       createUserDto.domicilioInstal = createUserDto.direccion
+     }
 
     if(!createUserDto.localidadInstal)
       createUserDto.localidadInstal = localidad.nombre
@@ -178,8 +145,8 @@ export class AuthsService {
       ...createUserDto,
       provincia,
       localidad,
-      equipos: [equipo],
-      servicios: [servicio],
+      // equipos: [equipo],
+      // servicios: [servicio],
     });
 
     if (!createUserDto.createdAt) {

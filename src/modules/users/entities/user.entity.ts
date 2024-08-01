@@ -60,7 +60,7 @@ export class User {
   @Column({ length: 60, nullable: true, default: 'no declarado' })
   razonSocial: string;
 
-  @ManyToOne(() => Impuesto, (impuesto) => impuesto.users, {nullable:true})
+  @ManyToOne(() => Impuesto, (impuesto) => impuesto.users)
   @JoinColumn({ name: 'impuestoId' })
   impuesto: Impuesto;
 
@@ -75,16 +75,16 @@ export class User {
   @Column()
   codigoPostal: string;
 
-  @Column({nullable:true})
+  @Column()
   domicilioInstal: string;
 
-  @Column({nullable:true})
+  @Column()
   localidadInstal: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar' })
   telefonoInstal: string;
 
-  @Column({nullable:true})
+  @Column()
   emailInstal: string;
 
   @Column({nullable:true})

@@ -153,10 +153,10 @@ export class CreateUserDto {
   razonSocial: string;
 
   @IsOptional()
-  // @IsUUID()
-  // @IsNotEmpty({
-  //   message: 'El id del impuesto es obligatorio y debe ser un id UUID válido.',
-  // })
+  @IsUUID()
+  @IsNotEmpty({
+    message: 'El id del impuesto es obligatorio y debe ser un id UUID válido. El default es el id de consumidor final',
+  })
   @ApiProperty({
     description: 'El id del impuesto debe ser un id UUID válido.',
     example: '2583ff4d-bb01-4dc7-90bb-281fa554f141',
@@ -199,10 +199,7 @@ export class CreateUserDto {
   })
   codigoPostal: string;
 
-  @IsNotEmpty({
-    message:
-      'El domicilio de instalación es obligatorio y no puede estar vacío.',
-  })
+  @IsOptional()
   @IsString({
     message: 'El domicilio de instalación debe ser una cadena de texto.',
   })
@@ -213,10 +210,7 @@ export class CreateUserDto {
   })
   domicilioInstal: string;
 
-  @IsNotEmpty({
-    message:
-      'La localidad de instalación es obligatoria y no puede estar vacía.',
-  })
+  @IsOptional()
   @IsString({
     message: 'La localidad de instalación debe ser una cadena de texto.',
   })
@@ -227,9 +221,7 @@ export class CreateUserDto {
   })
   localidadInstal: string;
 
-  @IsNotEmpty({
-    message: 'El número de teléfono de instalación es obligatorio.',
-  })
+  @IsOptional()
   @IsNumber(
     {},
     { message: 'El teléfono de instalación debe ser un número entero.' },
@@ -248,9 +240,7 @@ export class CreateUserDto {
   })
   telefonoInstal: string;
 
-  @IsNotEmpty({
-    message: 'El email de instalación es obligatorio y no puede estar vacío.',
-  })
+  @IsOptional()
   @IsEmail(
     {},
     { message: 'El correo electrónico de instalación no es válido.' },
@@ -262,9 +252,7 @@ export class CreateUserDto {
   })
   emailInstal: string;
 
-  @IsNotEmpty({
-    message: 'Las observaciones son obligatorias y no pueden estar vacías.',
-  })
+  @IsOptional()
   @IsString({ message: 'Las observaciones deben ser una cadena de texto.' })
   @ApiProperty({
     description: 'Las observaciones deben ser válidas.',
@@ -281,7 +269,7 @@ export class CreateUserDto {
   })
   senalConexion: string;
 
-  // @IsUUID()
+  @IsUUID()
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -290,7 +278,7 @@ export class CreateUserDto {
   })
   equipoId: string;
 
-  // @IsUUID()
+  @IsUUID()
   @IsOptional()
   @IsString()
   @ApiProperty({
