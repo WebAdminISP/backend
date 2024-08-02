@@ -3,9 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Query,
   UsePipes,
   UseGuards,
@@ -24,13 +22,12 @@ import {
   ApiQuery,
   ApiTags,
   ApiBearerAuth,
-  ApiSecurity,
 } from '@nestjs/swagger';
 import { Equipo } from './entities/equipo.entity';
 import { Roles } from '../../decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
-import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { RolesGuard } from './../auths/roles.guard';
+import { AuthGuard } from '../auths/auth.guards';
 
 @ApiTags('Equipos')
 @Controller('equipos')
@@ -41,10 +38,9 @@ export class EquiposController {
 
   @Post()
   @ApiOperation({ summary: 'Agregar un equipo nuevo' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   create(
@@ -70,10 +66,9 @@ export class EquiposController {
 
   @Get()
   @ApiOperation({ summary: 'Ver todos los equipos' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiQuery({
     name: 'page',
     required: false,
@@ -96,10 +91,9 @@ export class EquiposController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Ver un equipo por :id' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const equipo = await this.equiposService.findOne(id);
@@ -113,10 +107,9 @@ export class EquiposController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar un equipo por :id' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(

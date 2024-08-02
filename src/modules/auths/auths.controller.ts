@@ -11,18 +11,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthsService } from './auths.service';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UsersService } from '../users/users.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthGuard } from './auth.guards';
 import { Request } from 'express';
-import { CompositeAuthGuard } from './compositeAuthGuard';
 import { RolesGuard } from './roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from './roles.enum';
@@ -47,14 +41,12 @@ export class AuthsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async signIn(@Body() signInDto: SignInDto) {
     return this.authsService.signIn(signInDto);
-    //return this.authsService.signIn(signInDto);
   }
 
   @Post('signup')
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Dar de alta un usuario nuevo' })
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ transform: true }))

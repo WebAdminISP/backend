@@ -33,10 +33,7 @@ import { requiresAuth } from 'express-openid-connect';
   exports: [TypeOrmModule, UsersService],
 })
 export class UsersModule implements NestModule {
-  //* aqui llamo al consumer para aplicar el requireAuth() pero no hay que pasarle endpoints porque conflictua con el CompositeAuthGuard
-  //* este middleware permite acceder al objecto oicd con la info de auth0
   configure(consumer: MiddlewareConsumer) {
-    //protege con autenticacion cualquier endpoint aqui listado
-    consumer.apply(requiresAuth()).forRoutes();
+    consumer.apply(requiresAuth()).forRoutes('users/auth0/callback');
   }
 }
