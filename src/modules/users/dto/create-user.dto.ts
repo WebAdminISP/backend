@@ -286,6 +286,16 @@ export class CreateUserDto {
   // })
   servicioId: string;
 
+  @ApiHideProperty()
+  @IsUUID()
+  @IsOptional()
+  @IsString()
+  // @ApiProperty({
+  //   description: 'El id del servicio debe ser un id UUID válido.',
+  //   example: 'fa3f2527-4125-4938-9c74-7c7bf448f8b3',
+  // })
+  facturasId: string;
+
   constructor(createdAt?: number) {
     this.createdAt = createdAt ? new Date(createdAt) : this.getLocalDate();
   }

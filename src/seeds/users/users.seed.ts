@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { Impuesto } from '../../modules/impuestos/entities/impuesto.entity';
 import { Equipo } from '../../modules/equipos/entities/equipo.entity';
 import { Servicio } from '../../modules/servicios/entities/servicio.entity';
+import { Factura } from '../../modules/facturacion/entities/facturacion.entity';
 
 @Injectable()
 export class UsersSeed {
@@ -25,6 +26,8 @@ export class UsersSeed {
     private readonly serviciosRepository: Repository<Servicio>,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(Factura)
+    private readonly facturasRepository: Repository<Factura>,
   ) {}
 
   async seed() {
@@ -38,11 +41,11 @@ export class UsersSeed {
       return;
     }
 
-    const loalidadSeed = await this.localidadesRepository.findOne({
+    const localidadSeed = await this.localidadesRepository.findOne({
       where: { nombre: 'Maipú' },
     });
 
-    if (!loalidadSeed) {
+    if (!localidadSeed) {
       console.error('No se encontró la localidad Maipú');
       return;
     }
@@ -74,6 +77,15 @@ export class UsersSeed {
       return;
     }
 
+    const facturaSeed = await this.facturasRepository.findOne({
+      where: { concepto: '6/2' },
+    });
+
+    if (!facturaSeed) {
+      console.error('No se encontro el concepto: 6/2');
+      return;
+    }
+
     for (const userMock of UsersMock) {
       const existingUser = await this.usersRepository.findOne({
         where: { email: userMock.email },
@@ -88,10 +100,11 @@ export class UsersSeed {
       Object.assign(user, userMock);
       user.password = hashedPassword;
       user.provincia = provinciaSeed;
-      user.localidad = loalidadSeed;
+      user.localidad = localidadSeed;
       user.impuesto = impuestoSeed;
-      user.equipos = equipoSeed[0];
-      user.servicios = servicioSeed[0];
+      user.equipos = [equipoSeed];
+      user.servicios = [servicioSeed];
+      user.facturas = [facturaSeed];
 
       console.log('Creando usuario: ', user.nombre);
       await this.usersRepository.save(user);
