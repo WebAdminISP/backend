@@ -10,8 +10,6 @@ import {
   IsUUID,
   Length,
   Matches,
-  Max,
-  Min,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { addMinutes } from 'date-fns';
@@ -153,7 +151,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsUUID()
   @IsNotEmpty({
-    message: 'El id del impuesto es obligatorio y debe ser un id UUID válido. El default es el id de consumidor final',
+    message:
+      'El id del impuesto es obligatorio y debe ser un id UUID válido. El default es el id de consumidor final',
   })
   // @ApiProperty({
   //   description: 'El id del impuesto debe ser un id UUID válido.',
