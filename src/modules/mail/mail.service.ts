@@ -30,7 +30,7 @@ export class MailService {
     attachments?: { filename: string; path: string }[],
   ) {
     const mailOptions = {
-      from: '"Nombre Remitente" <tu-correo@gmail.com>', // remitente
+      from: '"UltraNet" <tu-correo@gmail.com>', // remitente
       to, // destinatario
       subject, // asunto
       text, // texto plano
