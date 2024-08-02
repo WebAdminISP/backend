@@ -55,7 +55,7 @@ export class UsersSeed {
     });
 
     if (!impuestoSeed) {
-      console.error('No se encontro el impuesto: Monotributo');
+      console.error('No se encontró el impuesto: Monotributo');
       return;
     }
 
@@ -84,7 +84,7 @@ export class UsersSeed {
       });
 
       if (existingUser) {
-        return;
+        continue;
       }
 
       const hashedPassword = await bcrypt.hash(userMock.password, 10);
@@ -94,9 +94,17 @@ export class UsersSeed {
       user.provincia = provinciaSeed;
       user.localidad = localidadSeed;
       user.impuesto = impuestoSeed;
-      user.equipos = equiposSeed;
-      user.servicios = serviciosSeed;
-      user.facturas = facturasSeed;
+
+      // Asignar instancias únicas de equipos, servicios y facturas a cada usuario
+      user.equipos = [
+        equiposSeed[Math.floor(Math.random() * equiposSeed.length)],
+      ];
+      user.servicios = [
+        serviciosSeed[Math.floor(Math.random() * serviciosSeed.length)],
+      ];
+      user.facturas = [
+        facturasSeed[Math.floor(Math.random() * facturasSeed.length)],
+      ];
 
       console.log('Creando usuario: ', user.nombre);
       await this.usersRepository.save(user);
