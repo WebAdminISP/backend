@@ -64,7 +64,7 @@ export class SeedsModule implements OnModuleInit {
     await this.equiposSeed.seed();
     await this.impuestosSeed.seed();
     await this.serviciosSeed.seed();
-    await this.usersSeed.seed();
     await this.facturacionSeed.seed();
+    await this.usersSeed.seed();
   }
 }
