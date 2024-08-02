@@ -11,6 +11,7 @@ import { Localidad } from '../localidades/entities/localidades.entity';
 import { Between, Repository } from 'typeorm';
 import { RangoFecha } from './dto/rango-fecha.dto';
 import { User } from '../users/entities/user.entity';
+import { MapsService } from '../maps/maps.service';
 
 @Injectable()
 export class RelevamientosService {
@@ -23,6 +24,7 @@ export class RelevamientosService {
     private localidadRepository: Repository<Localidad>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private mapsService:MapsService,
   ) {}
 
   async create(createRelevamientoDto: CreateRelevamientoDto) {
@@ -41,12 +43,14 @@ export class RelevamientosService {
     // //w localizar agente cercano y asignar(mock)
     const agente = 'Seed User';
     //w localiza coordenadas domicilio(mock)
-    const longitud = -58.3816;
-    const latitud = -58.3816;
+    // const longitud = -58.3816;
+    // const latitud = -58.3816;
 
-    //* fetch provincia y localidad
-    let provincia: Provincia;
-    let localidad: Localidad;
+    //* Geocoding :obtiene coordenadas del domicilio declarado por guest
+    const { direccion, provincia, localidad } = createRelevamientoDto;
+    const domicilioCompleto = `${direccion}, ${localidad}, ${provincia}`;
+    const coordenadas = await this.mapsService.getCoordenadas(domicilioCompleto);
+    const { lat, lng } = coordenadas;
 
     const fetchedProvincia = await this.provinciaRepository.findOne({
       where: { nombre: createRelevamientoDto.provincia },
@@ -56,9 +60,6 @@ export class RelevamientosService {
       throw new BadRequestException('La provincia no existe');
     }
 
-    // eslint-disable-next-line prefer-const
-    provincia = fetchedProvincia;
-
     const fetchedLocalidad = await this.localidadRepository.findOne({
       where: { nombre: createRelevamientoDto.localidad },
     });
@@ -67,17 +68,17 @@ export class RelevamientosService {
       throw new BadRequestException('La localidad no existe');
     }
 
-    // eslint-disable-next-line prefer-const
-    localidad = fetchedLocalidad;
 
     //* crea nuevo relevamiento con propiedades restantes
     const newRelevamiento = this.relevamientoRepository.create({
       ...createRelevamientoDto,
       agente,
-      longitud,
-      latitud,
-      provincia,
-      localidad,
+      latitud: lat,
+      longitud: lng,
+      // latitud,
+      // longitud,
+      provincia:fetchedProvincia,
+      localidad:fetchedLocalidad,
     });
 
     const savedRelevamiento =

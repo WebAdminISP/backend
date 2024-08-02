@@ -12,6 +12,7 @@ import { requiresAuth } from 'express-openid-connect';
 import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users/users.module';
 import { User } from '../users/entities/user.entity';
+import { MapsService } from '../maps/maps.service';
 
 @Module({
   imports: [UsersModule,TypeOrmModule.forFeature([Relevamiento, Provincia, Localidad, User])],
@@ -19,6 +20,7 @@ import { User } from '../users/entities/user.entity';
   providers: [
     RelevamientosService,
     UsersService,
+    MapsService,
     AuthGuard,
     Auth0Guard,
     CompositeAuthGuard,

@@ -21,6 +21,7 @@ import { RelevamientosModule } from './modules/relevamientos/relevamientos.modul
 import { MailModule } from './modules/mail/mail.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { FacturacionModule } from './modules/facturacion/facturacion.module';
+import { MapsModule } from './modules/maps/maps.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { FacturacionModule } from './modules/facturacion/facturacion.module';
     MailModule,
     NotificationsModule,
     FacturacionModule,
+    MapsModule
   ],
   controllers: [AppController],
   providers: [
