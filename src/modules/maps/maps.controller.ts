@@ -25,7 +25,7 @@ export class MapsController {
   @ApiOperation({ summary: 'Retorna la direccion' })
   async getAddress(@Body() reverseGeocodeDto: ReverseGeocodeDto) {
     const { lat, lng } = reverseGeocodeDto;
-    return await this.mapsService.getAddress(lat, lng);
+    return await this.mapsService.getDireccion(lat, lng);
   }
 
 

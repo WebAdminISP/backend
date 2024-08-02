@@ -22,7 +22,7 @@ export class MapsService {
     return coordenadas
   }
 
-  async getAddress(lat: number, lng: number): Promise<any> {
+  async getDireccion(lat: number, lng: number): Promise<any> {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.API_KEY}`;
     const response = await axios.get(url);
     const data = response.data;
