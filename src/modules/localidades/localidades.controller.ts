@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  // Query,
   UsePipes,
   ValidationPipe,
   UseGuards,
@@ -22,17 +21,15 @@ import {
   ApiBody,
   ApiForbiddenResponse,
   ApiOperation,
-  // ApiQuery,
   ApiResponse,
-  ApiSecurity,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import { RolesGuard } from '../auths/roles.guard';
-import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { Request } from 'express';
+import { AuthGuard } from '../auths/auth.guards';
 
 @ApiTags('Localidades')
 @Controller('localidades')
@@ -47,10 +44,9 @@ export class LocalidadesController {
     description: 'The locality has been successfully created.',
     type: CreateLocalidadeDto,
   })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post()
   create(
@@ -76,18 +72,6 @@ export class LocalidadesController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
   @ApiOperation({ summary: 'Get all localities' })
-  // @ApiQuery({
-  //   name: 'page',
-  //   required: false,
-  //   description: 'Number of page',
-  //   example: 1,
-  // })
-  // @ApiQuery({
-  //   name: 'limit',
-  //   required: false,
-  //   description: 'Number of items per page',
-  //   example: 5,
-  // })
   @ApiResponse({
     status: 200,
     description: 'The locality has been successfully retrieved.',
@@ -102,17 +86,9 @@ export class LocalidadesController {
           nombre: 'Godoy Cruz',
         },
       ],
-      // count: 18,
-      // currentPage: '1',
-      // totalPages: 4,
     },
   })
-  // @ApiBearerAuth('JWT-auth')
-  // @ApiSecurity('Auth0')
-  // @Roles(Role.Admin)
-  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @Get()
-  // findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 5) {
   findAll() {
     return this.localidadesService.findAll();
   }
@@ -132,10 +108,6 @@ export class LocalidadesController {
       },
     },
   })
-  // @ApiBearerAuth('JWT-auth')
-  // @ApiSecurity('Auth0')
-  // @Roles(Role.Admin)
-  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.localidadesService.findOne(id);
@@ -162,10 +134,9 @@ export class LocalidadesController {
       },
     },
   })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Patch(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   update(
@@ -206,10 +177,9 @@ export class LocalidadesController {
       },
     },
   })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.localidadesService.remove(id);

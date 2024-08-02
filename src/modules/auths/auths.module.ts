@@ -1,4 +1,5 @@
-import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+// import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AuthsService } from './auths.service';
 import { AuthsController } from './auths.controller';
 import { UsersService } from '../users/users.service';
@@ -11,7 +12,6 @@ import { Servicio } from '../servicios/entities/servicio.entity';
 import { AuthGuard } from './auth.guards';
 import { Auth0Guard } from './auth0.guards';
 import { CompositeAuthGuard } from './compositeAuthGuard';
-import { requiresAuth } from 'express-openid-connect';
 import { MailService } from '../mail/mail.service';
 import { ImpuestosService } from '../impuestos/impuestos.service';
 import { ImpuestosModule } from '../impuestos/impuestos.module';
@@ -24,7 +24,13 @@ import { EquiposModule } from '../equipos/equipos.module';
     UsersModule,
     ImpuestosModule,
     EquiposModule,
-    TypeOrmModule.forFeature([Provincia, Localidad, Equipo, Servicio, Impuesto]),
+    TypeOrmModule.forFeature([
+      Provincia,
+      Localidad,
+      Equipo,
+      Servicio,
+      Impuesto,
+    ]),
   ],
   controllers: [AuthsController],
   providers: [
@@ -39,8 +45,10 @@ import { EquiposModule } from '../equipos/equipos.module';
     Logger,
   ],
 })
-export class AuthsModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(requiresAuth()).forRoutes();
-  }
-}
+export class AuthsModule {}
+
+// export class AuthsModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(requiresAuth()).forRoutes();
+//   }
+// }
