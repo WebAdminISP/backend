@@ -30,6 +30,7 @@ const relevamientos_module_1 = require("./modules/relevamientos/relevamientos.mo
 const mail_module_1 = require("./modules/mail/mail.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
 const facturacion_module_1 = require("./modules/facturacion/facturacion.module");
+const maps_module_1 = require("./modules/maps/maps.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -63,6 +64,7 @@ exports.AppModule = AppModule = __decorate([
             mail_module_1.MailModule,
             notifications_module_1.NotificationsModule,
             facturacion_module_1.FacturacionModule,
+            maps_module_1.MapsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [
