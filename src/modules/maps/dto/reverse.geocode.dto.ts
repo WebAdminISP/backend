@@ -4,7 +4,7 @@ import { IsNotEmpty, IsNumber } from 'class-validator';
 export class ReverseGeocodeDto {
   @ApiProperty({
     description: 'Latitud',
-    example: -34.603722,
+    example: -32.8433517,
     type: Number,
   })
   @IsNotEmpty({
@@ -15,7 +15,7 @@ export class ReverseGeocodeDto {
 
   @ApiProperty({
     description: 'Longitud',
-    example: -58.381592,
+    example: -68.8320765,
     type: Number,
   })
   @IsNotEmpty({

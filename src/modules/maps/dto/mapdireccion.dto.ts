@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString } from "class-validator";
 export class MapDomicilioDto {
     @ApiProperty({
         description: 'calle y numero',
-        example: 'Calle Falsa 123',
+        example: 'Juan Cornelio Moyano 195',
         type: String,
       })
     @IsNotEmpty({
