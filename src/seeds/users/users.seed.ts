@@ -59,30 +59,22 @@ export class UsersSeed {
       return;
     }
 
-    const equipoSeed = await this.equiposRepository.findOne({
-      where: { equipo: 'NanoLoco M5' },
-    });
+    const equiposSeed = await this.equiposRepository.find();
+    const serviciosSeed = await this.serviciosRepository.find();
+    const facturasSeed = await this.facturasRepository.find();
 
-    if (!equipoSeed) {
-      console.error('No se encontro el equipo: NanoLoco M5');
+    if (equiposSeed.length === 0) {
+      console.error('No se encontraron equipos');
       return;
     }
 
-    const servicioSeed = await this.serviciosRepository.findOne({
-      where: { nombre: '100/35' },
-    });
-
-    if (!servicioSeed) {
-      console.error('No se encontro el servicio: 100/35');
+    if (serviciosSeed.length === 0) {
+      console.error('No se encontraron servicios');
       return;
     }
 
-    const facturaSeed = await this.facturasRepository.findOne({
-      where: { concepto: '6/2' },
-    });
-
-    if (!facturaSeed) {
-      console.error('No se encontro el concepto: 6/2');
+    if (facturasSeed.length === 0) {
+      console.error('No se encontraron facturas');
       return;
     }
 
@@ -102,9 +94,9 @@ export class UsersSeed {
       user.provincia = provinciaSeed;
       user.localidad = localidadSeed;
       user.impuesto = impuestoSeed;
-      user.equipos = [equipoSeed];
-      user.servicios = [servicioSeed];
-      user.facturas = [facturaSeed];
+      user.equipos = equiposSeed;
+      user.servicios = serviciosSeed;
+      user.facturas = facturasSeed;
 
       console.log('Creando usuario: ', user.nombre);
       await this.usersRepository.save(user);

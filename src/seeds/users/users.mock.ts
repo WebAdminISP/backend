@@ -22,8 +22,8 @@ export const UsersMock = [
     emailInstal: 'seedUser@mail.com',
     observaciones: 'Seed para usuario administrador',
     senalConexion: '00',
-    equiposId: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
-    serviciosId: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
-    facturasId: '',
+    equiposId: [],
+    serviciosId: [],
+    facturasId: [],
   },
 ];
