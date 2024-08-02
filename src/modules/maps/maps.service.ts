@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
+import { config } from 'dotenv';
+config();
 
 @Injectable()
 export class MapsService {
@@ -16,8 +18,8 @@ export class MapsService {
     if(!data || data.status === 'ZERO_RESULTS') {
       throw new NotFoundException(`No pudimos encontrar una locación para esta dirección`)
     }
-
-    const coordenadas = await data.results[0].geometry.location;
+    //* las coordenadas estan en propiedad > .geometry.location
+    const coordenadas = await data.results[0];
 
     return coordenadas
   }
@@ -30,7 +32,7 @@ export class MapsService {
     if (!data || data.status === 'ZERO_RESULTS') {
       throw new NotFoundException(`No pudimos encontrar una dirección para estas coordenadas`);
     }
-
+    //* la direccion esta en propiedad > .formatted_address
     const address = data.results[0];
     return { address };
   }

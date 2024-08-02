@@ -46,7 +46,7 @@ export class RelevamientosService {
     // const longitud = -58.3816;
     // const latitud = -58.3816;
 
-    //* obtiene coordenadas del domicilio declarado por guest
+    //* Geocoding :obtiene coordenadas del domicilio declarado por guest
     const { direccion, provincia, localidad } = createRelevamientoDto;
     const domicilioCompleto = `${direccion}, ${localidad}, ${provincia}`;
     const coordenadas = await this.mapsService.getCoordenadas(domicilioCompleto);
