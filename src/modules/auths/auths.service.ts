@@ -18,7 +18,6 @@ import { Localidad } from '../localidades/entities/localidades.entity';
 import { Servicio } from '../servicios/entities/servicio.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
 import { ImpuestosService } from '../impuestos/impuestos.service';
-import { EquiposService } from '../equipos/equipos.service';
 
 @Injectable()
 export class AuthsService {
@@ -37,7 +36,6 @@ export class AuthsService {
     private servicioRepository: Repository<Servicio>,
     private readonly impuestosService: ImpuestosService,
     private readonly jwtService: JwtService,
-
   ) {}
 
   async signIn(signInDto: SignInDto) {
@@ -59,8 +57,9 @@ export class AuthsService {
     const userPayload = {
       sub: newUser.id,
       id: newUser.id,
+      agente: newUser.agente,
       email: newUser.email,
-      agente: newUser.nombre,
+      nommbre: newUser.nombre,
       roles: [newUser.isAdmin ? Role.Admin : Role.User],
     };
 
@@ -91,7 +90,7 @@ export class AuthsService {
   }
 
   async saveUser(createUserDto: CreateUserDto) {
-       //* verifica existencia de usuario
+    //* verifica existencia de usuario
     const existingUser = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -105,7 +104,6 @@ export class AuthsService {
     }
 
     createUserDto.password = hashedPassword;
-
 
     //* verificacion de existencia de Provincia y Localidad
     const provincia = await this.provinciaRepository.findOne({
@@ -147,32 +145,33 @@ export class AuthsService {
 
     //* busca impuesto por defecto : 'Consumidor Final'
     const nombreImpuestoDefault = 'Consumidor Final';
-    const impuestoDefault = (await this.impuestosService.findImpuestoDefault(nombreImpuestoDefault));
+    const impuestoDefault = await this.impuestosService.findImpuestoDefault(
+      nombreImpuestoDefault,
+    );
 
-
-     //* llena campos opcionales vacios
-     if(!createUserDto.domicilioInstal){
-       createUserDto.domicilioInstal = createUserDto.direccion
-     }
-
-    if(!createUserDto.localidadInstal) {
-      createUserDto.localidadInstal = localidad.nombre
+    //* llena campos opcionales vacios
+    if (!createUserDto.domicilioInstal) {
+      createUserDto.domicilioInstal = createUserDto.direccion;
     }
 
-    if(!createUserDto.telefonoInstal) {
+    if (!createUserDto.localidadInstal) {
+      createUserDto.localidadInstal = localidad.nombre;
+    }
+
+    if (!createUserDto.telefonoInstal) {
       createUserDto.telefonoInstal = createUserDto.telefono;
     }
 
-    if(!createUserDto.emailInstal) {
-      createUserDto.emailInstal = createUserDto.email
+    if (!createUserDto.emailInstal) {
+      createUserDto.emailInstal = createUserDto.email;
     }
 
     const user = this.usersRepository.create({
       ...createUserDto,
       provincia,
       localidad,
-      impuesto:impuestoDefault,
-      equipos:createUserDto.equipoId ? [equipo] : [],
+      impuesto: impuestoDefault,
+      equipos: createUserDto.equipoId ? [equipo] : [],
       servicios: createUserDto.servicioId ? [servicio] : [],
     });
 

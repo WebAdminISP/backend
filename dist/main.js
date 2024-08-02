@@ -55,43 +55,24 @@ async function bootstrap() {
     }));
     app.use(logger_middleware_1.LoggerGlobal);
     const swaggerConfig = new swagger_1.DocumentBuilder()
-        .setTitle('Demo NestJS API')
-        .setDescription('Esta es una API creada con NestJS para el Proyecto Final FullStack de HENRY')
+        .setTitle('WebAdminISP')
+        .setDescription(`<hr <font color=#2E86C1>
+      <h4><font color=#2E86C1>Bienvenido a la documentación oficial del Proyecto Final, de la carrera FullStack Developer de SoyHenry<b>: <a target='blank' href="https://github.com/WebAdminISP">PF4-WebAdminISP</a></b>.</h4>
+      <p><font color=#2E86C1>Esta API está construida con <b>NestJS</b> y utiliza <b>Swagger</b> para fines de documentación.</p>
+      <p><font color=#2E86C1>La API se desarrolla como parte del Módulo <b>Proyecto Final</b> de la especialidad: <b>Backend</b> en la carrera Fullstack Developer de <a target='blank' href="https://www.soyhenry.com/"><b>Soy Henry</b></a>.</p>
+      <p><font color=#2E86C1>Aquí encontrará toda la información necesaria para interactuar con nuestros endpoints.</p>
+      <hr <font color=#2E86C1>
+      <p align="right"><font color=#2E86C1><i><b>Version 1.0.0</b></i></p>
+      <p align="left"><font color=#2E86C1>Para cualquier consulta o soporte, por favor contacte a nuestro equipo de desarrollo.</p>
+      <p align="left"><font color=#2E86C1><a target='blank' href="mailto:ekinast@gmail.com"><b>Edmundo Kinast</b></a></p>
+      <p align="left"><font color=#2E86C1><a target='blank' href="mailto:rod.foxtrot.13@gmail.com"><b>Rodrigo Nahuel Fernandez</b></a></p>
+      <p align="left"><font color=#2E86C1><a target='blank' href="mailto:rafael.vh@gmail.com"><b>Rafael Velazquez Hernandez</b></a></p>
+      `)
         .setVersion('1.0')
-        .addBearerAuth({
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-    }, 'JWT-auth')
-        .addOAuth2({
-        type: 'oauth2',
-        flows: {
-            implicit: {
-                authorizationUrl: process.env.AUTH0_ISSUER_BASE_URL,
-                scopes: {
-                    openid: 'OpenID',
-                    profile: 'Profile',
-                    email: 'Email',
-                },
-            },
-        },
-    }, 'Auth0')
+        .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, swaggerConfig);
-    swagger_1.SwaggerModule.setup('api', app, document, {
-        swaggerOptions: {
-            oauth2RedirectUrl: 'http://localhost:3000/api/oauth2-redirect.html',
-            oauth: {
-                clientId: process.env.AUTH0_CLIENT_ID,
-                appName: 'WebAdminISP',
-                scopeSeparator: ' ',
-                additionalQueryStringParams: {},
-            },
-        },
-    });
+    swagger_1.SwaggerModule.setup('api', app, document);
     await app.listen(3000);
 }
 bootstrap();

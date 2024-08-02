@@ -22,14 +22,13 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiQuery,
-  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
-import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { RolesGuard } from '../auths/roles.guard';
 import { Role } from '../auths/roles.enum';
 import { Servicio } from './entities/servicio.entity';
+import { AuthGuard } from '../auths/auth.guards';
 
 @ApiTags('Servicios')
 @Controller('servicios')
@@ -38,10 +37,9 @@ export class ServiciosController {
 
   @Post()
   @ApiOperation({ summary: 'Agregar un servicio nuevo' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   // create(@Body() createServicioDto: CreateServicioDto) {
@@ -69,10 +67,6 @@ export class ServiciosController {
 
   @Get()
   @ApiOperation({ summary: 'Ver todos los servicios' })
-  // @ApiBearerAuth('JWT-auth')
-  // @ApiSecurity('Auth0')
-  // @Roles(Role.Admin)
-  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @ApiQuery({
     name: 'page',
     required: false,
@@ -98,10 +92,6 @@ export class ServiciosController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Ver un servicio por :id' })
-  // @ApiBearerAuth('JWT-auth')
-  // @ApiSecurity('Auth0')
-  // @Roles(Role.Admin)
-  // @UseGuards(CompositeAuthGuard, RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const servicio = await this.serviciosService.findOne(id);
@@ -115,10 +105,9 @@ export class ServiciosController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar un servicio por :id' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   // async update(
@@ -151,10 +140,9 @@ export class ServiciosController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un servicio por :id' })
-  @ApiBearerAuth('JWT-auth')
-  @ApiSecurity('Auth0')
+  @ApiBearerAuth()
   @Roles(Role.Admin)
-  @UseGuards(CompositeAuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(200)
   async delete(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.serviciosService.remove(id);
