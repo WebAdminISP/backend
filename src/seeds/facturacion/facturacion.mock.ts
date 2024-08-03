@@ -65,7 +65,7 @@ export const FacturacionMock = [
     concepto: '6/2',
     observaciones: 'Julio 2024',
     numFactura: 7,
-    tipoPago: 'Cheque',
+    tipoPago: '',
     fechaVencimiento: new Date('2024-08-10T00:00:00.000Z'),
     importe: 14000,
   },

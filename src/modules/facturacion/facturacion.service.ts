@@ -27,6 +27,7 @@ export class FacturacionService {
   async findOne(id: string) {
     const factura = await this.facturasRepository.findOne({
       where: { id: id },
+      relations: ['user'],
     });
 
     if (factura) {
