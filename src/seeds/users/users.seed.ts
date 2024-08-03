@@ -102,9 +102,13 @@ export class UsersSeed {
       user.servicios = [
         serviciosSeed[Math.floor(Math.random() * serviciosSeed.length)],
       ];
-      user.facturas = [
-        facturasSeed[Math.floor(Math.random() * facturasSeed.length)],
-      ];
+
+      // Asignar todas las facturas a un solo usuario (el segundo en la lista)
+      if (UsersMock.indexOf(userMock) === 1) {
+        user.facturas = facturasSeed;
+      } else {
+        user.facturas = [];
+      }
 
       console.log('Creando usuario: ', user.nombre);
       await this.usersRepository.save(user);
