@@ -54,7 +54,7 @@ import { MapsModule } from './modules/maps/maps.module';
     MailModule,
     NotificationsModule,
     FacturacionModule,
-    MapsModule
+    MapsModule,
   ],
   controllers: [AppController],
   providers: [

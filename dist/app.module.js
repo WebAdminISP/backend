@@ -64,7 +64,7 @@ exports.AppModule = AppModule = __decorate([
             mail_module_1.MailModule,
             notifications_module_1.NotificationsModule,
             facturacion_module_1.FacturacionModule,
-            maps_module_1.MapsModule
+            maps_module_1.MapsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
