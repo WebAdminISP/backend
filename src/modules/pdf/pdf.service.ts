@@ -10,7 +10,7 @@ export class PdfService {
   async generateInvoice(user: User, factura: Factura): Promise<string> {
     try {
       const doc = new PDFDocument();
-      const baseDir = process.cwd(); // Con esto obtengo el directorio base de la aplicación
+      const baseDir = process.cwd();
       const directory = path.join(
         baseDir,
         'src',
@@ -18,33 +18,51 @@ export class PdfService {
         'facturacion',
         'invoices',
       );
-      // Extraer mes y año de las observaciones
-      const [mes, año] = factura.observaciones.split(' ');
+      const filePath = path.join(directory, `factura_${factura.id}.pdf`);
 
-      // Construir el nombre del archivo
-      const filePath = path.join(
-        directory,
-        `factura_${user.email}_${mes}_${año}.pdf`,
-      );
-
+      // Crear el directorio si no existe
       if (!existsSync(directory)) {
         mkdirSync(directory, { recursive: true });
       }
 
-      // Crear un archivo PDF con los datos de la factura pero como promesa
-      // para asegurarnos de que el archivo PDF se haya escrito completamente antes de resolver la promesa.
       return new Promise((resolve, reject) => {
         const stream = createWriteStream(filePath);
         doc.pipe(stream);
 
-        doc.fontSize(25).text('Factura', {
-          align: 'center',
-        });
+        // Título
+        doc
+          .fontSize(25)
+          .font('Helvetica-Bold')
+          .text('UltraNet', { align: 'center' });
+        doc
+          .fontSize(20)
+          .font('Helvetica')
+          .text(`Factura: ${factura.observaciones}`, { align: 'center' });
 
-        doc.fontSize(12).text(`Nombre: ${user.nombre}`);
-        doc.text(`Dirección: ${user.direccion}`);
-        doc.text(`Teléfono: ${user.telefono}`);
-        doc.text(`Importe: ${factura.importe}`);
+        // Datos del Usuario
+        doc
+          .fontSize(12)
+          .font('Helvetica')
+          .text(`Nombre: ${user.nombre}`, 100, 150)
+          .text(`Dirección: ${user.direccion}`, 100, 170)
+          .text(`Teléfono: ${user.telefono}`, 100, 190)
+          .text(`Servicio: ${factura.concepto}`, 100, 210);
+
+        // Importe
+        doc
+          .fontSize(15)
+          .fillColor('red')
+          .text(`Importe: $ ${factura.importe}`, 100, 250);
+
+        // Añadir una Imagen (opcional)
+        // doc.image('path/to/image.png', {
+        //   fit: [100, 100],
+        //   align: 'right',
+        //   valign: 'center'
+        // });
+
+        // Dibujar una Línea
+        doc.moveTo(100, 300).lineTo(500, 300).stroke();
 
         doc.end();
 
@@ -53,7 +71,7 @@ export class PdfService {
         });
 
         stream.on('error', (err) => {
-          reject(new InternalServerErrorException('Error al generar el PDF'));
+          reject(new InternalServerErrorException('Error generating PDF'));
         });
       });
     } catch (error) {
