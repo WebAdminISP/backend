@@ -22,8 +22,6 @@ export const UsersMock = [
     emailInstal: 'seedUser@mail.com',
     observaciones: 'Seed para usuario administrador',
     senalConexion: '00',
-    equiposId: [],
-    serviciosId: [],
     facturasId: [],
   },
   {
@@ -49,9 +47,6 @@ export const UsersMock = [
     emailInstal: 'jperez@mail.com',
     observaciones: 'Seed para primer usuario cliente',
     senalConexion: '00',
-    equiposId: [],
-    serviciosId: [],
-    facturasId: [],
   },
   {
     createdAt: new Date(),
@@ -76,9 +71,6 @@ export const UsersMock = [
     emailInstal: 'aperez@mail.com',
     observaciones: 'Seed para segundo usuario cliente',
     senalConexion: '00',
-    equiposId: [],
-    serviciosId: [],
-    facturasId: [],
   },
   {
     createdAt: new Date(),
@@ -100,10 +92,7 @@ export const UsersMock = [
     domicilioInstal: 'Av. San Martín 3360 5°A',
     localidadInstal: 'Maipu',
     telefonoInstal: 1234567,
-    emailInstal: 'seedUser@mail.com',
+    emailInstal: 'madmin@mail.com',
     observaciones: 'Seed para usuariode la usuaria administradora',
-    equiposId: [],
-    serviciosId: [],
-    facturasId: [],
   },
 ];
