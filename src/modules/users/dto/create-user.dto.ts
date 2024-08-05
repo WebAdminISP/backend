@@ -49,6 +49,15 @@ export class CreateUserDto {
   @ApiHideProperty()
   agente?: string;
 
+  @ApiProperty({
+    description: 'imgUrl debe ser un enlace valido a una imagen',
+    example: 'https://exmple-image.webp',
+    default: 'https://exmple-image.webp',
+    required: true,
+  })
+  @IsString()
+  imgUrl: string;
+
   @IsNotEmpty({ message: 'El nombre es obligatorio y no puede estar vacío.' })
   @IsString({ message: 'El nombre debe ser una cadena de texto.' })
   @Length(3, 50, { message: 'El nombre debe tener entre 3 y 80 caracteres.' })

@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import * as PDFDocument from 'pdfkit';
+import PDFDocument from 'pdfkit';
 import { createWriteStream, existsSync, mkdirSync } from 'fs';
 import * as path from 'path';
 import { User } from '../users/entities/user.entity';
@@ -70,6 +70,7 @@ export class PdfService {
           resolve(filePath);
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         stream.on('error', (err) => {
           reject(new InternalServerErrorException('Error generating PDF'));
         });

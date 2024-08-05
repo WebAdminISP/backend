@@ -23,6 +23,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { FacturacionModule } from './modules/facturacion/facturacion.module';
 import { MapsModule } from './modules/maps/maps.module';
 import { PdfModule } from './modules/pdf/pdf.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { PdfModule } from './modules/pdf/pdf.module';
     FacturacionModule,
     MapsModule,
     PdfModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [

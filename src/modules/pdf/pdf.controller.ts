@@ -9,7 +9,9 @@ import { Response } from 'express';
 import { PdfService } from './pdf.service';
 import { UsersService } from '../users/users.service';
 import { FacturacionService } from '../facturacion/facturacion.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('PDFs')
 @Controller('pdf')
 export class PdfController {
   constructor(

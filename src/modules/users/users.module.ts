@@ -11,6 +11,7 @@ import { AuthGuard } from '../auths/auth.guards';
 import { Auth0Guard } from '../auths/auth0.guards';
 import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { requiresAuth } from 'express-openid-connect';
+import { CloudinaryService } from 'src/common/cloudinary.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
@@ -29,6 +30,7 @@ import { requiresAuth } from 'express-openid-connect';
     Auth0Guard,
     CompositeAuthGuard,
     Logger,
+    CloudinaryService,
   ],
   exports: [TypeOrmModule, UsersService],
 })

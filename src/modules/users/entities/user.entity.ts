@@ -34,6 +34,13 @@ export class User {
   @Column({ length: 50, nullable: false })
   agente: string;
 
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    default: 'https://exmple-image.webp',
+  })
+  imgUrl: string;
+
   @Column({ length: 50, nullable: false })
   nombre: string;
 

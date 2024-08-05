@@ -74,6 +74,7 @@ export class AuthsService {
 
     const agente = decodedToken.agente;
 
+    console.log(decodedToken);
     return {
       succes: 'User logged in successfully',
       token,

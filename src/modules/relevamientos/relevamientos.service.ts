@@ -24,7 +24,7 @@ export class RelevamientosService {
     private localidadRepository: Repository<Localidad>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private mapsService:MapsService,
+    private mapsService: MapsService,
   ) {}
 
   async create(createRelevamientoDto: CreateRelevamientoDto) {
@@ -40,16 +40,20 @@ export class RelevamientosService {
         `Ya existe un relevamiento para este email.Un agente se contactará.`,
       );
 
-    // //w localizar agente cercano y asignar(mock)
+    //w localizar agente cercano y asignar(mock)
     const agente = 'Seed User';
+
+    //* Si se tiene api de GoogleMaps.
+    //* Descomentar: lat, lng y comentar toda la función que busca las coordenadas.
     //w localiza coordenadas domicilio(mock)
-    // const longitud = -58.3816;
-    // const latitud = -58.3816;
+    // const lat = -58.3816;
+    // const lng = -58.3816;
 
     //* Geocoding :obtiene coordenadas del domicilio declarado por guest
     const { direccion, provincia, localidad } = createRelevamientoDto;
     const domicilioCompleto = `${direccion}, ${localidad}, ${provincia}`;
-    const coordenadas = await this.mapsService.getCoordenadas(domicilioCompleto);
+    const coordenadas =
+      await this.mapsService.getCoordenadas(domicilioCompleto);
     const { lat, lng } = coordenadas;
 
     const fetchedProvincia = await this.provinciaRepository.findOne({
@@ -68,7 +72,6 @@ export class RelevamientosService {
       throw new BadRequestException('La localidad no existe');
     }
 
-
     //* crea nuevo relevamiento con propiedades restantes
     const newRelevamiento = this.relevamientoRepository.create({
       ...createRelevamientoDto,
@@ -77,8 +80,8 @@ export class RelevamientosService {
       longitud: lng,
       // latitud,
       // longitud,
-      provincia:fetchedProvincia,
-      localidad:fetchedLocalidad,
+      provincia: fetchedProvincia,
+      localidad: fetchedLocalidad,
     });
 
     const savedRelevamiento =

@@ -10,6 +10,7 @@ import { AuthGuard } from '../auths/auth.guards';
 import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { UsersService } from '../users/users.service';
 import { requiresAuth } from 'express-openid-connect';
+import { CloudinaryService } from 'src/common/cloudinary.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Servicio, User])],
@@ -21,6 +22,7 @@ import { requiresAuth } from 'express-openid-connect';
     CompositeAuthGuard,
     Logger,
     UsersService,
+    CloudinaryService,
   ],
 })
 export class ServiciosModule implements NestModule {
