@@ -10,6 +10,7 @@ import { Impuesto } from '../../modules/impuestos/entities/impuesto.entity';
 import { Equipo } from '../../modules/equipos/entities/equipo.entity';
 import { Servicio } from '../../modules/servicios/entities/servicio.entity';
 import { Factura } from '../../modules/facturacion/entities/facturacion.entity';
+import { FacturacionMock } from '../facturacion/facturacion.mock';
 
 @Injectable()
 export class UsersSeed {
@@ -61,7 +62,6 @@ export class UsersSeed {
 
     const equiposSeed = await this.equiposRepository.find();
     const serviciosSeed = await this.serviciosRepository.find();
-    const facturasSeed = await this.facturasRepository.find();
 
     if (equiposSeed.length === 0) {
       console.error('No se encontraron equipos');
@@ -73,10 +73,8 @@ export class UsersSeed {
       return;
     }
 
-    if (facturasSeed.length === 0) {
-      console.error('No se encontraron facturas');
-      return;
-    }
+    // Eliminar facturas con userId nulo
+    await this.facturasRepository.delete({ user: null });
 
     for (const userMock of UsersMock) {
       const existingUser = await this.usersRepository.findOne({
@@ -84,6 +82,9 @@ export class UsersSeed {
       });
 
       if (existingUser) {
+        console.log(
+          `Usuario ${existingUser.email} ya existe, saltando creación.`,
+        );
         continue;
       }
 
@@ -95,19 +96,72 @@ export class UsersSeed {
       user.localidad = localidadSeed;
       user.impuesto = impuestoSeed;
 
-      // Asignar instancias únicas de equipos, servicios y facturas a cada usuario
+      // Asignar un equipo aleatorio
       user.equipos = [
         equiposSeed[Math.floor(Math.random() * equiposSeed.length)],
       ];
-      user.servicios = [
-        serviciosSeed[Math.floor(Math.random() * serviciosSeed.length)],
-      ];
-      user.facturas = [
-        facturasSeed[Math.floor(Math.random() * facturasSeed.length)],
-      ];
 
-      console.log('Creando usuario: ', user.nombre);
+      // Asignar el servicio específico basado en el nombre
+      if (userMock.email === 'jperez@mail.com') {
+        const servicio = serviciosSeed.find((serv) => serv.nombre === '6/2');
+        if (servicio) {
+          user.servicios = [servicio];
+        } else {
+          console.error('No se encontró el servicio 6/2');
+          return;
+        }
+      } else if (userMock.email === 'aperez@mail.com') {
+        const servicio = serviciosSeed.find((serv) => serv.nombre === '30/7.5');
+        if (servicio) {
+          user.servicios = [servicio];
+        } else {
+          console.error('No se encontró el servicio 30/7.5');
+          return;
+        }
+      }
+
+      // Guardar el usuario antes de asignar facturas
       await this.usersRepository.save(user);
+
+      // Crear y asignar instancias de Factura a Juan Pérez y Alberto Pérez
+      let facturas;
+      if (userMock.email === 'jperez@mail.com') {
+        facturas = FacturacionMock.juanPerez.map((facturaData) => {
+          const factura = new Factura();
+          Object.assign(factura, facturaData);
+          factura.user = user;
+          return factura;
+        });
+      } else if (userMock.email === 'aperez@mail.com') {
+        facturas = FacturacionMock.albertoPerez.map((facturaData) => {
+          const factura = new Factura();
+          Object.assign(factura, facturaData);
+          factura.user = user;
+          return factura;
+        });
+      } else {
+        facturas = [];
+      }
+
+      for (const factura of facturas) {
+        const existingFactura = await this.facturasRepository.findOne({
+          where: { numFactura: factura.numFactura, user: { id: user.id } },
+        });
+
+        if (existingFactura) {
+          console.log(
+            `Factura ${existingFactura.numFactura} ya existe para el usuario ${user.email}, saltando creación.`,
+          );
+          continue;
+        }
+
+        await this.facturasRepository.save(factura);
+        console.log(
+          `Factura ${factura.numFactura} guardada en la DB para el usuario ${user.email}`,
+        );
+      }
+
+      console.log('Usuario creado: ', user.nombre);
     }
   }
 }
