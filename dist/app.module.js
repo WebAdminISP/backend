@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
@@ -16,7 +19,7 @@ const authErrorsInterceptor_1 = require("./interceptors/authErrorsInterceptor");
 const global_http_filter_1 = require("./filter/global-http-filter");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
-const typeorm_2 = require("./config/typeorm");
+const typeorm_2 = __importDefault(require("./config/typeorm"));
 const jwt_1 = require("@nestjs/jwt");
 const users_module_1 = require("./modules/users/users.module");
 const auths_module_1 = require("./modules/auths/auths.module");
@@ -32,6 +35,7 @@ const notifications_module_1 = require("./modules/notifications/notifications.mo
 const facturacion_module_1 = require("./modules/facturacion/facturacion.module");
 const maps_module_1 = require("./modules/maps/maps.module");
 const pdf_module_1 = require("./modules/pdf/pdf.module");
+const files_module_1 = require("./modules/files/files.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -67,6 +71,7 @@ exports.AppModule = AppModule = __decorate([
             facturacion_module_1.FacturacionModule,
             maps_module_1.MapsModule,
             pdf_module_1.PdfModule,
+            files_module_1.FilesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

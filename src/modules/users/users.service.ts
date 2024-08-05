@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -95,25 +99,24 @@ export class UsersService {
     return updatedUser;
   }
 
-  async updateAdmin(id:string, userToAdminDto:UserToAdminDto) {
-    const user = await this.usersRepository.findOneBy({id});
-    if(!user)
-      throw new BadRequestException(`El usuario no existe`)
+  async updateAdmin(id: string, userToAdminDto: UserToAdminDto) {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) throw new BadRequestException(`El usuario no existe`);
 
-    for(const key in userToAdminDto){
-      if(userToAdminDto.hasOwnProperty(key)) {
-        user[key] = userToAdminDto[key]
+    for (const key in userToAdminDto) {
+      if (userToAdminDto.hasOwnProperty(key)) {
+        user[key] = userToAdminDto[key];
       }
     }
 
     const response = await this.usersRepository.save(user);
-    const {password, ...updatedUser} = response;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...updatedUser } = response;
 
     return {
-      message: `Usuario ${updatedUser.nombre} es ahora Administrador`, 
-      updatedUser
-    }
-
+      message: `Usuario ${updatedUser.nombre} es ahora Administrador`,
+      updatedUser,
+    };
   }
 
   async deleteUser(id: string) {
@@ -128,5 +131,18 @@ export class UsersService {
     await this.usersRepository.remove(oldUser);
 
     return { success: `User with id: ${id} deleted successfully` };
+  }
+
+  async updateUserImage(id: string, secure_url: string) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException(`El usuario con id: ${id} no existe`);
+    }
+
+    user.imgUrl = secure_url;
+    await this.usersRepository.save(user);
+
+    return user;
   }
 }

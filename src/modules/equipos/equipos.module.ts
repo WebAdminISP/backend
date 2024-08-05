@@ -10,6 +10,7 @@ import { UsersController } from '../users/users.controller';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
 import { requiresAuth } from 'express-openid-connect';
+import { CloudinaryService } from 'src/common/cloudinary.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Equipo, User])],
@@ -21,6 +22,7 @@ import { requiresAuth } from 'express-openid-connect';
     CompositeAuthGuard,
     Logger,
     UsersService,
+    CloudinaryService,
   ],
 })
 export class EquiposModule implements NestModule {

@@ -3,16 +3,20 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
   HttpCode,
   Param,
+  ParseFilePipe,
   ParseUUIDPipe,
   Patch,
+  Post,
   Put,
   Query,
   Req,
-  // Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -23,20 +27,30 @@ import { Roles } from '../../decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiExcludeEndpoint,
   ApiOperation,
+  ApiParam,
   ApiQuery,
-  // ApiSecurity,
+  ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthGuard } from '../auths/auth.guards';
 import { UserToAdminDto } from './dto/user-to-admin.dto';
+import { CloudinaryService } from 'src/common/cloudinary.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileValidatorPipe } from 'src/pipes/fileValidator.pipe';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly UsersService: UsersService) {
+  constructor(
+    private readonly UsersService: UsersService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {
     console.log('UsersController instantiated');
   }
   @Get()
@@ -69,17 +83,18 @@ export class UsersController {
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
   @Patch('admin/:id')
-  async updateAdmin(@Param('id', ParseUUIDPipe) id:string, 
-                    @Body() userToAdminDto: UserToAdminDto )                  
-{
-try {
-  console.log(userToAdminDto);
-  const response = await this.UsersService.updateAdmin(id, userToAdminDto);
-  return response
-} catch (error) {
-  throw error
-}
-}
+  async updateAdmin(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() userToAdminDto: UserToAdminDto,
+  ) {
+    try {
+      console.log(userToAdminDto);
+      const response = await this.UsersService.updateAdmin(id, userToAdminDto);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Ver un usuario por :id' })
@@ -138,5 +153,55 @@ try {
     //   usuario: tokenResponse.user,
     // };
     return tokenResponse;
+  }
+
+  @ApiOperation({ summary: 'Subir una imagen para el usuario' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the user',
+    type: String,
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'The image to upload',
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'The URL of the uploaded image',
+    schema: {
+      type: 'object',
+      properties: {
+        imageUrl: { type: 'string' },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Post('uploadImage/:id')
+  @UseInterceptors(FileInterceptor('image'))
+  @UsePipes(FileValidatorPipe)
+  async uploadProuctImage(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const imageUrl = await this.cloudinaryService.uploadImage(file);
+    return this.UsersService.updateUserImage(id, imageUrl.secure_url);
   }
 }
