@@ -7,6 +7,7 @@ import {
   HttpCode,
   Param,
   ParseUUIDPipe,
+  Patch,
   Put,
   Query,
   Req,
@@ -30,6 +31,7 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthGuard } from '../auths/auth.guards';
+import { UserToAdminDto } from './dto/user-to-admin.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -61,6 +63,23 @@ export class UsersController {
     const allUsers: User[] = await this.UsersService.getUsers(page, limit);
     return allUsers;
   }
+
+  @ApiOperation({ summary: 'Asigna rol de administrador' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Patch('admin/:id')
+  async updateAdmin(@Param('id', ParseUUIDPipe) id:string, 
+                    @Body() userToAdminDto: UserToAdminDto )                  
+{
+try {
+  console.log(userToAdminDto);
+  const response = await this.UsersService.updateAdmin(id, userToAdminDto);
+  return response
+} catch (error) {
+  throw error
+}
+}
 
   @Get(':id')
   @ApiOperation({ summary: 'Ver un usuario por :id' })
