@@ -27,7 +27,7 @@ import { RelevamientosSeed } from './relevamientos/relevamientos.seed';
       Impuesto,
       Servicio,
       Factura,
-      Relevamiento
+      Relevamiento,
     ]),
   ],
   providers: [
@@ -38,7 +38,7 @@ import { RelevamientosSeed } from './relevamientos/relevamientos.seed';
     ImpuestosSeed,
     ServiciosSeed,
     FacturacionSeed,
-    RelevamientosSeed
+    RelevamientosSeed,
   ],
   exports: [
     ProvinciasSeed,

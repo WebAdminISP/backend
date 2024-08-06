@@ -42,8 +42,10 @@ export class UsersService {
 
     // console.log(decodedToken);
 
-    const iat = new Date(decodedToken.iat * 1000).toLocaleString();
-    const exp = new Date(decodedToken.exp * 1000).toLocaleString();
+    // const iat = new Date(decodedToken.iat * 1000).toLocaleString();
+    const iat = decodedToken.iat;
+    // const exp = new Date(decodedToken.exp * 1000).toLocaleString();
+    const exp = decodedToken.exp;
 
     return {
       succes: 'User logged in successfully',

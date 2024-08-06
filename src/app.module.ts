@@ -39,7 +39,6 @@ import { FilesModule } from './modules/files/files.module';
     UsersModule,
     AuthsModule,
     SeedsModule,
-    //FilesModule,
     JwtModule.register({
       global: true,
       signOptions: { expiresIn: '1h' },
