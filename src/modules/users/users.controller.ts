@@ -99,8 +99,7 @@ export class UsersController {
   @Get(':id')
   @ApiOperation({ summary: 'Ver un usuario por :id' })
   @ApiBearerAuth()
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   async getUserById(@Param('id', new ParseUUIDPipe()) id: string) {
     const user = await this.UsersService.getUserById(id);
