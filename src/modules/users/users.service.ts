@@ -73,6 +73,7 @@ export class UsersService {
   async getUserById(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id: id },
+      relations: ['facturas'],
     });
 
     if (!user) throw new NotFoundException('Usuario No Encontrado');
