@@ -10,7 +10,7 @@ import { addMinutes } from 'date-fns';
 import { Transform } from 'class-transformer';
 
 export class CreateFacturacionDto {
-  @ApiHideProperty()
+  @ApiProperty({ description: 'ID del usuario.' })
   @IsUUID()
   @IsOptional()
   userId?: string;

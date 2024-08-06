@@ -37,7 +37,7 @@ export class PdfService {
         doc
           .fontSize(20)
           .font('Helvetica')
-          .text(`Factura: ${factura.observaciones}`, { align: 'center' });
+          .text(`Pre-factura: ${factura.observaciones}`, { align: 'center' });
 
         // Datos del Usuario
         doc

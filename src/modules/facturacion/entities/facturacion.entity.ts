@@ -9,10 +9,10 @@ export class Factura {
   id: string;
 
   @ManyToOne(() => User, (user) => user.facturas, {
-    nullable: true,
+    nullable: false,
     onDelete: 'SET NULL',
   })
-  user?: User;
+  user: User;
 
   @Column({ length: 50, nullable: false })
   agente: string;

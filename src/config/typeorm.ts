@@ -16,7 +16,7 @@ const config = {
   extra: {
     timezone: 'America/Buenos_Aires', // Establecer la zona horaria aquí
   },
-  // dropSchema: true,
+  dropSchema: true,
   //logging: true,
   logging: ['error'],
   entities: ['dist/**/*.entity{.js,.ts}'],
