@@ -9,7 +9,7 @@ import { Response } from 'express';
 import { PdfService } from './pdf.service';
 import { UsersService } from '../users/users.service';
 import { FacturacionService } from '../facturacion/facturacion.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('PDFs')
 @Controller('pdf')
@@ -21,6 +21,14 @@ export class PdfController {
   ) {}
 
   @Get(':id')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'PDF file',
+  //   schema: {
+  //     type: 'string',
+  //     format: 'binary',
+  //   },
+  // })
   async getFactura(@Param('id') id: string, @Res() res: Response) {
     try {
       const factura = await this.facturacionService.findOne(id);
