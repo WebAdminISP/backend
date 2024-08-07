@@ -46,15 +46,15 @@ export class RelevamientosService {
     //* Si se tiene api de GoogleMaps.
     //* Descomentar: lat, lng y comentar toda la función que busca las coordenadas.
     //w localiza coordenadas domicilio(mock)
-    // const lat = -58.3816;
-    // const lng = -58.3816;
+    const lat = -58.3816;
+    const lng = -58.3816;
 
     //* Geocoding :obtiene coordenadas del domicilio declarado por guest
-    const { direccion, provincia, localidad } = createRelevamientoDto;
-    const domicilioCompleto = `${direccion}, ${localidad}, ${provincia}`;
-    const coordenadas =
-      await this.mapsService.getCoordenadas(domicilioCompleto);
-    const { lat, lng } = coordenadas;
+    // const { direccion, provincia, localidad } = createRelevamientoDto;
+    // const domicilioCompleto = `${direccion}, ${localidad}, ${provincia}`;
+    // const coordenadas =
+    //   await this.mapsService.getCoordenadas(domicilioCompleto);
+    // const { lat, lng } = coordenadas;
 
     const fetchedProvincia = await this.provinciaRepository.findOne({
       where: { nombre: createRelevamientoDto.provincia },

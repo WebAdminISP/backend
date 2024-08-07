@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @Entity({
@@ -53,6 +47,30 @@ export class Equipo {
   @Column({ nullable: true })
   antena?: string;
 
-  @ManyToOne(() => User, (user) => user.equipos, { nullable: true , onDelete:'SET NULL'})
+  @ManyToOne(() => User, (user) => user.equipos, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   user?: User;
+
+  @Column({ nullable: false, default: false })
+  isInstalled: boolean;
+
+  @Column({ nullable: true })
+  domicilioInstal: string;
+
+  @Column({ nullable: true })
+  localidadInstal: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  telefonoInstal: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  emailInstal: string;
+
+  @Column({ nullable: true })
+  observaciones: string;
+
+  @Column({ nullable: true })
+  senalConexion: string;
 }

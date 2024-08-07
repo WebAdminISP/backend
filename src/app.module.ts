@@ -24,6 +24,7 @@ import { FacturacionModule } from './modules/facturacion/facturacion.module';
 import { MapsModule } from './modules/maps/maps.module';
 import { PdfModule } from './modules/pdf/pdf.module';
 import { FilesModule } from './modules/files/files.module';
+import { AsistenciasModule } from './modules/asistencias/asistencias.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { FilesModule } from './modules/files/files.module';
     MapsModule,
     PdfModule,
     FilesModule,
+    AsistenciasModule,
   ],
   controllers: [AppController],
   providers: [
