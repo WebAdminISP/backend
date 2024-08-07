@@ -76,6 +76,15 @@ export class CreateFacturacionDto {
   })
   tipoPago: string;
 
+  @IsNotEmpty()
+  @IsString({ message: 'El tipo de pago debe ser un booleano.' })
+  @ApiProperty({
+    description: 'El tipo de pago debe ser un booleano.',
+    example: 'true',
+    type: Boolean,
+  })
+  pagado: boolean;
+
   @ApiProperty({
     description: 'La fecha de vencimiento de la factura.',
     example: '2023-12-31T23:59:59.999Z',
