@@ -3,9 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   UseGuards,
   UsePipes,
   Query,
@@ -18,7 +16,6 @@ import {
 } from '@nestjs/common';
 import { FacturacionService } from './facturacion.service';
 import { CreateFacturacionDto } from './dto/create-facturacion.dto';
-import { UpdateFacturacionDto } from './dto/update-facturacion.dto';
 import {
   ApiBearerAuth,
   ApiOperation,

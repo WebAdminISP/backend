@@ -13,6 +13,7 @@ import { Equipo } from '../../equipos/entities/equipo.entity';
 import { Servicio } from '../../servicios/entities/servicio.entity';
 import { Impuesto } from '../../impuestos/entities/impuesto.entity';
 import { Factura } from 'src/modules/facturacion/entities/facturacion.entity';
+import { Asistencia } from 'src/modules/asistencias/entities/asistencia.entity';
 
 @Entity({
   name: 'users',
@@ -89,23 +90,8 @@ export class User {
   @Column()
   codigoPostal: string;
 
-  @Column()
-  domicilioInstal: string;
-
-  @Column()
-  localidadInstal: string;
-
-  @Column({ type: 'varchar' })
-  telefonoInstal: string;
-
-  @Column()
-  emailInstal: string;
-
   @Column({ nullable: true })
   observaciones: string;
-
-  @Column({ nullable: true })
-  senalConexion: string;
 
   @OneToMany(() => Equipo, (equipo) => equipo.user, {
     nullable: true,
@@ -119,6 +105,15 @@ export class User {
   })
   servicios: Servicio[];
 
-  @OneToMany(() => Factura, (factura) => factura.user)
+  @OneToMany(() => Asistencia, (asistencia) => asistencia.user, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  asistencias: Asistencia[];
+
+  @OneToMany(() => Factura, (factura) => factura.user, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   facturas: Factura[];
 }

@@ -26,6 +26,7 @@ export class EquiposSeed {
         equipo.agente = equiposData.agente;
         equipo.equipo = equiposData.equipo;
         equipo.macEquipo = equiposData.macEquipo;
+        equipo.isInstalled = equiposData.isInstalled;
         await this.equiposRepository.save(equipo);
         console.log(`Equipo ${equipo.nombre} guardado en la DB`);
       }
