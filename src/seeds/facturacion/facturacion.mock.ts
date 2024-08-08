@@ -152,7 +152,7 @@ export const FacturacionMock = {
       observaciones: 'Julio 2024',
       numFactura: 7,
       tipoPago: '',
-      pagado: true,
+      pagado: false,
       fechaVencimiento: new Date('2024-08-10T00:00:00.000Z'),
       importe: 14000,
     },

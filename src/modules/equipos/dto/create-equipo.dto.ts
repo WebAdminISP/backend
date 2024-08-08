@@ -9,9 +9,9 @@ import {
 
 export class CreateEquipoDto {
   @IsNotEmpty({
-    message: 'El agente es obligatorio y no puede estar vacío.',
+    message: 'El nombre es obligatorio y no puede estar vacío.',
   })
-  @IsString({ message: 'El agente es cargado automaticamente' })
+  @IsString({ message: 'El nombre debe ser un string' })
   @ApiProperty({
     description: 'El nombre debe ser válido.',
     example: 'Huawei',
