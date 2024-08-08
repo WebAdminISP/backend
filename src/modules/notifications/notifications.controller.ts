@@ -1,29 +1,16 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { MailService } from '../mail/mail.service';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { NotificationsService } from './notifications.service';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Notificaciones')
 @Controller('notifications')
 export class NotificationsController {
-  constructor(private readonly mailService: MailService) {}
+  constructor(private readonly notificationsService: NotificationsService) {}
 
-  @Post('register')
-  async sendRegistrationConfirmation(
-    @Body() body: { email: string; username: string },
-  ) {
-    const { email, username } = body;
-    await this.mailService.sendRegistrationConfirmation(email, username);
+  @Get('send-monthly-notifications')
+  async sendMonthlyNotifications(): Promise<void> {
+    return this.notificationsService.sendMonthlyNotificationsWithAttachments();
   }
 
-  @Post('billing')
-  async sendBillingAlert(@Body() body: { email: string; amount: number }) {
-    const { email, amount } = body;
-    await this.mailService.sendBillingAlert(email, amount);
-  }
-
-  @Post('update')
-  async sendServiceUpdate(@Body() body: { email: string; update: string }) {
-    const { email, update } = body;
-    await this.mailService.sendServiceUpdate(email, update);
-  }
+  // Puedes agregar más endpoints según sea necesario
 }

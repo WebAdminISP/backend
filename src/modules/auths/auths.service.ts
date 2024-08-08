@@ -59,7 +59,7 @@ export class AuthsService {
       id: newUser.id,
       agente: newUser.agente,
       email: newUser.email,
-      nommbre: newUser.nombre,
+      nombre: newUser.nombre,
       roles: [newUser.isAdmin ? Role.Admin : Role.User],
     };
 
@@ -67,7 +67,7 @@ export class AuthsService {
 
     const decodedToken = this.jwtService.decode(token);
 
-    // console.log(decodedToken);
+    console.log('Decoded Token', decodedToken);
 
     // const iat = new Date(decodedToken.iat * 1000).toLocaleString();
     const iat = decodedToken.iat;
