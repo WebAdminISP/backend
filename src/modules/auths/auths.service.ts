@@ -67,7 +67,7 @@ export class AuthsService {
 
     const decodedToken = this.jwtService.decode(token);
 
-    console.log('Decoded Token', decodedToken);
+    //console.log('Decoded Token', decodedToken);
 
     // const iat = new Date(decodedToken.iat * 1000).toLocaleString();
     const iat = decodedToken.iat;

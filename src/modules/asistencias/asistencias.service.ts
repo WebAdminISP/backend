@@ -40,13 +40,17 @@ export class AsistenciasService {
       userId: createAsistenciaDto.userId,
     });
 
-    console.log('Creating Asistencia:', asistencia);
+    //console.log('Creating Asistencia:', asistencia);
 
     return await this.asistenciaRepository.save(asistencia);
   }
 
-  findAll() {
-    return `This action returns all asistencias`;
+  async findAll(page: number, limit: number) {
+    const skippedItems = (page - 1) * limit;
+    return this.asistenciaRepository.find({
+      skip: skippedItems,
+      take: limit,
+    });
   }
 
   findOne(id: number) {
