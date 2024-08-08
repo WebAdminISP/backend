@@ -8,13 +8,21 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { AsistenciasService } from './asistencias.service';
 import { CreateAsistenciaDto } from './dto/create-asistencia.dto';
 import { UpdateAsistenciaDto } from './dto/update-asistencia.dto';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auths/auth.guards';
 import { Request } from 'express';
+import { Asistencia } from './entities/asistencia.entity';
 
 @ApiTags('Asistencias')
 @Controller('asistencias')
@@ -31,13 +39,33 @@ export class AsistenciasController {
     @Req() req: Request,
   ) {
     const user = req.user;
-    console.log('Authenticated User:', user);
+    //console.log('Authenticated User:', user);
     return await this.asistenciasService.create(createAsistenciaDto, user);
   }
 
   @Get()
-  findAll() {
-    return this.asistenciasService.findAll();
+  @ApiOperation({ summary: 'Ver todas las asistencias' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+    example: 5,
+  })
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 5,
+  ) {
+    const allServicios: Asistencia[] = await this.asistenciasService.findAll(
+      page,
+      limit,
+    );
+    return allServicios;
   }
 
   @Get(':id')
