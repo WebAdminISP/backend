@@ -72,7 +72,11 @@ async function bootstrap() {
       <p align="left"><font color=#2E86C1><a target='blank' href="mailto:rafael.vh@gmail.com"><b>Rafael Velazquez Hernandez</b></a></p>
       `)
         .setVersion('1.0')
-        .addBearerAuth()
+        .addBearerAuth({
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+    }, 'JWT-auth')
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, swaggerConfig);
     swagger_1.SwaggerModule.setup('api', app, document);
