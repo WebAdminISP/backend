@@ -52,18 +52,13 @@ export class AuthsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async createUser(
     //* extiende la req de express que se espera tenga propiedades extra
-    @Req() req: Request & { oidc?: any; user?: any },
+    // @Req() req: Request & { oidc?: any; user?: any },
+    @Req() req: Request,
     @Body() createUserDto: CreateUserDto,
   ) {
-    let agente: string;
+    const agente = req.user.nombre;
 
-    //* propiedad user existe tanto en auth interna como externa
-    //* solo difiere el acceso al nombre (name > Auth0, agente > Interna)
-    if (req.user) {
-      agente = req.user.name || req.user.agente;
-    } else {
-      throw new UnauthorizedException('No se pudo determinar el agente');
-    }
+    console.log('Agenteeeee:', req.user);
 
     //? creo que esta verificacion no corre nunca
     if (!agente) {
