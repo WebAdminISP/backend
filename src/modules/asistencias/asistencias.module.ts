@@ -8,8 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from '../users/users.service';
 import { CloudinaryService } from '../../common/cloudinary.service';
 import { AuthGuard } from '../auths/auth.guards';
-import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
-import { Auth0Guard } from '../auths/auth0.guards';
 import { requiresAuth } from 'express-openid-connect';
 
 @Module({
@@ -18,8 +16,6 @@ import { requiresAuth } from 'express-openid-connect';
   providers: [
     AsistenciasService,
     AuthGuard,
-    Auth0Guard,
-    CompositeAuthGuard,
     Logger,
     UsersService,
     CloudinaryService,
