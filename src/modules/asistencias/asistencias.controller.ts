@@ -23,16 +23,20 @@ import {
 import { AuthGuard } from '../auths/auth.guards';
 import { Request } from 'express';
 import { Asistencia } from './entities/asistencia.entity';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from '../auths/roles.enum';
+import { RolesGuard } from '../auths/roles.guard';
 
 @ApiTags('Asistencias')
 @Controller('asistencias')
 export class AsistenciasController {
   constructor(private readonly asistenciasService: AsistenciasService) {}
 
-  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Dar de alta un pedido o asistencia' })
   @ApiBearerAuth()
+  //@Roles(Role.Admin)
+  @UseGuards(AuthGuard)
   @ApiBody({ type: CreateAsistenciaDto })
   async create(
     @Body() createAsistenciaDto: CreateAsistenciaDto,
@@ -45,6 +49,9 @@ export class AsistenciasController {
 
   @Get()
   @ApiOperation({ summary: 'Ver todas las asistencias' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiQuery({
     name: 'page',
     required: false,
@@ -61,11 +68,11 @@ export class AsistenciasController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 5,
   ) {
-    const allServicios: Asistencia[] = await this.asistenciasService.findAll(
+    const allAsistencias: Asistencia[] = await this.asistenciasService.findAll(
       page,
       limit,
     );
-    return allServicios;
+    return allAsistencias;
   }
 
   @Get(':id')

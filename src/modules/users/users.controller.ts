@@ -53,6 +53,7 @@ export class UsersController {
   ) {
     console.log('UsersController instantiated');
   }
+
   @Get()
   @ApiOperation({ summary: 'Ver todos los usuarios' })
   @ApiBearerAuth()
