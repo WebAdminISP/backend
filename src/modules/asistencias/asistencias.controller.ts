@@ -9,6 +9,12 @@ import {
   UseGuards,
   Req,
   Query,
+  UsePipes,
+  ValidationPipe,
+  ParseUUIDPipe,
+  Put,
+  HttpCode,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AsistenciasService } from './asistencias.service';
 import { CreateAsistenciaDto } from './dto/create-asistencia.dto';
@@ -35,7 +41,6 @@ export class AsistenciasController {
   @Post()
   @ApiOperation({ summary: 'Dar de alta un pedido o asistencia' })
   @ApiBearerAuth()
-  //@Roles(Role.Admin)
   @UseGuards(AuthGuard)
   @ApiBody({ type: CreateAsistenciaDto })
   async create(
@@ -76,20 +81,57 @@ export class AsistenciasController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.asistenciasService.findOne(+id);
+  @ApiOperation({ summary: 'Ver una asistencia por :id' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const asistencia = await this.asistenciasService.findOne(id);
+    if (!asistencia) {
+      return {
+        error: 'No se encontró la asistencia.',
+      };
+    }
+    return asistencia;
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateAsistenciaDto: UpdateAsistenciaDto,
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualizar una asistencia por :id' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @HttpCode(200)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async update(
+    @Req() req: Request & { oidc?: any; user?: any },
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() createAsistenciaDto: CreateAsistenciaDto,
   ) {
-    return this.asistenciasService.update(+id, updateAsistenciaDto);
+    let agente: string;
+
+    if (req.user) {
+      agente = req.user.name || req.user.agente;
+    } else {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createAsistenciaDto.agente = agente;
+    console.log('agente cargado automáticamente al dto');
+    return this.asistenciasService.update(id, createAsistenciaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.asistenciasService.remove(+id);
+  @ApiOperation({ summary: 'Eliminar una asistencia por :id' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @HttpCode(200)
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.asistenciasService.remove(id);
   }
 }

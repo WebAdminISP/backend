@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAsistenciaDto } from './dto/create-asistencia.dto';
 import { UpdateAsistenciaDto } from './dto/update-asistencia.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -53,15 +57,46 @@ export class AsistenciasService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} asistencia`;
+  async findOne(id: string) {
+    const asistencia = await this.asistenciaRepository.findOne({
+      where: { id: id },
+    });
+
+    if (asistencia) {
+      return {
+        ...asistencia,
+      };
+    } else {
+      return null;
+    }
   }
 
-  update(id: number, updateAsistenciaDto: UpdateAsistenciaDto) {
-    return `This action updates a #${id} asistencia`;
+  async update(id: string, updatedAsistenciaData: Partial<Asistencia>) {
+    const oldAsistencia = await this.asistenciaRepository.findOneBy({ id: id });
+
+    if (!oldAsistencia) {
+      throw new NotFoundException(`Asistencia con ID ${id} no encontrada`);
+    }
+
+    // Merge de datos: copiar las propiedades actualizadas
+    Object.assign(oldAsistencia, updatedAsistenciaData);
+
+    const updatedAsistencia =
+      await this.asistenciaRepository.save(oldAsistencia);
+    return updatedAsistencia;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} asistencia`;
+  async remove(id: string) {
+    const oldAsistencia = await this.asistenciaRepository.findOne({
+      where: { id },
+    });
+
+    if (!oldAsistencia) {
+      throw new NotFoundException(`Asistencia con ID ${id} no encontrada`);
+    }
+
+    await this.asistenciaRepository.remove(oldAsistencia);
+
+    return { success: `Asistencia con id: ${id} eliminado con éxito` };
   }
 }
