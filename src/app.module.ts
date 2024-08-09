@@ -25,6 +25,7 @@ import { MapsModule } from './modules/maps/maps.module';
 import { PdfModule } from './modules/pdf/pdf.module';
 import { FilesModule } from './modules/files/files.module';
 import { AsistenciasModule } from './modules/asistencias/asistencias.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { AsistenciasModule } from './modules/asistencias/asistencias.module';
     PdfModule,
     FilesModule,
     AsistenciasModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [

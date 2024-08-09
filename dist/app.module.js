@@ -37,6 +37,7 @@ const maps_module_1 = require("./modules/maps/maps.module");
 const pdf_module_1 = require("./modules/pdf/pdf.module");
 const files_module_1 = require("./modules/files/files.module");
 const asistencias_module_1 = require("./modules/asistencias/asistencias.module");
+const chat_module_1 = require("./modules/chat/chat.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -74,6 +75,7 @@ exports.AppModule = AppModule = __decorate([
             pdf_module_1.PdfModule,
             files_module_1.FilesModule,
             asistencias_module_1.AsistenciasModule,
+            chat_module_1.ChatModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
