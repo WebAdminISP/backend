@@ -29,6 +29,7 @@ import { RolesGuard } from '../auths/roles.guard';
 import { Role } from '../auths/roles.enum';
 import { Servicio } from './entities/servicio.entity';
 import { AuthGuard } from '../auths/auth.guards';
+import { Request } from 'express';
 
 @ApiTags('Servicios')
 @Controller('servicios')
@@ -42,26 +43,14 @@ export class ServiciosController {
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  // create(@Body() createServicioDto: CreateServicioDto) {
-  //   return this.serviciosService.create(createServicioDto);
-  create(
-    @Req() req: Request & { oidc?: any; user?: any },
-    @Body() createServicioDto: CreateServicioDto,
-  ) {
-    let agente: string;
-
-    if (req.user) {
-      agente = req.user.name || req.user.agente;
-    } else {
-      throw new UnauthorizedException('No se pudo determinar el agente');
-    }
+  create(@Req() req: Request, @Body() createServicioDto: CreateServicioDto) {
+    const agente = req.user.nombre;
 
     if (!agente) {
       throw new UnauthorizedException('No se pudo determinar el agente');
     }
 
     createServicioDto.agente = agente;
-    console.log('agente cargado automáticamente al dto');
     return this.serviciosService.create(createServicioDto);
   }
 
@@ -110,31 +99,18 @@ export class ServiciosController {
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
-  // async update(
-  //   @Param('id', new ParseUUIDPipe()) id: string,
-  //   @Body() createServicioDto: CreateServicioDto,
-  // ) {
-  //   return this.serviciosService.update(id, createServicioDto);
-  // }
   async update(
     @Req() req: Request & { oidc?: any; user?: any },
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() createServicioDto: CreateServicioDto,
   ) {
-    let agente: string;
-
-    if (req.user) {
-      agente = req.user.name || req.user.agente;
-    } else {
-      throw new UnauthorizedException('No se pudo determinar el agente');
-    }
+    const agente = req.user.nombre;
 
     if (!agente) {
       throw new UnauthorizedException('No se pudo determinar el agente');
     }
 
     createServicioDto.agente = agente;
-    console.log('agente cargado automáticamente al dto');
     return this.serviciosService.update(id, createServicioDto);
   }
 

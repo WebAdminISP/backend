@@ -7,6 +7,12 @@ import {
   Delete,
   UseGuards,
   Put,
+  HttpCode,
+  ValidationPipe,
+  UsePipes,
+  HttpStatus,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ImpuestosService } from './impuestos.service';
 import { CreateImpuestoDto } from './dto/create-impuesto.dto';
@@ -15,6 +21,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import { RolesGuard } from '../auths/roles.guard';
 import { AuthGuard } from '../auths/auth.guards';
+import { Request } from 'express';
 
 @ApiTags('Impuestos')
 @Controller('impuestos')
@@ -26,7 +33,19 @@ export class ImpuestosController {
   @ApiBearerAuth()
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
-  async create(@Body() createImpuestoDto: CreateImpuestoDto) {
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async create(
+    @Req() req: Request,
+    @Body() createImpuestoDto: CreateImpuestoDto,
+  ) {
+    const agente = req.user.nombre;
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createImpuestoDto.agente = agente;
     return await this.impuestosService.create(createImpuestoDto);
   }
 
@@ -55,8 +74,16 @@ export class ImpuestosController {
   @UseGuards(AuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,
+    @Req() req: Request,
     @Body() updateImpuestoDto: CreateImpuestoDto,
   ) {
+    const agente = req.user.nombre;
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    updateImpuestoDto.agente = agente;
     return await this.impuestosService.update(id, updateImpuestoDto);
   }
 
