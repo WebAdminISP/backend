@@ -56,6 +56,9 @@ export class Equipo {
   @Column({ nullable: false, default: false })
   isInstalled: boolean;
 
+  @Column({ nullable: false, default: true })
+  isAvailable: boolean;
+
   @Column({ nullable: true })
   domicilioInstal: string;
 

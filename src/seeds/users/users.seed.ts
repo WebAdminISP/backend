@@ -96,10 +96,19 @@ export class UsersSeed {
       user.localidad = localidadSeed;
       user.impuesto = impuestoSeed;
 
+      const equiposDisponibles = equiposSeed
+        .filter((equipo) => !equipo.isAvailable)
+        .slice(0, 3);
+
+      if (equiposDisponibles.length < 3) {
+        console.error(
+          'No se encontraron suficientes equipos disponibles (isAvailable: false)',
+        );
+        return;
+      }
+
       // Asignar un equipo aleatorio
-      user.equipos = [
-        equiposSeed[Math.floor(Math.random() * equiposSeed.length)],
-      ];
+      user.equipos = equiposDisponibles;
 
       // Asignar el servicio específico basado en el nombre
       if (userMock.email === 'jperez@mail.com') {
