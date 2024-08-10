@@ -14,6 +14,7 @@ import {
   Put,
   Query,
   Req,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -37,7 +38,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthGuard } from '../auths/auth.guards';
 import { UserToAdminDto } from './dto/user-to-admin.dto';
 import { CloudinaryService } from 'src/common/cloudinary.service';
@@ -138,19 +139,19 @@ export class UsersController {
   //? Ejemplo de uso Auth0.
   @ApiExcludeEndpoint()
   @Get('auth0/callback')
-  // async getAuth0Protected(@Req() req: Request, @Res() res: Response) {
-  async getAuth0Protected(@Req() req: Request) {
+  async getAuth0Protected(@Req() req: Request, @Res() res: Response) {
+    // async getAuth0Protected(@Req() req: Request) {
     const auth0Data = req.oidc.user;
     console.log('Respuesta de auth0:', auth0Data);
 
     // return this.usersService.auth0Signin(auth0Data);
     const tokenResponse = await this.UsersService.auth0Signin(auth0Data);
 
-    // res.redirect(`http://localhost:3000/products`);
-    // return {
-    //   token: tokenResponse.token,
-    //   usuario: tokenResponse.user,
-    // };
+    const redirectUrl = `http://localhost:3001/dashboard/home?token=${tokenResponse.token}&issuedAt=${tokenResponse.issuedAt}&expiresAt=${tokenResponse.expiresAt}&agente=${tokenResponse.agente}&userId=${tokenResponse.user.id}&userEmail=${tokenResponse.user.email}&userNombre=${tokenResponse.user.nombre}&userRole=${tokenResponse.user.roles}`;
+
+    res.redirect(redirectUrl);
+
+    // console.log('Redireccionando a:', redirectUrl);
     return tokenResponse;
   }
 
