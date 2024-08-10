@@ -11,6 +11,10 @@ import {
   ValidationPipe,
   ParseUUIDPipe,
   Put,
+  HttpCode,
+  HttpStatus,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { RelevamientosService } from './relevamientos.service';
 import { CreateRelevamientoDto } from './dto/create-relevamiento.dto';
@@ -25,6 +29,7 @@ import { Role } from '../auths/roles.enum';
 import { RolesGuard } from '../auths/roles.guard';
 import { RangoFecha } from './dto/rango-fecha.dto';
 import { AuthGuard } from '../auths/auth.guards';
+import { Request } from 'express';
 
 @ApiTags('Relevamientos')
 @Controller('relevamientos')
@@ -37,7 +42,22 @@ export class RelevamientosController {
 
   //* Público: usado por guests
   @Post()
-  async create(@Body() createRelevamientoDto: CreateRelevamientoDto) {
+  @ApiOperation({ summary: 'Agregar un relevamiento nuevo' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async create(
+    @Req() req: Request,
+    @Body() createRelevamientoDto: CreateRelevamientoDto,
+  ) {
+    const agente = req.user.nombre;
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createRelevamientoDto.agente = agente;
     return this.relevamientosService.create(createRelevamientoDto);
   }
 
@@ -118,10 +138,20 @@ export class RelevamientosController {
   @ApiBearerAuth()
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
+  @HttpCode(200)
+  @UsePipes(new ValidationPipe({ transform: true }))
   async updateRelevamiento(
+    @Req() req: Request,
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateRelevamiento: CreateRelevamientoDto,
   ) {
+    const agente = req.user.nombre;
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    updateRelevamiento.agente = agente;
     return await this.relevamientosService.update(id, updateRelevamiento);
   }
 

@@ -1,3 +1,4 @@
+import { auth } from 'express-openid-connect';
 import {
   Controller,
   Get,
@@ -28,6 +29,8 @@ import { Roles } from '../../decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import { RolesGuard } from './../auths/roles.guard';
 import { AuthGuard } from '../auths/auth.guards';
+import { UsersService } from '../users/users.service';
+import { Request } from 'express';
 
 @ApiTags('Equipos')
 @Controller('equipos')
@@ -43,24 +46,14 @@ export class EquiposController {
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(
-    @Req() req: Request & { oidc?: any; user?: any },
-    @Body() createEquipoDto: CreateEquipoDto,
-  ) {
-    let agente: string;
-
-    if (req.user) {
-      agente = req.user.name || req.user.agente;
-    } else {
-      throw new UnauthorizedException('No se pudo determinar el agente');
-    }
+  async create(@Req() req: Request, @Body() createEquipoDto: CreateEquipoDto) {
+    const agente = req.user.nombre;
 
     if (!agente) {
       throw new UnauthorizedException('No se pudo determinar el agente');
     }
 
     createEquipoDto.agente = agente;
-    console.log('agente cargado automáticamente al dto');
     return this.equiposService.create(createEquipoDto);
   }
 
@@ -113,24 +106,17 @@ export class EquiposController {
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(
-    @Req() req: Request & { oidc?: any; user?: any },
+    @Req() req: Request,
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() createEquipoDto: CreateEquipoDto,
   ) {
-    let agente: string;
-
-    if (req.user) {
-      agente = req.user.name || req.user.agente;
-    } else {
-      throw new UnauthorizedException('No se pudo determinar el agente');
-    }
+    const agente = req.user.nombre;
 
     if (!agente) {
       throw new UnauthorizedException('No se pudo determinar el agente');
     }
 
     createEquipoDto.agente = agente;
-    console.log('agente cargado automáticamente al dto');
     return this.equiposService.update(id, createEquipoDto);
   }
 }

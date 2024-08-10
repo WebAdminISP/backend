@@ -13,6 +13,7 @@ import {
   Put,
   HttpCode,
   Req,
+  HttpStatus,
 } from '@nestjs/common';
 import { FacturacionService } from './facturacion.service';
 import { CreateFacturacionDto } from './dto/create-facturacion.dto';
@@ -27,6 +28,7 @@ import { Role } from '../auths/roles.enum';
 import { AuthGuard } from '../auths/auth.guards';
 import { RolesGuard } from '../auths/roles.guard';
 import { Factura } from './entities/facturacion.entity';
+import { Request } from 'express';
 
 @ApiTags('Facturación')
 @Controller('facturacion')
@@ -34,7 +36,23 @@ export class FacturacionController {
   constructor(private readonly facturacionService: FacturacionService) {}
 
   @Post()
-  create(@Body() createFacturacionDto: CreateFacturacionDto) {
+  @ApiOperation({ summary: 'Agregar una factura nueva' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async create(
+    @Req() req: Request,
+    @Body() createFacturacionDto: CreateFacturacionDto,
+  ) {
+    const agente = req.user.nombre;
+
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createFacturacionDto.agente = agente;
     return this.facturacionService.create(createFacturacionDto);
   }
 
@@ -90,24 +108,17 @@ export class FacturacionController {
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(
-    @Req() req: Request & { oidc?: any; user?: any },
+    @Req() req: Request,
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() createFacturaDto: CreateFacturacionDto,
   ) {
-    let agente: string;
-
-    if (req.user) {
-      agente = req.user.name || req.user.agente;
-    } else {
-      throw new UnauthorizedException('No se pudo determinar el agente');
-    }
+    const agente = req.user.nombre;
 
     if (!agente) {
       throw new UnauthorizedException('No se pudo determinar el agente');
     }
 
     createFacturaDto.agente = agente;
-    console.log('agente cargado automáticamente al dto');
     return this.facturacionService.update(id, createFacturaDto);
   }
 }

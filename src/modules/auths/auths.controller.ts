@@ -50,22 +50,13 @@ export class AuthsController {
   @ApiOperation({ summary: 'Dar de alta un usuario nuevo' })
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async createUser(
-    //* extiende la req de express que se espera tenga propiedades extra
-    // @Req() req: Request & { oidc?: any; user?: any },
-    @Req() req: Request,
-    @Body() createUserDto: CreateUserDto,
-  ) {
+  async createUser(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
     const agente = req.user.nombre;
 
-    console.log('Agenteeeee:', req.user);
-
-    //? creo que esta verificacion no corre nunca
     if (!agente) {
       throw new UnauthorizedException('No se pudo determinar el agente');
     }
 
-    //* agrega al agente al dto y lo pasa al servicio
     createUserDto.agente = agente;
     const email = createUserDto.email;
     const username = createUserDto.nombre;
