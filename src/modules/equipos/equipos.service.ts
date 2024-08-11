@@ -52,6 +52,22 @@ export class EquiposService {
     }
   }
 
+  async getEquiposCount() {
+    const totalEquipos = await this.equiposRepository
+      .createQueryBuilder('equipo')
+      .getCount();
+
+    const totalDisponibles = await this.equiposRepository
+      .createQueryBuilder('equipo')
+      .where('equipo.isAvailable = :isAvailable', { isAvailable: true })
+      .getCount();
+
+    return {
+      totalEquipos,
+      totalDisponibles,
+    };
+  }
+
   async findAll(page: number, limit: number) {
     const skippedItems = (page - 1) * limit;
     return this.equiposRepository.find({
