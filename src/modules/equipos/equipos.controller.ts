@@ -81,6 +81,16 @@ export class EquiposController {
     return allEquipos;
   }
 
+  @Get('/stats')
+  @ApiOperation({ summary: 'Obtener estadísticas de equipos' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  async getEquiposStats() {
+    const stats = await this.equiposService.getEquiposCount();
+    return stats;
+  }
+
   @Get('/available')
   @ApiOperation({ summary: 'Ver todos los equipos disponibles' })
   @ApiBearerAuth()
