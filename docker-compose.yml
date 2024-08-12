@@ -3,9 +3,10 @@
 services:
   nestapp:
     ##build: ./
-    build:
-      context: .
-      dockerfile: Dockerfile
+    ##build:
+    ##  context: .
+    ##  dockerfile: Dockerfile
+    image: pfinal:latest
     container_name: pfinal
     ports:
       - '3000:3000'
