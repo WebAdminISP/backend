@@ -6,6 +6,7 @@ import {
   FileTypeValidator,
   Get,
   HttpCode,
+  NotFoundException,
   Param,
   ParseFilePipe,
   ParseUUIDPipe,
@@ -144,15 +145,21 @@ export class UsersController {
     const auth0Data = req.oidc.user;
     console.log('Respuesta de auth0:', auth0Data);
 
-    // return this.usersService.auth0Signin(auth0Data);
-    const tokenResponse = await this.UsersService.auth0Signin(auth0Data);
+    try {
+      const tokenResponse = await this.UsersService.auth0Signin(auth0Data);
 
-    const redirectUrl = `http://localhost:3001/dashboard/home?token=${tokenResponse.token}&issuedAt=${tokenResponse.issuedAt}&expiresAt=${tokenResponse.expiresAt}&agente=${tokenResponse.agente}&userId=${tokenResponse.user.id}&userEmail=${tokenResponse.user.email}&userNombre=${tokenResponse.user.nombre}&userRole=${tokenResponse.user.roles}`;
-
-    res.redirect(redirectUrl);
-
-    // console.log('Redireccionando a:', redirectUrl);
-    return tokenResponse;
+      const redirectUrl = `http://localhost:3001/verifyAuth0?verify=true&token=${tokenResponse.token}&issuedAt=${tokenResponse.issuedAt}&expiresAt=${tokenResponse.expiresAt}&agente=${tokenResponse.agente}&userId=${tokenResponse.user.id}&userEmail=${tokenResponse.user.email}&userNombre=${tokenResponse.user.nombre}&userRole=${tokenResponse.user.roles}`;
+      res.redirect(redirectUrl);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        // Redirigir a una página específica cuando el usuario no tiene cuenta
+        const errorRedirectUrl = `http://localhost:3001/verifyAuth0?verify=false`;
+        res.redirect(errorRedirectUrl);
+      } else {
+        // Manejar otros tipos de errores si es necesario
+        res.status(500).send('Internal Server Error');
+      }
+    }
   }
 
   @ApiOperation({ summary: 'Subir una imagen para el usuario' })
