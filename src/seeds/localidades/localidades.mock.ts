@@ -42,6 +42,7 @@ export const LocalidadesMock = [
     nombre: 'Malargüe',
   },
   {
+    //agente: 'Seed User',
     nombre: 'Tupungato',
   },
   {

@@ -16,6 +16,8 @@ export class AuthErrorsInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       catchError((err) => {
+        console.error('Error capturado por el interceptor:', err);
+
         if (
           err instanceof UnauthorizedException ||
           err instanceof ForbiddenException ||

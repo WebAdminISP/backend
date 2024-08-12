@@ -14,6 +14,17 @@ import { AuthsModule } from './modules/auths/auths.module';
 import { ProvinciasModule } from './modules/provincias/provincias.module';
 import { SeedsModule } from './seeds/seeds.module';
 import { LocalidadesModule } from './modules/localidades/localidades.module';
+import { EquiposModule } from './modules/equipos/equipos.module';
+import { ServiciosModule } from './modules/servicios/servicios.module';
+import { ImpuestosModule } from './modules/impuestos/impuestos.module';
+import { RelevamientosModule } from './modules/relevamientos/relevamientos.module';
+import { MailModule } from './modules/mail/mail.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { FacturacionModule } from './modules/facturacion/facturacion.module';
+import { MapsModule } from './modules/maps/maps.module';
+import { PdfModule } from './modules/pdf/pdf.module';
+import { FilesModule } from './modules/files/files.module';
+import { AsistenciasModule } from './modules/asistencias/asistencias.module';
 
 @Module({
   imports: [
@@ -29,7 +40,6 @@ import { LocalidadesModule } from './modules/localidades/localidades.module';
     UsersModule,
     AuthsModule,
     SeedsModule,
-    //FilesModule,
     JwtModule.register({
       global: true,
       signOptions: { expiresIn: '1h' },
@@ -39,6 +49,17 @@ import { LocalidadesModule } from './modules/localidades/localidades.module';
     UsersModule,
     ProvinciasModule,
     LocalidadesModule,
+    EquiposModule,
+    ServiciosModule,
+    ImpuestosModule,
+    RelevamientosModule,
+    MailModule,
+    NotificationsModule,
+    FacturacionModule,
+    MapsModule,
+    PdfModule,
+    FilesModule,
+    AsistenciasModule,
   ],
   controllers: [AppController],
   providers: [

@@ -15,6 +15,9 @@ import * as bcrypt from 'bcrypt';
 import { Role } from './roles.enum';
 import { Provincia } from '../provincias/entities/provincia.entity';
 import { Localidad } from '../localidades/entities/localidades.entity';
+import { Servicio } from '../servicios/entities/servicio.entity';
+import { Equipo } from '../equipos/entities/equipo.entity';
+import { ImpuestosService } from '../impuestos/impuestos.service';
 
 @Injectable()
 export class AuthsService {
@@ -27,6 +30,11 @@ export class AuthsService {
     private provinciaRepository: Repository<Provincia>,
     @InjectRepository(Localidad)
     private localidadRepository: Repository<Localidad>,
+    @InjectRepository(Equipo)
+    private equipoRepository: Repository<Equipo>,
+    @InjectRepository(Servicio)
+    private servicioRepository: Repository<Servicio>,
+    private readonly impuestosService: ImpuestosService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -49,8 +57,9 @@ export class AuthsService {
     const userPayload = {
       sub: newUser.id,
       id: newUser.id,
+      agente: newUser.agente,
       email: newUser.email,
-      agente: newUser.nombre,
+      nombre: newUser.nombre,
       roles: [newUser.isAdmin ? Role.Admin : Role.User],
     };
 
@@ -58,10 +67,12 @@ export class AuthsService {
 
     const decodedToken = this.jwtService.decode(token);
 
-    // console.log(decodedToken);
+    //console.log('Decoded Token', decodedToken);
 
-    const iat = new Date(decodedToken.iat * 1000).toLocaleString();
-    const exp = new Date(decodedToken.exp * 1000).toLocaleString();
+    // const iat = new Date(decodedToken.iat * 1000).toLocaleString();
+    const iat = decodedToken.iat;
+    // const exp = new Date(decodedToken.exp * 1000).toLocaleString();
+    const exp = decodedToken.exp;
 
     const agente = decodedToken.agente;
 
@@ -71,11 +82,17 @@ export class AuthsService {
       issuedAt: iat,
       expiresAt: exp,
       agente,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        nombre: newUser.nombre,
+        roles: [newUser.isAdmin ? Role.Admin : Role.User],
+      },
     };
-    //return { succes: 'User logged in successfully' };
   }
 
-  async saveUser(createUserDto: Omit<CreateUserDto, 'isAdmin'>) {
+  async saveUser(createUserDto: CreateUserDto) {
+    //* verifica existencia de usuario
     const existingUser = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -90,6 +107,7 @@ export class AuthsService {
 
     createUserDto.password = hashedPassword;
 
+    //* verificacion de existencia de Provincia y Localidad
     const provincia = await this.provinciaRepository.findOne({
       where: { id: createUserDto.provinciaId },
     });
@@ -109,10 +127,54 @@ export class AuthsService {
       );
     }
 
+    const equipo = await this.equipoRepository.findOne({
+      where: { id: createUserDto.equipoId },
+    });
+    if (!equipo) {
+      throw new NotFoundException(
+        `Equipo with ID ${createUserDto.equipoId} not found`,
+      );
+    }
+
+    const servicio = await this.servicioRepository.findOne({
+      where: { id: createUserDto.servicioId },
+    });
+    if (!servicio) {
+      throw new NotFoundException(
+        `Servicio with ID ${createUserDto.servicioId} not found`,
+      );
+    }
+
+    //* busca impuesto por defecto : 'Consumidor Final'
+    const nombreImpuestoDefault = 'Consumidor Final';
+    const impuestoDefault = await this.impuestosService.findImpuestoDefault(
+      nombreImpuestoDefault,
+    );
+
+    //* llena campos opcionales vacios
+    if (!createUserDto.domicilioInstal) {
+      createUserDto.domicilioInstal = createUserDto.direccion;
+    }
+
+    if (!createUserDto.localidadInstal) {
+      createUserDto.localidadInstal = localidad.nombre;
+    }
+
+    if (!createUserDto.telefonoInstal) {
+      createUserDto.telefonoInstal = createUserDto.telefono;
+    }
+
+    if (!createUserDto.emailInstal) {
+      createUserDto.emailInstal = createUserDto.email;
+    }
+
     const user = this.usersRepository.create({
       ...createUserDto,
       provincia,
       localidad,
+      impuesto: impuestoDefault,
+      equipos: createUserDto.equipoId ? [equipo] : [],
+      servicios: createUserDto.servicioId ? [servicio] : [],
     });
 
     if (!createUserDto.createdAt) {

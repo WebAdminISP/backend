@@ -1,6 +1,7 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
   IsDate,
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsNumber,
@@ -9,25 +10,17 @@ import {
   IsUUID,
   Length,
   Matches,
-  Max,
-  Min,
-  // ValidateNested,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { addMinutes } from 'date-fns';
-// import { Provincia } from '../../provincias/entities/provincia.entity';
-// import { Localidad } from '../../localidades/entities/localidades.entity';
 
 export class CreateUserDto {
   @ApiHideProperty()
-  // @ApiProperty({
-  //   description: 'Define si el usuario es administrador boolean.',
-  //   example: 'false',
-  //   type: Boolean,
-  // })
+  @IsOptional()
+  @IsBoolean({ message: 'isAdmin debe ser un valor booleano.' })
   isAdmin: boolean;
 
-  @IsOptional()
+  @ApiHideProperty()
   @IsDate({ message: 'createdAt debe ser una instancia de Date' })
   @Transform(
     ({ value }) => {
@@ -38,44 +31,51 @@ export class CreateUserDto {
     },
     { toClassOnly: true },
   )
-  @ApiHideProperty()
+  @IsOptional()
+  // @IsNotEmpty({ message: 'La fecha de creación es obligatoria.' })
   // @ApiProperty({
-  //   description: 'La fecha de creación del usuario se genera automáticamente.',
-  //   type: Date,
+  //   description: 'La fecha de creación del usuario.',
+  //   example: '2023-12-31T23:59:59.999Z',
   // })
   createdAt: Date;
 
-  @IsOptional()
-  @IsString({ message: 'El agente es cargado automaticamente' })
-  // @ApiProperty({})
+  @IsOptional({ message: 'El agente es cargado automaticamente' })
+  @IsString({ message: 'El agente debe ser una cadena de texto.' })
+  @Length(3, 50, { message: 'El agente debe tener entre 3 y 80 caracteres.' })
+  // @ApiProperty({
+  //   description: 'El nombre del agente debe ser válido y contener al menos 3 caracteres.',
+  //   example: 'Agente Pérez',
+  // })
   @ApiHideProperty()
   agente?: string;
 
+  @ApiProperty({
+    description: 'imgUrl debe ser un enlace valido a una imagen',
+    example: 'https://exmple-image.webp',
+    default: 'https://exmple-image.webp',
+    required: true,
+  })
+  @IsString()
+  imgUrl: string;
+
   @IsNotEmpty({ message: 'El nombre es obligatorio y no puede estar vacío.' })
   @IsString({ message: 'El nombre debe ser una cadena de texto.' })
-  @Length(3, 80, { message: 'El nombre debe tener entre 3 y 80 caracteres.' })
+  @Length(3, 50, { message: 'El nombre debe tener entre 3 y 80 caracteres.' })
   @ApiProperty({
     description:
       'El nombre del usuario debe ser válido y contener al menos 3 caracteres.',
     example: 'Juan Pérez',
-    type: String,
   })
   nombre: string;
 
-  @IsNotEmpty({
-    message: 'El número de teléfono es obligatorio.',
-  })
-  @IsNumber({}, { message: 'El teléfono debe ser un número entero' })
-  @Min(1000000, { message: 'El teléfono debe tener al menos 7 dígitos' })
-  @Max(999999999999999, {
-    message: 'El teléfono debe tener como máximo 15 dígitos',
-  })
+  @IsNotEmpty({ message: 'El número de teléfono es obligatorio.' })
+  @IsString()
   @ApiProperty({
-    description: 'El número de teléfono debe ser un número entero.',
+    description: 'El número de teléfono debe ser un string.',
     example: 1234567,
-    type: Number,
+    type: String,
   })
-  telefono: number;
+  telefono: string;
 
   @IsNotEmpty({
     message: 'La dirección es obligatoria y no puede estar vacía.',
@@ -90,9 +90,7 @@ export class CreateUserDto {
   })
   direccion: string;
 
-  @IsNotEmpty({
-    message: 'La latitud es obligatoria y no puede estar vacía.',
-  })
+  @IsNotEmpty({ message: 'La latitud es obligatoria y no puede estar vacía.' })
   @IsNumber({}, { message: 'La latitud debe ser un número.' })
   @ApiProperty({
     description: 'La latitud debe ser válida.',
@@ -101,9 +99,7 @@ export class CreateUserDto {
   })
   latitud: number;
 
-  @IsNotEmpty({
-    message: 'La longitud es obligatoria y no puede estar vacía.',
-  })
+  @IsNotEmpty({ message: 'La longitud es obligatoria y no puede estar vacía.' })
   @IsNumber({}, { message: 'La longitud debe ser un número.' })
   @ApiProperty({
     description: 'La longitud debe ser válida.',
@@ -124,12 +120,7 @@ export class CreateUserDto {
   documento: number;
 
   @IsNotEmpty({ message: 'El email es obligatorio y no puede estar vacío.' })
-  @IsEmail(
-    {},
-    {
-      message: 'El correo electrónico no es válido.',
-    },
-  )
+  @IsEmail({}, { message: 'El correo electrónico no es válido.' })
   @ApiProperty({
     description: 'El email del usuario debe ser un email válido.',
     example: 'jperez@mail.com',
@@ -152,135 +143,167 @@ export class CreateUserDto {
   })
   password: string;
 
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString({ message: 'La razón social debe ser una cadena de texto.' })
   @Length(8, 40, {
-    message: 'El nombre de la razón social debe tener entre 8 y 40 caracteres.',
+    message: 'La razón social debe tener entre 8 y 40 caracteres.',
   })
-  @ApiProperty({
-    description: 'La razón social debe ser válida.',
-    example: 'Café los Angelitos',
-    type: String,
-  })
+  // @ApiProperty({
+  //   description: 'La razón social debe ser válida.',
+  //   example: 'Café los Angelitos',
+  //   type: String,
+  // })
   razonSocial: string;
 
-  @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
-  @ApiProperty()
-  impuesto: string;
-
-  // @IsNotEmpty({})
-  // @ValidateNested()
-  // @Type(() => Provincia)
-  // @ApiProperty({ type: Provincia })
-  // provincia: Provincia;
+  @ApiHideProperty()
+  @IsOptional()
+  @IsUUID()
+  @IsNotEmpty({
+    message:
+      'El id del impuesto es obligatorio y debe ser un id UUID válido. El default es el id de consumidor final',
+  })
+  // @ApiProperty({
+  //   description: 'El id del impuesto debe ser un id UUID válido.',
+  //   example: '2583ff4d-bb01-4dc7-90bb-281fa554f141',
+  // })
+  impuestoId: string;
 
   @IsUUID()
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message:
+      'El id de la provincia es obligatorio y debe ser un id UUID válido.',
+  })
   @ApiProperty({
-    description: 'El id de la provincia, debe ser un id UUID valido',
-    example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
+    description: 'El id de la provincia debe ser un id UUID válido.',
+    example: 'e003af0a-f7f4-4d99-868e-931ee12b538b',
   })
   provinciaId: string;
 
-  // @IsNotEmpty({})
-  // @ValidateNested()
-  // @Type(() => Localidad)
-  // @ApiProperty({ type: Localidad })
-  // localidad: Localidad;
-
   @IsUUID()
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message:
+      'El id de la localidad es obligatorio y debe ser un id UUID válido.',
+  })
   @ApiProperty({
-    description: 'El id de la localidad, debe ser un id UUID valido',
-    example: '911aec2b-1ee8-4e86-a223-abf0eb0d138b',
+    description: 'El id de la localidad debe ser un id UUID válido.',
+    example: 'cbcc03a5-a1fe-4e49-b040-95adfb0afb80',
   })
   localidadId: string;
 
-  @IsNotEmpty({})
-  @IsString({ message: 'El CP debe ser una cadena de texto.' })
-  @Length(4, 8, { message: 'El CP debe tener 4 u 8 caracteres.' })
+  @IsNotEmpty({
+    message: 'El código postal es obligatorio y no puede estar vacío.',
+  })
+  @IsString({ message: 'El código postal debe ser una cadena de texto.' })
+  @Length(4, 8, {
+    message: 'El código postal debe tener entre 4 y 8 caracteres.',
+  })
   @ApiProperty({
-    description: 'El CP debe ser válido.',
+    description: 'El código postal debe ser válido.',
     example: 'X5180FKA',
     type: String,
   })
   codigoPostal: string;
 
-  @IsNotEmpty({})
-  @IsString({ message: 'El domicilio debe ser una cadena de texto.' })
-  @ApiProperty({
-    description: 'El domicilio de instalación debe ser válido.',
-    example: 'Urquiza 3560 1°A',
-    type: String,
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString({
+    message: 'El domicilio de instalación debe ser una cadena de texto.',
   })
+  // @ApiProperty({
+  //   description: 'El domicilio de instalación debe ser válido.',
+  //   example: 'Urquiza 3560 1°A',
+  //   type: String,
+  // })
   domicilioInstal: string;
 
-  @IsNotEmpty({})
-  @IsString({ message: 'La localidad debe ser una cadena de texto.' })
-  @ApiProperty({
-    description: 'La localidad de instalación debe ser válida.',
-    example: 'Potrerillos',
-    type: String,
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString({
+    message: 'La localidad de instalación debe ser una cadena de texto.',
   })
+  // @ApiProperty({
+  //   description: 'La localidad de instalación debe ser válida.',
+  //   example: 'Potrerillos',
+  //   type: String,
+  // })
   localidadInstal: string;
 
-  @IsNotEmpty({
-    message: 'El número de teléfono es obligatorio.',
-  })
-  @IsNumber({}, { message: 'El teléfono debe ser un número entero' })
-  @Min(1000000, { message: 'El teléfono debe tener al menos 7 dígitos' })
-  @Max(999999999999999, {
-    message: 'El teléfono debe tener como máximo 15 dígitos',
-  })
-  @ApiProperty({
-    description: 'El número de teléfono debe ser un número entero.',
-    example: 1234567,
-    type: Number,
-  })
-  telefonoInstal: number;
+  @ApiHideProperty()
+  @IsOptional()
+  @IsNumber(
+    {},
+    { message: 'El teléfono de instalación debe ser un número entero.' },
+  )
+  // @ApiProperty({
+  //   description:
+  //     'El número de teléfono de instalación debe ser un string.',
+  //   example: '1234567',
+  //   type: String,
+  // })
+  telefonoInstal: string;
 
-  @IsNotEmpty({ message: 'El email es obligatorio y no puede estar vacío.' })
+  @ApiHideProperty()
+  @IsOptional()
   @IsEmail(
     {},
-    {
-      message: 'El correo electrónico no es válido.',
-    },
+    { message: 'El correo electrónico de instalación no es válido.' },
   )
-  @ApiProperty({
-    description: 'El email de la instalación debe ser un email válido.',
-    example: 'jperez@mail.com',
-    type: String,
-  })
+  // @ApiProperty({
+  //   description: 'El email de instalación debe ser un email válido.',
+  //   example: 'jperez@mail.com',
+  //   type: String,
+  // })
   emailInstal: string;
 
-  @IsNotEmpty({})
+  @ApiHideProperty()
+  @IsOptional()
   @IsString({ message: 'Las observaciones deben ser una cadena de texto.' })
-  @ApiProperty({
-    description: 'Las observaciones deben ser válidas.',
-    example: 'La antena tiene acceso difícil, coordinar con el propietario',
-    type: String,
-  })
+  // @ApiProperty({
+  //   description: 'Las observaciones deben ser válidas.',
+  //   example: 'La antena tiene acceso difícil, coordinar con el propietario',
+  // })
   observaciones: string;
 
-  @IsNotEmpty({})
-  @IsString({
-    message: 'La señal de la conexión debe ser una cadena de texto.',
-  })
-  @ApiProperty({
-    description: 'El texto de la señal de la conexión debe ser válido.',
-    example: '-65dBm',
-    type: String,
-  })
+  @ApiHideProperty()
+  @IsOptional()
+  @IsString({ message: 'La señal de conexión debe ser una cadena de texto.' })
+  // @ApiProperty({
+  //   description: 'El texto de la señal de conexión debe ser válido.',
+  //   example: '-65dBm',
+  //   type: String,
+  // })
   senalConexion: string;
 
-  @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
-  @ApiProperty()
-  equiposId: string;
+  @ApiHideProperty()
+  @IsUUID()
+  @IsOptional()
+  @IsString()
+  // @ApiProperty({
+  //   description: 'El id del equipo debe ser un id UUID válido.',
+  //   example: 'b2837f3d-48cd-476d-a64d-ade12932b606',
+  // })
+  equipoId: string;
 
-  @IsNotEmpty({})
-  @IsString({ message: 'Futura ForeingKey' })
-  @ApiProperty()
-  serviciosId: string;
+  @ApiHideProperty()
+  @IsUUID()
+  @IsOptional()
+  @IsString()
+  // @ApiProperty({
+  //   description: 'El id del servicio debe ser un id UUID válido.',
+  //   example: 'fa3f2527-4125-4938-9c74-7c7bf448f8b3',
+  // })
+  servicioId: string;
+
+  @ApiHideProperty()
+  @IsUUID()
+  @IsOptional()
+  @IsString()
+  // @ApiProperty({
+  //   description: 'El id del servicio debe ser un id UUID válido.',
+  //   example: 'fa3f2527-4125-4938-9c74-7c7bf448f8b3',
+  // })
+  facturasId: string;
 
   constructor(createdAt?: number) {
     this.createdAt = createdAt ? new Date(createdAt) : this.getLocalDate();

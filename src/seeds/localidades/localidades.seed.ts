@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Localidad } from '../../modules/localidades/entities/localidades.entity';
 import { Provincia } from '../../modules/provincias/entities/provincia.entity';
@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { LocalidadesMock } from './localidades.mock';
 
 @Injectable()
-export class LocalidadesSeed implements OnModuleInit {
+export class LocalidadesSeed {
   constructor(
     @InjectRepository(Localidad)
     private readonly localidadesRepository: Repository<Localidad>,
@@ -14,13 +14,9 @@ export class LocalidadesSeed implements OnModuleInit {
     private readonly provinciasRepository: Repository<Provincia>,
   ) {}
 
-  async onModuleInit() {
-    console.log('Seed localidades inicializado');
-    await this.seed();
-  }
-
   async seed() {
     // Obtener la provincia de Mendoza
+    console.log('Seed localidades inicializado');
     const provinciaMendoza = await this.provinciasRepository.findOne({
       where: { nombre: 'Mendoza' },
     });

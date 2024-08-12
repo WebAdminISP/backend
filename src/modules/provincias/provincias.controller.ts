@@ -3,14 +3,20 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+  Put,
 } from '@nestjs/common';
 import { ProvinciasService } from './provincias.service';
 import { CreateProvinciaDto } from './dto/create-provincia.dto';
-import { UpdateProvinciaDto } from './dto/update-provincia.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from '../auths/roles.enum';
+import { RolesGuard } from '../auths/roles.guard';
+import { AuthGuard } from '../auths/auth.guards';
 
 @ApiTags('Provincias')
 @Controller('provincias')
@@ -18,30 +24,47 @@ export class ProvinciasController {
   constructor(private readonly provinciasService: ProvinciasService) {}
 
   @Post()
-  create(@Body() createProvinciaDto: CreateProvinciaDto) {
-    return this.provinciasService.create(createProvinciaDto);
+  @ApiOperation({ summary: 'Crea una provincia' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  async create(@Body() createProvinciaDto: CreateProvinciaDto) {
+    return await this.provinciasService.create(createProvinciaDto);
   }
 
   @Get()
-  findAll() {
+  @ApiOperation({ summary: 'Retorna todas las provincias' })
+  async findAll() {
     return this.provinciasService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.provinciasService.findOne(+id);
+  @ApiOperation({ summary: 'Retorna 1 provincia  por id' })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async findOne(@Param('id') id: string) {
+    return this.provinciasService.findOne(id);
   }
 
-  @Patch(':id')
-  update(
+  @Put(':id')
+  @ApiOperation({ summary: 'Modifica 1 provincia  por id' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async update(
     @Param('id') id: string,
-    @Body() updateProvinciaDto: UpdateProvinciaDto,
+    @Body() updateProvinciaDto: CreateProvinciaDto,
   ) {
-    return this.provinciasService.update(+id, updateProvinciaDto);
+    return this.provinciasService.update(id, updateProvinciaDto);
   }
 
+  @ApiOperation({ summary: 'Elimina 1 provincia  por id' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.provinciasService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return this.provinciasService.remove(id);
   }
 }

@@ -8,6 +8,7 @@ import {
   ValidationPipe,
   UseGuards,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthsService } from './auths.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -16,6 +17,10 @@ import { SignInDto } from './dto/sign-in.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthGuard } from './auth.guards';
 import { Request } from 'express';
+import { RolesGuard } from './roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from './roles.enum';
+import { MailService } from '../mail/mail.service';
 
 @ApiTags('Auth')
 @Controller('auths')
@@ -23,6 +28,7 @@ export class AuthsController {
   constructor(
     private readonly authsService: AuthsService,
     private readonly usersDBService: UsersService,
+    private readonly mailService: MailService,
   ) {
     {
       console.log('AuthController instantiated');
@@ -33,22 +39,29 @@ export class AuthsController {
   @ApiOperation({ summary: 'Ingresar al sistema con email y contraseña' })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  signIn(@Body() signInDto: SignInDto) {
+  async signIn(@Body() signInDto: SignInDto) {
     return this.authsService.signIn(signInDto);
-    //return this.authsService.signIn(signInDto);
   }
 
   @Post('signup')
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Dar de alta un usuario nuevo' })
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ transform: true }))
   async createUser(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
-    // const agente = req.user.agente;
-    const agente = 'Admin';
-    createUserDto.agente = agente;
+    const agente = req.user.nombre;
 
-    return this.authsService.saveUser(createUserDto);
+    if (!agente) {
+      throw new UnauthorizedException('No se pudo determinar el agente');
+    }
+
+    createUserDto.agente = agente;
+    const email = createUserDto.email;
+    const username = createUserDto.nombre;
+    const savedUser = await this.authsService.saveUser(createUserDto);
+    await this.mailService.sendRegistrationConfirmation(email, username);
+    return savedUser;
   }
 }
