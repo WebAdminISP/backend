@@ -4,8 +4,6 @@ import { FacturacionController } from './facturacion.controller';
 import { Factura } from './entities/facturacion.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthGuard } from '../auths/auth.guards';
-import { Auth0Guard } from '../auths/auth0.guards';
-import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
 import { requiresAuth } from 'express-openid-connect';
@@ -18,8 +16,6 @@ import { CloudinaryService } from 'src/common/cloudinary.service';
   providers: [
     FacturacionService,
     AuthGuard,
-    Auth0Guard,
-    CompositeAuthGuard,
     Logger,
     UsersService,
     CloudinaryService,

@@ -5,9 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Servicio } from './entities/servicio.entity';
 import { User } from '../users/entities/user.entity';
 import { UsersController } from '../users/users.controller';
-import { Auth0Guard } from '../auths/auth0.guards';
 import { AuthGuard } from '../auths/auth.guards';
-import { CompositeAuthGuard } from '../auths/compositeAuthGuard';
 import { UsersService } from '../users/users.service';
 import { requiresAuth } from 'express-openid-connect';
 import { CloudinaryService } from 'src/common/cloudinary.service';
@@ -18,8 +16,6 @@ import { CloudinaryService } from 'src/common/cloudinary.service';
   providers: [
     ServiciosService,
     AuthGuard,
-    Auth0Guard,
-    CompositeAuthGuard,
     Logger,
     UsersService,
     CloudinaryService,

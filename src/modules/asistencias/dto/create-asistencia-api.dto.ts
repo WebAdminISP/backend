@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { addMinutes } from 'date-fns';
 
-export class CreateAsistenciaDto {
+export class CreateAsistenciaApiDto {
   @ApiHideProperty()
   @IsDate({ message: 'createdAt debe ser una instancia de Date' })
   @Transform(
@@ -43,7 +43,7 @@ export class CreateAsistenciaDto {
   @ApiProperty({ description: 'ID del usuario.' })
   @IsUUID()
   @IsNotEmpty()
-  userId?: string;
+  userId: string;
 
   @IsOptional()
   @IsString({ message: 'El día en que el cliente está disponible.' })

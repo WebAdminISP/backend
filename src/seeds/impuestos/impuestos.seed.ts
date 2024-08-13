@@ -21,6 +21,7 @@ export class ImpuestosSeed {
       if (!existingImpuestosNames.includes(impuestosData.nombre)) {
         const impuesto = new Impuesto();
         impuesto.nombre = impuestosData.nombre;
+        impuesto.agente = impuestosData.agente;
         console.log('Creando impuesto: ', impuesto.nombre);
         await this.impuestosRepository.save(impuesto);
       }

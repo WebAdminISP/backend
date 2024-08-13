@@ -1,10 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as cron from 'node-cron';
-import { MailService } from '../mail/mail.service'; // Asumiendo que tienes un servicio de correo configurado
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
+import { Factura } from '../facturacion/entities/facturacion.entity';
+import { MailService } from '../mail/mail.service';
+import { PdfService } from '../pdf/pdf.service'; // Importar el servicio de PDF
 
 @Injectable()
-export class NotificationsService {
-  constructor(private readonly mailService: MailService) {}
+export class NotificationsService implements OnModuleInit {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Factura)
+    private readonly facturaRepository: Repository<Factura>,
+    private readonly mailService: MailService,
+    private readonly pdfService: PdfService, // Inyectar el servicio de PDF
+  ) {}
 
   onModuleInit() {
     this.scheduleTasks();
@@ -12,43 +24,37 @@ export class NotificationsService {
 
   private scheduleTasks() {
     // Programar una tarea para enviar recordatorios y pre-facturas el primer día de cada mes a las 9 AM
-    cron.schedule('0 9 1 * *', async () => {
+    cron.schedule('38 18 7 * *', async () => {
       await this.sendMonthlyNotificationsWithAttachments();
     });
   }
 
-  private async sendMonthlyNotificationsWithAttachments() {
-    // Aquí deberías implementar la lógica para obtener los usuarios y enviar las notificaciones
-    const users = await this.getUsersToNotify();
-    const filePath = 'path/to/your/invoice.pdf'; // Ajusta la ruta del archivo según sea necesario
+  public async sendMonthlyNotificationsWithAttachments() {
+    const usersWithUnpaidInvoices = await this.getUsersWithUnpaidInvoices();
 
-    for (const user of users) {
-      await this.sendNotificationWithAttachment(user, filePath);
+    for (const user of usersWithUnpaidInvoices) {
+      for (const factura of user.facturas) {
+        const filePath = await this.pdfService.generateInvoice(user, factura);
+        await this.sendNotificationWithAttachment(user, filePath);
+      }
     }
   }
 
-  private async getUsersToNotify() {
-    // Implementa la lógica para obtener los usuarios desde la base de datos
-    return [
-      { email: 'user1@example.com', name: 'User 1' },
-      { email: 'user2@example.com', name: 'User 2' },
-    ];
+  private async getUsersWithUnpaidInvoices(): Promise<User[]> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.facturas', 'factura')
+      .where('factura.pagado = :pagado', { pagado: false })
+      .getMany();
   }
 
-  private async sendNotificationWithAttachment(
-    user: { email: string; name: string },
-    filePath: string,
-  ) {
-    // Implementa la lógica para enviar el correo electrónico con el archivo adjunto utilizando el método específico de MailService
+  private async sendNotificationWithAttachment(user: User, filePath: string) {
+    const email = user.email;
+    const username = user.nombre;
     await this.mailService.sendMonthlyNotificationWithAttachment(
-      user.email,
-      user.name,
+      email,
+      username,
       filePath,
     );
-  }
-
-  private async sendNotification(user: { email: string; name: string }) {
-    // Implementa la lógica para enviar el correo electrónico utilizando el método específico de MailService
-    await this.mailService.sendMonthlyNotification(user.email, user.name);
   }
 }

@@ -21,6 +21,7 @@ import { RolesGuard } from './roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from './roles.enum';
 import { MailService } from '../mail/mail.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('Auth')
 @Controller('auths')
@@ -50,32 +51,31 @@ export class AuthsController {
   @ApiOperation({ summary: 'Dar de alta un usuario nuevo' })
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async createUser(
-    //* extiende la req de express que se espera tenga propiedades extra
-    @Req() req: Request & { oidc?: any; user?: any },
-    @Body() createUserDto: CreateUserDto,
-  ) {
-    let agente: string;
+  async createUser(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
+    const agente = req.user.nombre;
 
-    //* propiedad user existe tanto en auth interna como externa
-    //* solo difiere el acceso al nombre (name > Auth0, agente > Interna)
-    if (req.user) {
-      agente = req.user.name || req.user.agente;
-    } else {
-      throw new UnauthorizedException('No se pudo determinar el agente');
-    }
-
-    //? creo que esta verificacion no corre nunca
     if (!agente) {
       throw new UnauthorizedException('No se pudo determinar el agente');
     }
 
-    //* agrega al agente al dto y lo pasa al servicio
     createUserDto.agente = agente;
     const email = createUserDto.email;
     const username = createUserDto.nombre;
     const savedUser = await this.authsService.saveUser(createUserDto);
     await this.mailService.sendRegistrationConfirmation(email, username);
     return savedUser;
+  }
+
+  @Post('change-password')
+  @UseGuards(AuthGuard) // Asegura que solo los usuarios autenticados puedan cambiar la contraseña
+  @ApiOperation({ summary: 'Cambio de contraseña por parte del usuario' })
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async changePassword(
+    @Req() req: Request,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    const userId: string = req.user.id; // Asumiendo que el ID del usuario está en el JWT y es un UUID
+    return this.authsService.changePassword(userId, changePasswordDto);
   }
 }

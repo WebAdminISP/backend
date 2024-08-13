@@ -36,6 +36,9 @@ export class Factura {
   @Column({ nullable: false })
   tipoPago: string;
 
+  @Column({ nullable: false, default: false })
+  pagado: boolean;
+
   @Column({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',

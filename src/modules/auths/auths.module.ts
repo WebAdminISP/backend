@@ -10,8 +10,8 @@ import { Provincia } from '../provincias/entities/provincia.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
 import { Servicio } from '../servicios/entities/servicio.entity';
 import { AuthGuard } from './auth.guards';
-import { Auth0Guard } from './auth0.guards';
-import { CompositeAuthGuard } from './compositeAuthGuard';
+// import { Auth0Guard } from './auth0.guards';
+// import { CompositeAuthGuard } from './compositeAuthGuard';
 import { MailService } from '../mail/mail.service';
 import { ImpuestosService } from '../impuestos/impuestos.service';
 import { ImpuestosModule } from '../impuestos/impuestos.module';
@@ -40,8 +40,8 @@ import { EquiposModule } from '../equipos/equipos.module';
     EquiposService,
     MailService,
     AuthGuard,
-    Auth0Guard,
-    CompositeAuthGuard,
+    // Auth0Guard,
+    // CompositeAuthGuard,
     Logger,
   ],
 })

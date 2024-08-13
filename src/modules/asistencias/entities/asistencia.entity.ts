@@ -1,5 +1,11 @@
 import { User } from 'src/modules/users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({
   name: 'asistencias',
@@ -22,7 +28,11 @@ export class Asistencia {
     nullable: false,
     onDelete: 'SET NULL',
   })
+  @JoinColumn({ name: 'userId' })
   user: User;
+
+  @Column({ type: 'uuid' })
+  userId: string;
 
   @Column({ length: 50, nullable: false })
   diaCliente: string;

@@ -18,6 +18,10 @@ import { Localidad } from '../localidades/entities/localidades.entity';
 import { Servicio } from '../servicios/entities/servicio.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
 import { ImpuestosService } from '../impuestos/impuestos.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { validate, IsUUID } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import { UUIDValidationDto } from './dto/uuid-validation.dto';
 
 @Injectable()
 export class AuthsService {
@@ -59,7 +63,7 @@ export class AuthsService {
       id: newUser.id,
       agente: newUser.agente,
       email: newUser.email,
-      nommbre: newUser.nombre,
+      nombre: newUser.nombre,
       roles: [newUser.isAdmin ? Role.Admin : Role.User],
     };
 
@@ -67,7 +71,7 @@ export class AuthsService {
 
     const decodedToken = this.jwtService.decode(token);
 
-    // console.log(decodedToken);
+    //console.log('Decoded Token', decodedToken);
 
     // const iat = new Date(decodedToken.iat * 1000).toLocaleString();
     const iat = decodedToken.iat;
@@ -184,5 +188,35 @@ export class AuthsService {
     }
 
     return await this.usersRepository.save(user);
+  }
+
+  async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
+    const { oldPassword, newPassword, confirmNewPassword } = changePasswordDto;
+
+    // Validar si el userId es un UUID válido
+    const uuidValidation = plainToClass(UUIDValidationDto, { userId });
+    const errors = await validate(uuidValidation);
+    if (errors.length > 0) {
+      throw new BadRequestException('Invalid user ID format');
+    }
+
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isOldPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      throw new BadRequestException('New passwords do not match');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+
+    return this.usersRepository.save(user);
   }
 }

@@ -11,6 +11,9 @@ export class Impuesto {
   @Column({ length: 50, nullable: false })
   nombre: string;
 
+  @Column({ nullable: false })
+  agente: string;
+
   @OneToMany(() => User, (user) => user.impuesto)
   users: User[];
 }
