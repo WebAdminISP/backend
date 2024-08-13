@@ -45,6 +45,7 @@ import { UserToAdminDto } from './dto/user-to-admin.dto';
 import { CloudinaryService } from 'src/common/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidatorPipe } from 'src/pipes/fileValidator.pipe';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -122,9 +123,9 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async updateUser(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() createUserDto: CreateUserDto,
+    @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.UsersService.updateUser(id, createUserDto);
+    return this.UsersService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
