@@ -156,11 +156,13 @@ export class CreateEquipoDto {
   userId?: string;
 
   @ApiHideProperty()
-  @IsNotEmpty()
+  @IsOptional()
+  // @IsNotEmpty()
   isInstalled: boolean;
 
   @ApiHideProperty()
-  @IsNotEmpty()
+  @IsOptional()
+  // @IsNotEmpty()
   isAvailable: boolean;
 
   @ApiProperty({
