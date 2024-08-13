@@ -45,7 +45,7 @@
       console.log('ChatGateway initialized');
       this.server.on('connection', (client: Socket) => {
         console.log(`Client attempting to connect: ${client.id}`);
-        console.log('Socket handshake:', client.handshake);
+        console.log('Socket handshake:', client.handshake.auth.name);
 
         // maneja las conexiones individualmente
         // this.handleConnection(client);
@@ -57,7 +57,9 @@
     async handleConnection(client: Socket) {
       console.log('New client connecting');
       const { userId, isAdmin } = (client as any).user;
+      const { name } = client.handshake.auth;
       console.log('User object on socket:', (client as any).user);
+      console.log(name);
     
       if (!userId) {
         console.log('User not authenticated, disconnecting');
@@ -117,6 +119,14 @@
         client.disconnect();
         return
       }
+
+      // evita que el usuario pueda crear mas de 1 sala
+      const existingRoom = await this.chatService.findRoomByParticipant(userId);
+      if (existingRoom) {
+        client.emit('join-failed', 'Ya tienes un chat abierto. No puedes crear otra sala.');
+        return;
+      }
+
       // crea una nueva room y retorna el roomId
       const response = await this.chatService.createRoom(userId);
       //agrega el cliente al room creado
@@ -160,6 +170,7 @@
     ) {
       // desestructura la info entrante
       const { userId, isAdmin } = client.user;
+      const { name } = client.handshake.auth;
       const { roomId, message } = data;
 
       //retorna lista de usuarios en el room
@@ -169,9 +180,18 @@
       if (participants && (participants.user === userId || participants.admin === userId)) {
         this.server.to(roomId).emit('new-message', {
           userId,
+          name,
+          roomId,
           isAdmin,
-          message
+          message,
         });
+        console.log('new-message:', {
+          userId,
+          name,
+          roomId,
+          isAdmin,
+          message,
+        })
       }
     }
   }
