@@ -41,7 +41,7 @@ export class RelevamientosService {
       );
 
     //w localizar agente cercano y asignar(mock)
-    const agente = 'Seed User';
+    const agente = 'asignar agente';
 
     //* Si se tiene api de GoogleMaps.
     //* Descomentar: lat, lng y comentar toda la función que busca las coordenadas.
