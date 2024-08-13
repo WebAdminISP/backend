@@ -67,7 +67,7 @@ export class AuthsController {
   }
 
   @Post('change-password')
-  @UseGuards(AuthGuard) // Asegura que solo los usuarios autenticados puedan cambiar la contraseña
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Cambio de contraseña por parte del usuario' })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))

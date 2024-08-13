@@ -45,7 +45,10 @@ export class User {
   @Column({ length: 50, nullable: false })
   nombre: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: false, default: '261' })
+  codArea: string;
+
+  @Column({ type: 'varchar', nullable: false })
   telefono: string;
 
   @Column()
@@ -57,8 +60,11 @@ export class User {
   @Column('double precision')
   longitud: number;
 
-  @Column()
-  documento: number;
+  @Column({ length: 20, nullable: false, default: 'DNI' })
+  tipoDocum: string;
+
+  @Column({ length: 20, nullable: false, default: '00000000' })
+  documento: string;
 
   @Column({ length: 50, nullable: false, unique: true })
   email: string;
