@@ -133,6 +133,8 @@
       client.join(response.roomId);
       //emite evento 'room-created' informando al cliente de nueva room y su union a ella > el cliente debe estar subscrito a este evento para escucharlo
       client.emit('room-created', response);
+
+      return response
     }
 
     // escucha evento 'join-room' del usuario (user o admin), ejecuta funcion.
@@ -156,6 +158,8 @@
         client.emit('room-joined', {success:'Usuario se unio a la sala',roomId});
         // notifica a TODOS los usuarios en ESA room, que alguien se conecto
         this.server.to(roomId).emit('user-joined', { success:'Usuario(Admin) se unio al chat', userId, isAdmin });
+
+        return joined
       } else {
         // emite evento para join-failed
         client.emit('join-failed', 'Unable to join room');
