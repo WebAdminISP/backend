@@ -63,6 +63,15 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   })
   nombre: string;
 
+  @IsOptional({ message: 'El código de area es obligatorio.' })
+  @IsString()
+  @ApiProperty({
+    description: 'El código de area debe ser un string.',
+    example: +54351,
+    type: String,
+  })
+  codArea: string;
+
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -103,14 +112,25 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   })
   longitud: number;
 
+  @IsOptional({
+    message: 'El tipo de documento es obligatorio y no puede estar vacío.',
+  })
+  @IsString({ message: 'El documento debe ser un juego de caracteres.' })
+  @ApiProperty({
+    description: 'El tipo de documento debe ser válido.',
+    example: 'DNI',
+    type: String,
+  })
+  tipoDocum: string;
+
   @IsOptional()
   @IsNumber({}, { message: 'El documento debe ser un número.' })
   @ApiProperty({
     description: 'El documento debe ser válido.',
     example: '45123456',
-    type: Number,
+    type: String,
   })
-  documento: number;
+  documento: string;
 
   @IsOptional()
   @IsEmail({}, { message: 'El correo electrónico no es válido.' })
