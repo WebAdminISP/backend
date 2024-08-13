@@ -1,7 +1,7 @@
 export const UsersMock = [
   {
     createdAt: new Date(),
-    isAdmin: true,
+    isAdmin: false,
     agente: 'SeedAdmin',
     imgUrl: 'https://exmple-image.webp',
     nombre: 'Seed User',
