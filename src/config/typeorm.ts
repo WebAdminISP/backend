@@ -19,7 +19,7 @@ const config = {
   ssl: {
     rejectUnauthorized: false, // Importante para Render, que utiliza certificados SSL autofirmados.
   },
-  //dropSchema: true,
+  // dropSchema: true,
   //logging: true,
   logging: ['error'],
   entities: ['dist/**/*.entity{.js,.ts}'],
