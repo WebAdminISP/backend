@@ -21,6 +21,7 @@ import { RolesGuard } from './roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from './roles.enum';
 import { MailService } from '../mail/mail.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('Auth')
 @Controller('auths')
@@ -63,5 +64,18 @@ export class AuthsController {
     const savedUser = await this.authsService.saveUser(createUserDto);
     await this.mailService.sendRegistrationConfirmation(email, username);
     return savedUser;
+  }
+
+  @Post('change-password')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Cambio de contraseña por parte del usuario' })
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async changePassword(
+    @Req() req: Request,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    const userId: string = req.user.id; // Asumiendo que el ID del usuario está en el JWT y es un UUID
+    return this.authsService.changePassword(userId, changePasswordDto);
   }
 }

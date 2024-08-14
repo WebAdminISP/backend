@@ -43,21 +43,22 @@ export class RelevamientosController {
   //* Público: usado por guests
   @Post()
   @ApiOperation({ summary: 'Agregar un relevamiento nuevo' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   async create(
     @Req() req: Request,
     @Body() createRelevamientoDto: CreateRelevamientoDto,
   ) {
-    const agente = req.user.nombre;
+    // const agente = req.user.nombre;
+ 
 
-    if (!agente) {
-      throw new UnauthorizedException('No se pudo determinar el agente');
-    }
+    // if (!agente) {
+    //   throw new UnauthorizedException('No se pudo determinar el agente');
+    // }
 
-    createRelevamientoDto.agente = agente;
+    // createRelevamientoDto.agente = agente;
     return this.relevamientosService.create(createRelevamientoDto);
   }
 

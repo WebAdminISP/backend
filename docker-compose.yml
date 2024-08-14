@@ -6,6 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    ##image: pfinal:latest
     container_name: pfinal
     ports:
       - '3000:3000'
@@ -20,6 +21,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+    command: bash -c "npm run migration:run && npm run start:dev"
 
   postgresdbpf:
     image: postgres:latest
