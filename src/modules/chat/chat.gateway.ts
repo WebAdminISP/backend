@@ -6,16 +6,17 @@
   import { SocketAuthMiddleware } from "src/middlewares/ws.middleware";
   import { TimeoutService } from "./timeout.service";
 
-
+  // decora la clase para manejar conexiones con el protocolo websocket 
   @WebSocketGateway({
     cors: {
       origin: '*'
     }
   })
-  // @UseGuards(WsJwtGuard) > esto no sirve en una app hibrida
+  // @UseGuards(WsJwtGuard) > esto NO sirve en una app hibrida (http-websocket) > 
+  // la autenticacion se produce en el ciclo AfterInit()-ver mas abajo
   export class ChatGateway implements OnGatewayInit, OnModuleInit, OnGatewayConnection {
 
-    // inyecta una instancia del ws server. Es todo el objecto server en si.
+    // inyecta una instancia del ws server. 'server' ES el websocket server.
     // provee metodos para conectar, desconectar, emitir eventos,broadcasting, manejar rooms, etc
     @WebSocketServer()
     public server: Server;
@@ -30,32 +31,32 @@
     private idleTimeouts: Map<string, NodeJS.Timeout> = new Map();
     private warningTimeouts: Map<string, NodeJS.Timeout> = new Map();
 
-    // afterInit > momento en que se inicializa el ws server pero antes de haber una conexion, o sea, Nestjs instancia esta clase.
+    // afterInit() > momento en que se inicializa el ws server pero antes de haber una conexion, o sea, Nestjs instancia esta clase pero nadie se conecta aun.
     // Aqui se lleva a cabo la autenticacion del usuario llamando a un middleware que a su vez llama al WsJwtGuard. Esta guard agrega el objeto user al payload.
-    // Socket > es la conexion individual entre el server y 1 cliente especifico
+    // Socket > representa conexion individual entre el server y 1 cliente especifico
     // metodos varios de conexion, desconexion, leave, join, etc.
     afterInit(client:Socket){
       client.use(SocketAuthMiddleware() as any);
-      Logger.log('Application Loaded Up: from ChatGateway')
+      Logger.log('Aplicacion de Chat Cargada: desde ChatGateway')
     }
 
-    // OnModuleInit > momento en que el ChatModule esta completamente inicializado(instanciado)
-    // 'connection' es un evento global para todas las conexiones ws.
+    // OnModuleInit > momento en que el ChatModule y todas sus dependencias (providers) estan inicializadas. Se ejecuta despues del AfterInit().
+    // 'connection' es un built-in global event para todas las conexiones ws.
     async onModuleInit() {
       console.log('ChatGateway initialized');
       this.server.on('connection', (client: Socket) => {
         console.log(`Client attempting to connect: ${client.id}`);
         console.log('Socket handshake:', client.handshake.auth.name);
 
-        // maneja las conexiones individualmente
-        // this.handleConnection(client);
       });
     }
 
 
     //W ###### HANDLE CONNECTION (INDIVIDUAL)###################
+    // se ejecuta cuando un nuevo usuario se conecta
+    // si el usuario no esta autenticado lo desconecta(esto ya lo hace el AfterInit
     async handleConnection(client: Socket) {
-      console.log('New client connecting');
+      console.log('Nuevo Usuario Conectado');
       const { userId, isAdmin } = (client as any).user;
       const { name } = client.handshake.auth;
       console.log('User object on socket:', (client as any).user);
@@ -67,42 +68,45 @@
         return;
       }
     
-      console.log('User authenticated:', userId);
+      console.log('Usuario Autenticado con ID', userId);
     
+      // establece los tiempos de advertencia y desconexion por inactividad
       await this.timeoutService.setupWarningTimeout(client);
       await this.timeoutService.setupIdleTimeout(client);
     
+      // 'escucha' cuando un usuario se desconecta(cierra el tab)
       client.on('disconnect', async () => {
-        console.log(`Client Disconnected: ${client.id}`);
+        console.log(`Cliente ${name} se desconecto: ${client.id}`);
     
-        // Find the room for this user, whether they're an admin or not
+        // busvca la sala del desconectado y se fija si era user o admin
         const roomId = await this.chatService.findRoomByParticipant(userId);
         if (roomId) {
           const participants = await this.chatService.getRoomParticipants(roomId);
           if (participants) {
             if (participants.admin === userId) {
-              console.log('Admin disconnected, notifying users and deleting room');
+              console.log('Admin desconectado, notificando user y borrando sala...');
               this.server.to(roomId).emit('user-disconnected', 'El agente se ha desconectado - Chat Terminado');
-    
+              
+              // desconecta al user, cierra el socket, y elimina sala
               const userSocket = Array.from(this.server.sockets.sockets.values())
                 .find(socket => (socket as any).user.userId === participants.user);
               if (userSocket) userSocket.disconnect();
     
               await this.chatService.deleteRoom(roomId);
             } else if (participants.user === userId) {
-              console.log('User disconnected, removing from room');
               participants.user = null;
+              console.log('Cliente desconectado y eliminado de diccionario');
               if (!participants.admin) {
-                console.log('No admin in the room, deleting room');
                 await this.chatService.deleteRoom(roomId);
+                console.log('Sala vacia: Sala ELIMINADA');
               }
             }
           }
         }
-    
+        // elimina los timeout asociados al usuario desconectado
         this.timeoutService.clearTimeouts(client.id);
       });
-    
+      // resetea los timeouts cada vez que un usuario manda un mensaje
       client.on('send-message', () => {
         this.timeoutService.resetTimeouts(client);
       });

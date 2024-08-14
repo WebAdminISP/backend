@@ -12,14 +12,14 @@ const config = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   autoLoadEntities: true,
-  synchronize: true,
+  synchronize: false,
   extra: {
     timezone: 'America/Buenos_Aires', // Establecer la zona horaria aquí
   },
-  // ssl: {
-  //   rejectUnauthorized: false, // Importante para Render, que utiliza certificados SSL autofirmados.
-  // },
-  dropSchema: true,
+  ssl: {
+    rejectUnauthorized: false, // Importante para Render, que utiliza certificados SSL autofirmados.
+  },
+  // dropSchema: true,
   //logging: true,
   logging: ['error'],
   entities: ['dist/**/*.entity{.js,.ts}'],

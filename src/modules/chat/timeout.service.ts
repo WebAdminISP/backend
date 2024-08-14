@@ -11,8 +11,8 @@ export class TimeoutService {
 
   //w sacarle el cero extra
   // timeout por inactividad
-  private readonly WARNING_TIMEOUT= 240000; // 1 minuto : advertencia
-  private readonly IDLE_TIMEOUT = 300000; // 1:30 minutos: desconecta
+  private readonly WARNING_TIMEOUT= 240000; // 4 minutos : advertencia
+  private readonly IDLE_TIMEOUT = 300000; // 5 minutos: desconecta
 
   async setupWarningTimeout(client: Socket) {
     // limpia timouts existentes para evitar que se vea duplicado

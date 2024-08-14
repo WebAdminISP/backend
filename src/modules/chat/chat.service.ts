@@ -24,8 +24,8 @@ export class ChatService {
     const roomId = this.generateRoomId();
     // crea nuevo registro del room en el diccionario
     this.rooms[roomId] = { user: userId, admin: null };
-    console.log(`#### >> Room Created with ID: ${roomId}in dictionary`)
-    console.log(`#### >> User was Added to the room dictionary ${userId}`)
+    console.log(`#### >> Nueva Sala con ID: ${roomId} en diccionario`)
+    console.log(`#### >> Usuario agregado a la sala en diccionario: ${userId}`)
     console.log(this.rooms)
     return {
       success: 'Sala Creada y Usuario agregado a sala',
@@ -106,7 +106,7 @@ export class ChatService {
   // elimina una sala
   async deleteRoom(roomId: string): Promise<void> {
     delete this.rooms[roomId];
-    console.log(`Room ${roomId} deleted from the dictionary`);
+    console.log(`Sala ${roomId} eliminada del diccionario`);
   }
 
   // retorna lista de participantes del room indicado
