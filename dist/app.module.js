@@ -37,6 +37,7 @@ const maps_module_1 = require("./modules/maps/maps.module");
 const pdf_module_1 = require("./modules/pdf/pdf.module");
 const files_module_1 = require("./modules/files/files.module");
 const asistencias_module_1 = require("./modules/asistencias/asistencias.module");
+const mercado_pago_module_1 = require("./modules/mercado-pago/mercado-pago.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -74,6 +75,7 @@ exports.AppModule = AppModule = __decorate([
             pdf_module_1.PdfModule,
             files_module_1.FilesModule,
             asistencias_module_1.AsistenciasModule,
+            mercado_pago_module_1.MercadoPagoModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

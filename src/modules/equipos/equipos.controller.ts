@@ -1,4 +1,3 @@
-import { auth } from 'express-openid-connect';
 import {
   Controller,
   Get,
@@ -29,7 +28,6 @@ import { Roles } from '../../decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import { RolesGuard } from './../auths/roles.guard';
 import { AuthGuard } from '../auths/auth.guards';
-import { UsersService } from '../users/users.service';
 import { Request } from 'express';
 
 @ApiTags('Equipos')
