@@ -13,4 +13,5 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+##CMD ["npm", "run", "start"]
+CMD ["bash", "-c", "npm run migration:run && npm run start"]
