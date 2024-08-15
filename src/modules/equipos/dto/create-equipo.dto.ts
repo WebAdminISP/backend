@@ -154,4 +154,68 @@ export class CreateEquipoDto {
   //   example: 'e24dfa7e-8474-4b69-b974-34bf6f3cb69a',
   // })
   userId?: string;
+
+  @ApiHideProperty()
+  @IsOptional()
+  // @IsNotEmpty()
+  isInstalled: boolean;
+
+  @ApiHideProperty()
+  @IsOptional()
+  // @IsNotEmpty()
+  isAvailable: boolean;
+
+  @ApiProperty({
+    description: 'Domicilio de instalación.',
+    example: 'San Martín 1234',
+    type: String,
+  })
+  @IsString({ message: 'Debe ser una cadena de texto.' })
+  @IsOptional()
+  domicilioInstal: string;
+
+  @ApiProperty({
+    description: 'Localidad de instalación.',
+    example: 'Las Heras',
+    type: String,
+  })
+  @IsString({ message: 'Debe ser una cadena de texto.' })
+  @IsOptional()
+  localidadInstal: string;
+
+  @ApiProperty({
+    description: 'Teléfono de la instalación.',
+    example: '3548567894',
+    type: String,
+  })
+  @IsString({ message: 'Debe ser una cadena de texto.' })
+  @IsOptional()
+  telefonoInstal: string;
+
+  @ApiProperty({
+    description: 'email de la instalación.',
+    example: 'jperez@mail.com',
+    type: String,
+  })
+  @IsString({ message: 'Debe ser una cadena de texto.' })
+  @IsOptional()
+  emailInstal: string;
+
+  @ApiProperty({
+    description: 'Observaciones de la instalación.',
+    example: 'Instalación en el techo.',
+    type: String,
+  })
+  @IsString({ message: 'Debe ser una cadena de texto.' })
+  @IsOptional()
+  observaciones: string;
+
+  @ApiProperty({
+    description: 'Intensidad de la señal en la instalación.',
+    example: '-64dbm',
+    type: String,
+  })
+  @IsString({ message: 'Debe ser una cadena de texto.' })
+  @IsOptional()
+  senalConexion: string;
 }

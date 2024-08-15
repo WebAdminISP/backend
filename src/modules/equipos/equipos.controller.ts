@@ -80,6 +80,46 @@ export class EquiposController {
     return allEquipos;
   }
 
+  @Get('/stats')
+  @ApiOperation({ summary: 'Obtener estadísticas de equipos' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  async getEquiposStats() {
+    const stats = await this.equiposService.getEquiposCount();
+    return stats;
+  }
+
+  @Get('/available')
+  @ApiOperation({ summary: 'Ver todos los equipos disponibles' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+    example: 5,
+  })
+  async findAvailable(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 5,
+  ) {
+    // Obtener todos los equipos con paginación
+    const allEquipos: Equipo[] = await this.equiposService.findAll(page, limit);
+
+    // Filtrar solo aquellos equipos que tengan isAvailable: true
+    const availableEquipos = allEquipos.filter((equipo) => equipo.isAvailable);
+
+    return availableEquipos;
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Ver un equipo por :id' })
   @ApiBearerAuth()
