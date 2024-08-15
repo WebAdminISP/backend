@@ -73,6 +73,7 @@ export class EquiposService {
     return this.equiposRepository.find({
       skip: skippedItems,
       take: limit,
+      relations: ['user'],
     });
   }
 
