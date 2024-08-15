@@ -43,17 +43,18 @@ export class RelevamientosService {
     //w localizar agente cercano y asignar(mock)
     const agente = 'asignar agente';
 
-    //* Si se tiene api de GoogleMaps.
+    //* Si no se tiene api de GoogleMaps.
     //* Descomentar: lat, lng y comentar toda la función que busca las coordenadas.
     //w localiza coordenadas domicilio(mock)
-    const lat = -58.3816;
-    const lng = -58.3816;
+    // const lat = -58.3816;
+    // const lng = -58.3816;
 
     //* Geocoding :obtiene coordenadas del domicilio declarado por guest
     // const { direccion, provincia, localidad } = createRelevamientoDto;
     // const domicilioCompleto = `${direccion}, ${localidad}, ${provincia}`;
     // const coordenadas =
     //   await this.mapsService.getCoordenadas(domicilioCompleto);
+    //   console.log('COORDENADAS',coordenadas);
     // const { lat, lng } = coordenadas;
 
     const fetchedProvincia = await this.provinciaRepository.findOne({
@@ -76,10 +77,6 @@ export class RelevamientosService {
     const newRelevamiento = this.relevamientoRepository.create({
       ...createRelevamientoDto,
       agente,
-      latitud: lat,
-      longitud: lng,
-      // latitud,
-      // longitud,
       provincia: fetchedProvincia,
       localidad: fetchedLocalidad,
     });
