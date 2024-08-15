@@ -25,6 +25,7 @@ import { MapsModule } from './modules/maps/maps.module';
 import { PdfModule } from './modules/pdf/pdf.module';
 import { FilesModule } from './modules/files/files.module';
 import { AsistenciasModule } from './modules/asistencias/asistencias.module';
+import { MercadoPagoModule } from './modules/mercado-pago/mercado-pago.module';
 import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
@@ -61,6 +62,7 @@ import { ChatModule } from './modules/chat/chat.module';
     PdfModule,
     FilesModule,
     AsistenciasModule,
+    MercadoPagoModule,
     ChatModule,
   ],
   controllers: [AppController],
