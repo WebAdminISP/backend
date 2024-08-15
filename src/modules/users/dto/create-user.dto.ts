@@ -21,6 +21,11 @@ export class CreateUserDto {
   isAdmin: boolean;
 
   @ApiHideProperty()
+  @IsOptional()
+  @IsBoolean({ message: 'activo debe ser un valor booleano.' })
+  activo: boolean;
+
+  @ApiHideProperty()
   @IsDate({ message: 'createdAt debe ser una instancia de Date' })
   @Transform(
     ({ value }) => {

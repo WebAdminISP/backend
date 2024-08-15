@@ -6,10 +6,12 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { auth } from 'express-openid-connect';
 import { config as auth0Config } from './config/auth0';
 import cors from 'cors';
+import { AbstractWsAdapter } from '@nestjs/websockets';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  
   const corsOptions = {
     // origin: 'http://localhost:3000',
     origin: '*',

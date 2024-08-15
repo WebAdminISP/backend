@@ -25,6 +25,9 @@ export class User {
   @Column({ default: false })
   isAdmin: boolean;
 
+  @Column({ default: true, nullable: false })
+  activo: boolean;
+
   @Column({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
