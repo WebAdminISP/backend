@@ -12,7 +12,7 @@ const config = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   autoLoadEntities: true,
-  synchronize: true,
+  synchronize: false,
   extra: {
     timezone: 'America/Buenos_Aires', // Establecer la zona horaria aquí
   },
