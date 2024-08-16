@@ -9,6 +9,7 @@ import { CreateEquipoDto } from './dto/create-equipo.dto';
 import { Equipo } from './entities/equipo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { UpdateEquipoDto } from './dto/update-equipo.dto';
 
 @Injectable()
 export class EquiposService {
@@ -73,12 +74,14 @@ export class EquiposService {
     return this.equiposRepository.find({
       skip: skippedItems,
       take: limit,
+      relations: ['user'],
     });
   }
 
   async findOne(id: string) {
     const equipo = await this.equiposRepository.findOne({
       where: { id: id },
+      relations: ['user'],
     });
 
     if (equipo) {
@@ -90,7 +93,7 @@ export class EquiposService {
     }
   }
 
-  async update(id: string, updatedEquipoData: Partial<Equipo>) {
+  async update(id: string, updatedEquipoData: UpdateEquipoDto) {
     const oldEquipo = await this.equiposRepository.findOneBy({ id: id });
 
     if (!oldEquipo) {
@@ -99,6 +102,15 @@ export class EquiposService {
 
     // Merge de datos: copiar las propiedades actualizadas
     Object.assign(oldEquipo, updatedEquipoData);
+
+    // busca el usuario por id
+    const user = await this.usersRepository.findOneBy({
+      id: updatedEquipoData.userId,
+    });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    //asigna el usuario > el objeto entero para la relacion
+    oldEquipo.user = user;
 
     const updatedEquipo = await this.equiposRepository.save(oldEquipo);
     return updatedEquipo;
@@ -116,5 +128,27 @@ export class EquiposService {
     await this.equiposRepository.remove(oldEquipo);
 
     return { success: `Equipo con id: ${id} eliminado con éxito` };
+  }
+
+  async unassignEquipo(id: string): Promise<Equipo> {
+    const equipo = await this.equiposRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!equipo) {
+      throw new NotFoundException(`Equipo con ID ${id} no encontrado`);
+    }
+
+    equipo.isAvailable = true;
+    equipo.user = null; // Desasignamos el equipo del usuario
+
+    try {
+      return await this.equiposRepository.save(equipo);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Ocurrió un error al desasignar el equipo.',
+      );
+    }
   }
 }

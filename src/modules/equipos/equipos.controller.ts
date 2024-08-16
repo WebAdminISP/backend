@@ -14,6 +14,7 @@ import {
   Put,
   UnauthorizedException,
   Req,
+  Patch,
 } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
 import { CreateEquipoDto } from './dto/create-equipo.dto';
@@ -156,5 +157,15 @@ export class EquiposController {
 
     createEquipoDto.agente = agente;
     return this.equiposService.update(id, createEquipoDto);
+  }
+
+  @Patch(':id/desasignar')
+  @ApiOperation({ summary: 'Desasignar un equipo por :id' })
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @HttpCode(200)
+  async unassignEquipo(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.equiposService.unassignEquipo(id);
   }
 }
