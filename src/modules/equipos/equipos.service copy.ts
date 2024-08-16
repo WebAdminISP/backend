@@ -81,7 +81,6 @@ export class EquiposService {
   async findOne(id: string) {
     const equipo = await this.equiposRepository.findOne({
       where: { id: id },
-      relations: ['user'],
     });
 
     if (equipo) {
@@ -128,27 +127,5 @@ export class EquiposService {
     await this.equiposRepository.remove(oldEquipo);
 
     return { success: `Equipo con id: ${id} eliminado con éxito` };
-  }
-
-  async unassignEquipo(id: string): Promise<Equipo> {
-    const equipo = await this.equiposRepository.findOne({
-      where: { id },
-      relations: ['user'],
-    });
-
-    if (!equipo) {
-      throw new NotFoundException(`Equipo con ID ${id} no encontrado`);
-    }
-
-    equipo.isAvailable = true;
-    equipo.user = null; // Desasignamos el equipo del usuario
-
-    try {
-      return await this.equiposRepository.save(equipo);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Ocurrió un error al desasignar el equipo.',
-      );
-    }
   }
 }
