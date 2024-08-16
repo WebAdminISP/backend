@@ -16,9 +16,9 @@ const config = {
   extra: {
     timezone: 'America/Buenos_Aires', // Establecer la zona horaria aquí
   },
-  ssl: {
-    rejectUnauthorized: false, // Importante para Render, que utiliza certificados SSL autofirmados.
-  },
+  //ssl: {
+  //  rejectUnauthorized: false, // Importante para Render, que utiliza certificados SSL autofirmados.
+  //},
   // dropSchema: true,
   //logging: true,
   logging: ['error'],
