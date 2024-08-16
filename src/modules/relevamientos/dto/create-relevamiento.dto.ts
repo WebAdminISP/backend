@@ -82,6 +82,26 @@ export class CreateRelevamientoDto {
   @IsString()
   localidad: string;
 
+  @ApiProperty({ 
+    example: -34.6037, 
+    description: 'Latitude of the location' 
+  })
+  @IsNotEmpty()
+  @IsNumber({}, { message: 'Latitude must be a number' })
+  @Min(-90, { message: 'Latitude must be greater than or equal to -90' })
+  @Max(90, { message: 'Latitude must be less than or equal to 90' })
+  latitud: number;
+
+  @ApiProperty({ 
+    example: -58.3816, 
+    description: 'Longitude of the location' 
+  })
+  @IsNotEmpty()
+  @IsNumber({}, { message: 'Longitude must be a number' })
+  @Min(-180, { message: 'Longitude must be greater than or equal to -180' })
+  @Max(180, { message: 'Longitude must be less than or equal to 180' })
+  longitud: number;
+
   // @ApiProperty({ required: false, example: 'Lunes', description: 'Día preferido para visita' })
   @ApiHideProperty()
   @IsOptional()

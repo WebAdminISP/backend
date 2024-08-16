@@ -62,12 +62,6 @@ export class ChatService {
       return true;
     } 
 
-    // //si usuario no es admin y si ya esta asignado a este room, retorna true > evita que otros usuarios non-admins puedan entrar
-    // if (!isAdmin && room.user === userId) {
-    //   console.log('Usuario ya esta agregado a la sala en diccionario')
-    //   console.log('Existing Rooms:', this.rooms);
-    //   return true;
-    // }
     
     // If the user is not an admin and the room has no user, assign them
   if (!isAdmin && !room.user) {
@@ -112,6 +106,13 @@ export class ChatService {
   // retorna lista de participantes del room indicado
  async  getRoomParticipants(roomId: string): Promise<{ user: string; admin: string } | null> {
     return this.rooms[roomId] || null;
+  }
+
+  // retorna array de roomIDs que no tienen un admin
+  async getRoomsWithoutAdmin(){
+    return Object.entries(this.rooms)
+      .filter(([_, participants]) => !participants.admin)
+      .map(([roomId, _]) => roomId);
   }
 
   // genera id unico para room

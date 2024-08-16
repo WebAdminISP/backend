@@ -41,7 +41,7 @@ export class Equipo {
   @Column({ nullable: true })
   cableMts: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique:true })
   macEquipo: string;
 
   @Column({ nullable: true })

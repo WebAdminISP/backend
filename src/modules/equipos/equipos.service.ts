@@ -9,6 +9,7 @@ import { CreateEquipoDto } from './dto/create-equipo.dto';
 import { Equipo } from './entities/equipo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { UpdateEquipoDto } from './dto/update-equipo.dto';
 
 @Injectable()
 export class EquiposService {
@@ -73,6 +74,7 @@ export class EquiposService {
     return this.equiposRepository.find({
       skip: skippedItems,
       take: limit,
+      relations: ['user'],
     });
   }
 
@@ -90,15 +92,22 @@ export class EquiposService {
     }
   }
 
-  async update(id: string, updatedEquipoData: Partial<Equipo>) {
+  async update(id: string, updatedEquipoData: UpdateEquipoDto) {
     const oldEquipo = await this.equiposRepository.findOneBy({ id: id });
 
     if (!oldEquipo) {
       throw new NotFoundException(`Equipo con ID ${id} no encontrado`);
-    }
+    } 
 
     // Merge de datos: copiar las propiedades actualizadas
     Object.assign(oldEquipo, updatedEquipoData);
+
+    // busca el usuario por id 
+    const user = await this.usersRepository.findOneBy({id:updatedEquipoData.userId})
+    if(!user) throw new NotFoundException('Usuario no encontrado');
+
+    //asigna el usuario > el objeto entero para la relacion
+    oldEquipo.user = user;
 
     const updatedEquipo = await this.equiposRepository.save(oldEquipo);
     return updatedEquipo;
