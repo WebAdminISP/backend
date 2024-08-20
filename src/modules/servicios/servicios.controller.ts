@@ -100,7 +100,7 @@ export class ServiciosController {
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(
-    @Req() req: Request & { oidc?: any; user?: any },
+    @Req() req: Request,
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() createServicioDto: CreateServicioDto,
   ) {

@@ -29,7 +29,7 @@ export class MercadoPagoController {
 
   @Post('process-payment')
   async processPayment(@Body() paymentData: any): Promise<any> {
-    return this.mercadoPagoService.createPayment(paymentData);
+    return await this.mercadoPagoService.createPayment(paymentData);
   }
 
   @Post('notification')
