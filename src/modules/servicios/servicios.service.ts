@@ -75,15 +75,27 @@ export class ServiciosService {
     }
   }
 
-  async update(id: string, updatedServicioData: Partial<Servicio>) {
+  async update(id: string, updatedServicioData: CreateServicioDto) {
     const oldServicio = await this.serviciosRepository.findOneBy({ id: id });
 
     if (!oldServicio) {
       throw new NotFoundException(`Servicio con ID ${id} no encontrado`);
     }
 
+    console.log(updatedServicioData);
+
     // Merge de datos: copiar las propiedades actualizadas
     Object.assign(oldServicio, updatedServicioData);
+
+    const userId = await this.usersRepository.findOneBy({
+      id: updatedServicioData.userId,
+    });
+
+    console.log(userId);
+
+    if (!userId) throw new NotFoundException('Usuario no encontrado');
+
+    oldServicio.user = userId;
 
     const updatedServicio = await this.serviciosRepository.save(oldServicio);
     return updatedServicio;
