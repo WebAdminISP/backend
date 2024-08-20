@@ -1,5 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsDate,
   IsNotEmpty,
   IsOptional,
@@ -77,9 +78,9 @@ export class CreateFacturacionDto {
   tipoPago: string;
 
   @IsNotEmpty()
-  @IsString({ message: 'El tipo de pago debe ser un booleano.' })
+  @IsBoolean({ message: 'El tipo de pago debe ser un booleano?.' })
   @ApiProperty({
-    description: 'El tipo de pago debe ser un booleano.',
+    description: 'El campo pagado debe ser un booleano.',
     example: 'true',
     type: Boolean,
   })
