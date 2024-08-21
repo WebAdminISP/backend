@@ -27,13 +27,13 @@ export class Factura {
   @Column({ length: 50, nullable: false })
   concepto: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   observaciones: string;
 
   @Column({ nullable: false })
   numFactura: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   tipoPago: string;
 
   @Column({ nullable: false, default: false })

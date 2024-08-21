@@ -9,6 +9,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { Factura } from '../facturacion/entities/facturacion.entity';
+import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig({ path: '.env.development' });
 
 @Injectable()
 export class MercadoPagoService {
@@ -78,9 +81,12 @@ export class MercadoPagoService {
       },
       back_urls: {
         success: 'https://e80f-45-167-120-30.ngrok-free.app/',
+        // success: process.env.MERCADO_PAGO_NOTIFICACIONES,
         failure: 'https://e80f-45-167-120-30.ngrok-free.app/api',
+        // failure: process.env.MERCADO_PAGO_NOTIFICACIONES,
         pending:
           'https://e80f-45-167-120-30.ngrok-free.app/mercado-pago/notification',
+        // process.env.MERCADO_PAGO_NOTIFICACIONES,
       },
       differential_pricing: {
         id: 1,
@@ -148,7 +154,7 @@ export class MercadoPagoService {
 
     const body = {
       transaction_amount: paymentData.transaction_amount,
-      description: paymentData.description || 'No description provided',
+      description: paymentData.description || 'Pago servicio de internet',
       payment_method_id: paymentData.payment_method_id,
       payer: {
         email: paymentData.payer.email,
@@ -160,8 +166,12 @@ export class MercadoPagoService {
     };
 
     console.log('Lo que envia el back para hacer el pago:', body);
+
     try {
-      const response = await this.payment.create({ body });
+      const response = await this.payment.create({
+        body,
+        requestOptions: { idempotencyKey: paymentData.token },
+      });
       return response;
     } catch (error) {
       console.error('Error creating payment:', error);
