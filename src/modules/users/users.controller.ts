@@ -24,7 +24,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
 import { Roles } from '../../decorators/roles.decorator';
 import { Role } from '../auths/roles.enum';
 import {
@@ -46,6 +45,9 @@ import { CloudinaryService } from 'src/common/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidatorPipe } from 'src/pipes/fileValidator.pipe';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig({ path: '.env.development' });
 
 @ApiTags('Users')
 @Controller('users')
@@ -149,12 +151,13 @@ export class UsersController {
     try {
       const tokenResponse = await this.UsersService.auth0Signin(auth0Data);
 
-      const redirectUrl = `http://localhost:3001/verifyAuth0?verify=true&token=${tokenResponse.token}&issuedAt=${tokenResponse.issuedAt}&expiresAt=${tokenResponse.expiresAt}&agente=${tokenResponse.agente}&userId=${tokenResponse.user.id}&userEmail=${tokenResponse.user.email}&userNombre=${tokenResponse.user.nombre}&userRole=${tokenResponse.user.roles}`;
+      const redirectUrl = `${process.env.REDIRECT_URL_AUTH0}/verifyAuth0?verify=true&token=${tokenResponse.token}&issuedAt=${tokenResponse.issuedAt}&expiresAt=${tokenResponse.expiresAt}&agente=${tokenResponse.agente}&userId=${tokenResponse.user.id}&userEmail=${tokenResponse.user.email}&userNombre=${tokenResponse.user.nombre}&userRole=${tokenResponse.user.roles}`;
+
       res.redirect(redirectUrl);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        // Redirigir a una página específica cuando el usuario no tiene cuenta
-        const errorRedirectUrl = `http://localhost:3001/verifyAuth0?verify=false`;
+        const errorRedirectUrl = `${process.env.REDIRECT_URL_AUTH0}/verifyAuth0?verify=false`;
+
         res.redirect(errorRedirectUrl);
       } else {
         // Manejar otros tipos de errores si es necesario
