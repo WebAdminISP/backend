@@ -5,6 +5,7 @@
   import { CustomSocket } from "./typings/ISocket";
   import { SocketAuthMiddleware } from "src/middlewares/ws.middleware";
   import { TimeoutService } from "./timeout.service";
+  import axios from 'axios';
 
   // decora la clase para manejar conexiones con el protocolo websocket 
   @WebSocketGateway({
@@ -24,7 +25,7 @@
       // inyecta servicios como ya sabemos
       constructor(
         private readonly chatService: ChatService,
-        private readonly timeoutService: TimeoutService
+        private readonly timeoutService: TimeoutService,
       ) {}
 
     // almacena in memory los timeouts para cada conexion (esto se haria en db)
@@ -121,29 +122,41 @@
     // @SubscribeMessage 'escucha' evento 'create-room' emitido por cliente y dispara la funcion
     @SubscribeMessage('create-room')
     async handleCreateRoom(@ConnectedSocket() client: CustomSocket) {
-      //extrae userId del usuario autenticado
-      const { userId, isAdmin } = client.user;
-      if(isAdmin) {
-        client.emit('join-failed', 'Los admins no pueden crear salas');
-        client.disconnect();
-        return
-      }
-
-      // evita que el usuario pueda crear mas de 1 sala
-      const existingRoom = await this.chatService.findRoomByParticipant(userId);
-      if (existingRoom) {
-        client.emit('join-failed', 'Ya tienes un chat abierto. No puedes crear otra sala.');
-        return;
-      }
-
-      // crea una nueva room y retorna el roomId
-      const response = await this.chatService.createRoom(userId);
-      //agrega el cliente al room creado
-      client.join(response.roomId);
-      //emite evento 'room-created' informando al cliente de nueva room y su union a ella > el cliente debe estar subscrito a este evento para escucharlo
-      client.emit('room-created', response);
-
-      return response
+     try {
+       //extrae userId del usuario autenticado
+       const { userId, isAdmin } = client.user;
+       if(isAdmin) {
+         client.emit('join-failed', 'Los admins no pueden crear salas');
+         client.disconnect();
+         return
+       }
+ 
+       // evita que el usuario pueda crear mas de 1 sala
+       const existingRoom = await this.chatService.findRoomByParticipant(userId);
+       if (existingRoom) {
+         client.emit('join-failed', 'Ya tienes un chat abierto. No puedes crear otra sala.');
+         return;
+       }
+ 
+       // crea una nueva room y retorna el roomId
+       const response = await this.chatService.createRoom(userId);
+       //agrega el cliente al room creado
+       client.join(response.roomId);
+       //emite evento 'room-created' informando al cliente de nueva room y su union a ella > el cliente debe estar subscrito a este evento para escucharlo
+       client.emit('room-created', response);
+ 
+       // busca las rooms sin admins asignados
+       const pendingRooms = await this.chatService.getRoomsWithoutAdmin()
+       // envia las rooms al front - endpoint de Nextjs
+       await axios.post('https://your-nextjs-server.com/api/update-pending-rooms', {
+         rooms: pendingRooms
+       });
+ 
+       return response
+     } catch (error) {
+      console.error('Error in handleCreateRoom:', error);
+      client.emit('join-failed', 'An error occurred while creating the room.');
+     }
     }
 
     // escucha evento 'join-room' del usuario (user o admin), ejecuta funcion.
