@@ -146,11 +146,15 @@
        client.emit('room-created', response);
  
        // busca las rooms sin admins asignados
-       const pendingRooms = await this.chatService.getRoomsWithoutAdmin()
+       const newRoomIDs = await this.chatService.getRoomsWithoutAdmin();
+       console.log('>>> ROOMIDs sin admin para enviar a Nextjs server>>>',newRoomIDs)
        // envia las rooms al front - endpoint de Nextjs
-       await axios.post('https://your-nextjs-server.com/api/update-pending-rooms', {
-         rooms: pendingRooms
-       });
+       const nextResponse = await axios.post('https://frontend-swart-sigma.vercel.app/api/rooms', { roomIDs: newRoomIDs },  { 
+        headers: { 
+          authorization: 'a5c0febe-c609-476f-a661-b538f19b2177' 
+     }});
+
+     console.log('>>> ENVIO DE ROOMS EXITOSO>>>',nextResponse);
  
        return response
      } catch (error) {
