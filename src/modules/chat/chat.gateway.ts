@@ -96,6 +96,11 @@
             } else if (participants.user === userId) {
               participants.user = null;
               console.log('Cliente desconectado y eliminado de diccionario');
+
+              // emite evento 'user-disconnected' a todos los usuarios en la sala
+              this.server.to(roomId)
+              .emit('user-disconnected', `${name} se ha desconectado del chat`);
+
               if (!participants.admin) {
                 await this.chatService.deleteRoom(roomId);
                 console.log('Sala vacia: Sala ELIMINADA');
