@@ -150,31 +150,80 @@ export class MercadoPagoService {
   }
 
   async createPayment(paymentData: any): Promise<any> {
-    console.log('Lo llega desde el front para hacer el pago:', paymentData);
+    // console.log('Lo llega desde el front para hacer el pago:', paymentData);
+
+    const userId = paymentData.initialization.userId;
+
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    const [nombre, apellido] = user.nombre.split(' ');
+
+    const invoiceId = paymentData.initialization.invoiceId;
+
+    const factura = await this.facturaRepository.findOne({
+      where: { id: invoiceId },
+    });
+
+    if (!factura) {
+      throw new NotFoundException('Factura no encontrada');
+    }
+    if (factura.pagado === true) {
+      throw new BadRequestException(
+        `La factura con id: ${factura.id}, ya está cancelada`,
+      );
+    }
 
     const body = {
       transaction_amount: paymentData.transaction_amount,
-      description: paymentData.description || 'Pago servicio de internet',
+      description: factura.observaciones || 'Pago servicio de internet',
       payment_method_id: paymentData.payment_method_id,
+      additional_info: {
+        items: [
+          {
+            id: factura.id,
+            title: factura.concepto,
+            description: factura.observaciones,
+            category_id: 'Abono',
+            quantity: 1,
+            unit_price: factura.importe,
+          },
+        ],
+        payer: {
+          first_name: nombre,
+          last_name: apellido,
+          phone: { area_code: user.codArea, number: user.telefono },
+          address: {
+            zip_code: user.codigoPostal,
+            street_name: user.direccion,
+          },
+        },
+      },
       payer: {
+        type: 'customer',
         email: paymentData.payer.email,
         identification: paymentData.payer.identification,
       },
+      external_reference: factura.id,
       token: paymentData.token,
       installments: paymentData.installments || 1,
       issuer_id: paymentData.issuer_id || null, //? Agregar este campo si es necesario
     };
 
-    console.log('Lo que envia el back para hacer el pago:', body);
+    // console.log('Lo que envia el back para hacer el pago:', body);
 
     try {
       const response = await this.payment.create({
         body,
         requestOptions: { idempotencyKey: paymentData.token },
       });
+
       return response;
     } catch (error) {
-      console.error('Error creating payment:', error);
+      console.error('Error creando el pago:', error);
       throw error;
     }
   }
@@ -182,22 +231,29 @@ export class MercadoPagoService {
   async processPaymentNotification(notificationData: any) {
     const { data, action } = notificationData;
 
+    console.log('Llega notificacion:', notificationData);
+
     if (action === 'payment.created') {
       const { id } = data;
 
       try {
         const paymentDetails = await this.payment.get({ id });
 
-        // console.log(paymentDetails);
-
         if (paymentDetails.status === 'approved') {
-          console.log(
-            'Si entro acá es porque esta aprobado:',
-            paymentDetails.status,
-          );
-          // await this.updateFacturaStatus(id, true); // Marcar la factura como pagada
+          const factura = await this.facturaRepository.findOne({
+            where: { id: paymentDetails.external_reference },
+          });
+          factura.pagado = true;
+          factura.tipoPago = 'Mercado Pago';
+          factura.referenciaId = Number(id);
+          factura.fechaPago = paymentDetails.date_approved;
+
+          await this.facturaRepository.save(factura);
+          return `Pago de factura: ${factura.id} aceptado y actualizado`;
         } else {
-          console.log(`Payment status is ${paymentDetails.status_detail}`);
+          console.log(
+            ` El estado del pago es: ${paymentDetails.status_detail}`,
+          );
         }
       } catch (error) {
         console.error('Error fetching payment details:', error);
@@ -207,15 +263,4 @@ export class MercadoPagoService {
       throw new BadRequestException('Invalid notification action');
     }
   }
-
-  // private async updateFacturaStatus(paymentId: string, status: boolean) {
-  //   // Implementa la lógica para actualizar el estado de la factura en la base de datos
-  //   const factura = await this.facturaRepository.findOne({ where: { paymentId } });
-  //   if (factura) {
-  //     factura.pagado = status;
-  //     await this.facturaRepository.save(factura);
-  //   } else {
-  //     throw new NotFoundException('Factura no encontrada');
-  //   }
-  // }
 }
