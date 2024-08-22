@@ -49,10 +49,24 @@ export class MailService {
 
   async sendRegistrationConfirmation(email: string, username: string) {
     const subject = 'Confirmación de Registro';
-    const text = `Hola ${username}, gracias por registrarte en nuestro servicio PT19A.`;
-    const html = `<p>Hola ${username},</p><p>Gracias por registrarte en nuestro servicio PT19A.</p>`;
+    const text = `Hola ${username}, gracias por registrarte en nuestro servicio UltraNet.`;
+    const html = `<p>Hola ${username},</p><p>Gracias por registrarte en nuestro servicio UltraNet.</p>`;
 
     await this.sendMail(email, subject, text, html);
+  }
+
+  // Método para enviar notificaciones de Mercado Pago con archivo adjunto
+  async sendNotificationMPagoWithAttachment(
+    email: string,
+    username: string,
+    filePath: string,
+  ) {
+    const subject = 'Confirmación de Pago';
+    const text = `Hola ${username},\n\nConfirmamos el pago de su factura.\n\nSaludos,\nUltraNet`;
+    const html = `<p>Hola ${username},</p><p>Confirmamos el pago de su factura.</p><p>Saludos,<br>UltraNet</p>`;
+    const attachments = [{ filename: path.basename(filePath), path: filePath }];
+
+    await this.sendMail(email, subject, text, html, attachments);
   }
 
   async sendBillingAlert(email: string, amount: number) {
