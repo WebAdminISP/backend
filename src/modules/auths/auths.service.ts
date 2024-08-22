@@ -19,7 +19,7 @@ import { Servicio } from '../servicios/entities/servicio.entity';
 import { Equipo } from '../equipos/entities/equipo.entity';
 import { ImpuestosService } from '../impuestos/impuestos.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { validate, IsUUID } from 'class-validator';
+import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { UUIDValidationDto } from './dto/uuid-validation.dto';
 
