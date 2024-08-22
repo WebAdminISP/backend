@@ -45,13 +45,30 @@
     // 'connection' es un built-in global event para todas las conexiones ws.
     async onModuleInit() {
       console.log('ChatGateway initialized');
-      this.server.on('connection', (client: Socket) => {
+      this.server.on('connection', async (client: Socket) => {
         console.log(`Client attempting to connect: ${client.id}`);
         console.log('Socket handshake:', client.handshake.auth.name);
-
+        //w emite mensaje con salas pendientes tras crearse nueva sala
+        await this.emitPendingRoomsToAdmins();
       });
     }
 
+    //w funcion para emitir mensaje con salas pendientes de atencion
+    //w para enviar solo a los admins via socket
+  private async emitPendingRoomsToAdmins() {
+    const pendingRooms = await this.chatService.getRoomsWithoutAdmin();
+    
+    // retorna todos los sockets conectados
+    const sockets = await this.server.fetchSockets();
+    
+    // emite las salas pendientes solo a los admins
+    for (const socket of sockets) {
+      const customSocket = socket as any as CustomSocket;
+      if (customSocket.user && customSocket.user.isAdmin) {
+        customSocket.emit('pending-rooms', pendingRooms);
+      }
+    }
+  }
 
     //W ###### HANDLE CONNECTION (INDIVIDUAL)###################
     // se ejecuta cuando un nuevo usuario se conecta
@@ -74,6 +91,11 @@
       // establece los tiempos de advertencia y desconexion por inactividad
       await this.timeoutService.setupWarningTimeout(client);
       await this.timeoutService.setupIdleTimeout(client);
+
+      // si se conecta un user (non-admin), se emite el mensaje con las salas
+    if (!isAdmin) {
+      await this.emitPendingRoomsToAdmins();
+    }
     
       // 'escucha' cuando un usuario se desconecta(cierra el tab)
       client.on('disconnect', async () => {
@@ -144,22 +166,26 @@
        client.join(response.roomId);
        //emite evento 'room-created' informando al cliente de nueva room y su union a ella > el cliente debe estar subscrito a este evento para escucharlo
        client.emit('room-created', response);
- 
-       // busca las rooms sin admins asignados
-       const newRoomIDs = await this.chatService.getRoomsWithoutAdmin();
-       console.log('>>> ROOMIDs sin admin para enviar a Nextjs server>>>',newRoomIDs)
-       // envia las rooms al front - endpoint de Nextjs
-       const nextResponse = await axios.post('https://frontend-swart-sigma.vercel.app/api/rooms', { roomIDs: newRoomIDs },  { 
-        headers: { 
-          authorization: 'a5c0febe-c609-476f-a661-b538f19b2177' 
-     }});
 
-     console.log('>>> ENVIO DE ROOMS EXITOSO>>>',nextResponse);
+        //w emite mensaje con salas pendientes tras crearse nueva sala
+      await this.emitPendingRoomsToAdmins();
+      console.log(`>>>>Enviando salas pendientes a admins >>>>`)
+ 
+    //    // busca las rooms sin admins asignados
+    //    const newRoomIDs = await this.chatService.getRoomsWithoutAdmin();
+    //    console.log('>>> ROOMIDs sin admin para enviar a Nextjs server>>>',newRoomIDs)
+    //    // envia las rooms al front - endpoint de Nextjs
+    //    const nextResponse = await axios.post('https://frontend-swart-sigma.vercel.app/api/rooms', { roomIDs: newRoomIDs },  { 
+    //     headers: { 
+    //       authorization: 'a5c0febe-c609-476f-a661-b538f19b2177' 
+    //  }});
+
+    //  console.log('>>> ENVIO DE ROOMS EXITOSO>>>',nextResponse);
  
        return response
      } catch (error) {
       console.error('Error in handleCreateRoom:', error);
-      client.emit('join-failed', 'An error occurred while creating the room.');
+      client.emit('join-failed', 'Error al crear sala');
      }
     }
 
