@@ -24,7 +24,7 @@ export class NotificationsService implements OnModuleInit {
 
   private scheduleTasks() {
     // Programar una tarea para enviar recordatorios y pre-facturas el primer día de cada mes a las 9 AM
-    cron.schedule('38 18 7 * *', async () => {
+    cron.schedule('10 21 23 * *', async () => {
       await this.sendMonthlyNotificationsWithAttachments();
     });
   }
