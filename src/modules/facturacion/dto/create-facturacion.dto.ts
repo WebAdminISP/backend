@@ -69,6 +69,12 @@ export class CreateFacturacionDto {
   numFactura: number;
 
   @IsOptional()
+  referenciaId: number;
+
+  @IsOptional()
+  fechaPago: string;
+
+  @IsOptional()
   @IsString({ message: 'El tipo de pago debe ser una cadena de texto.' })
   @ApiProperty({
     description: 'El tipo de pago debe contener la forma de pago.',
