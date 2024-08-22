@@ -34,6 +34,12 @@ export class Factura {
   numFactura: number;
 
   @Column({ nullable: true })
+  referenciaId: number;
+
+  @Column({ nullable: true })
+  fechaPago: string;
+
+  @Column({ nullable: true })
   tipoPago: string;
 
   @Column({ nullable: false, default: false })
