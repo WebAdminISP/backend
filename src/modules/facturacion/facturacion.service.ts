@@ -54,16 +54,29 @@ export class FacturacionService {
 
   async findAll(page: number, limit: number) {
     const skippedItems = (page - 1) * limit;
-    return this.facturasRepository.find({
+    const factura = this.facturasRepository.find({
       skip: skippedItems,
       take: limit,
+      relations: ['user'],
+      select: {
+        user: {
+          nombre: true,
+        },
+      },
     });
+
+    return factura;
   }
 
   async findOne(id: string) {
     const factura = await this.facturasRepository.findOne({
       where: { id: id },
       relations: ['user'],
+      select: {
+        user: {
+          nombre: true,
+        },
+      },
     });
 
     if (factura) {
