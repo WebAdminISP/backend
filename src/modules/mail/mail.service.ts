@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { config as dotenvConfig } from 'dotenv';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 import * as path from 'path';
 
 dotenvConfig({ path: '.env.development' });
@@ -59,14 +59,42 @@ export class MailService {
   async sendNotificationMPagoWithAttachment(
     email: string,
     username: string,
-    filePath: string,
+    factura,
+    // filePath: string,
   ) {
-    const subject = 'Confirmación de Pago';
-    const text = `Hola ${username},\n\nConfirmamos el pago de su factura.\n\nSaludos,\nUltraNet`;
-    const html = `<p>Hola ${username},</p><p>Confirmamos el pago de su factura.</p><p>Saludos,<br>UltraNet</p>`;
-    const attachments = [{ filename: path.basename(filePath), path: filePath }];
+    const subject = `Confirmación de pago`;
 
-    await this.sendMail(email, subject, text, html, attachments);
+    const html = `
+    <hr <font color=#2E86C1>
+    <h2><font color=#2E86C1>Hola, ${username}.</h2>
+    <p><font color=#2E86C1>Gracias por tu pago.</p>
+    <p><font color=#2E86C1>Aquí tienes los detalles de tu factura:</p>
+    <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
+      <tr style="background-color: #DAD9DB;">
+        <th style="color: #2E86C1; text-align: center;">Tu Plan</th>
+        <th style="color: #2E86C1; text-align: center;">Mes Abonado</th>
+        <th style="color: #2E86C1; text-align: center;">Monto</th>
+        <th style="color: #2E86C1; text-align: center;">Fecha de Pago</th>
+        <th style="color: #2E86C1; text-align: center;">Medio de Pago</th>
+      </tr>
+      <tr>
+        <td style="text-align: center;">Velocidad: ${factura.concepto}</td>
+        <td style="text-align: center;">${factura.observaciones}</td>
+        <td style="text-align: center;">$${factura.importe}</td>
+        <td style="text-align: center;">${factura.fechaPago}</td>
+        <td style="text-align: center;">${factura.tipoPago}</td>
+      </tr>
+    </table>
+    <p><font color=#2E86C1><b>Recuerda que puedes ver y descargar tus facturas en: <a target='blank' href="https://frontend-swart-sigma.vercel.app/login/1">UltraNet</a></b></p>
+    <br>
+    <h3 align="center"><font color=#2E86C1><b>¡Gracias por elegir nuestros servicios!</b></h3>
+    <hr <font color=#2E86C1>
+  `;
+    const text = `Hola ${username},\n\nLe confirmamos que el pago de su factura, se realizo con exito.\n\nSaludos,\nUltraNet`;
+
+    // const attachments = [{ filename: path.basename(filePath), path: filePath }];
+    // await this.sendMail(email, subject, text, html, attachments);
+    await this.sendMail(email, subject, text, html);
   }
 
   async sendBillingAlert(email: string, amount: number) {

@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { Factura } from '../facturacion/entities/facturacion.entity';
 import { config as dotenvConfig } from 'dotenv';
+import { MailService } from '../mail/mail.service';
 
 dotenvConfig({ path: '.env.development' });
 
@@ -20,6 +21,7 @@ export class MercadoPagoService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Factura) private facturaRepository: Repository<Factura>,
+    private readonly mailService: MailService,
   ) {
     this.preference = new Preference(mercadoPagoClient);
     this.payment = new Payment(mercadoPagoClient);
@@ -242,6 +244,7 @@ export class MercadoPagoService {
         if (paymentDetails.status === 'approved') {
           const factura = await this.facturaRepository.findOne({
             where: { id: paymentDetails.external_reference },
+            relations: ['user'],
           });
           factura.pagado = true;
           factura.tipoPago = 'Mercado Pago';
@@ -249,6 +252,17 @@ export class MercadoPagoService {
           factura.fechaPago = paymentDetails.date_approved;
 
           await this.facturaRepository.save(factura);
+
+          const user = await this.usersRepository.findOne({
+            where: { id: factura.user.id },
+          });
+
+          await this.mailService.sendNotificationMPagoWithAttachment(
+            user.email,
+            user.nombre,
+            factura,
+          );
+
           return `Pago de factura: ${factura.id} aceptado y actualizado`;
         } else {
           console.log(
