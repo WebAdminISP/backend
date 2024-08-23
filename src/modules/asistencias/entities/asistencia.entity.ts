@@ -34,15 +34,15 @@ export class Asistencia {
   @Column({ type: 'uuid' })
   userId: string;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ nullable: false })
   diaCliente: string;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ nullable: false })
   horarios: string;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ nullable: false })
   problema: string;
 
-  @Column({ length: 50, nullable: false })
+  @Column({ nullable: false })
   observaciones: string;
 }
