@@ -129,7 +129,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   tipoDocum: string;
 
   @IsOptional()
-  @IsNumber({}, { message: 'El documento debe ser un número.' })
+  @IsNumber({}, { message: 'El documento debe ser un string.' })
   @ApiProperty({
     description: 'El documento debe ser válido.',
     example: '45123456',
