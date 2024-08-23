@@ -21,7 +21,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-    command: bash -c "npm run migration:run && npm run start:dev"
+    ##command: bash -c "npm run migration:run && npm run start:dev"
 
   postgresdbpf:
     image: postgres:latest
