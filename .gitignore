@@ -43,6 +43,7 @@ lerna-debug.log*
 .env.development
 .env.development.local
 .env.test.local
+.env.production
 .env.production.local
 .env.local
 
@@ -58,3 +59,8 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Configuración de producción
+/src/config/auth0.ts
+/src/config/typeorm.ts
+/src/config/cloudinary.ts
